@@ -175,7 +175,7 @@ svg text{font-family:var(--f-label)}
   </section>
 
   <section class="floor" id="matcat">
-    <h2>Mặt cắt A–A <small>cắt dọc nhà qua hành lang (y = 0,5 m), nhìn về phía tường hông y = 4,2</small></h2>
+    <h2>Mặt cắt A–A <small>cắt dọc nhà qua hành lang, nhìn về phía cầu thang; mặt tiền bên phải</small></h2>
     <div class="plan sec" id="sec"></div>
     <p class="foot">Tô đen: phần bị cắt (tường, sàn, mái). Nét mảnh: thấy phía sau mặt cắt. Giả định: sàn và mái bê tông dày 12 cm, cửa đi cao 2,2 m, lan can ban công 1,0 m, lan can ô thang 0,9 m, mái bằng chưa có tường chắn mái. <span class="hint">Trên điện thoại, vuốt ngang để xem hết.</span></p>
   </section>
@@ -186,6 +186,7 @@ svg text{font-family:var(--f-label)}
       <li><b>PN3 thêm cửa sổ 1,2 m</b> (y = 2,5–3,7) ra khu phơi. Để cửa sổ thông ra ngoài trời, khu phơi đổi thành dải 1,6 m chạy hết bề ngang, giáp toàn bộ vách sau PN3. Nhà tắm 1,6 × 4,2 m nằm phía sau, vào qua khu phơi. Không mở cửa sổ ở tường hông y = 4,2 vì tường này thường giáp ranh nhà bên.</li>
       <li><b>Tầng trệt cao 3,78 m</b> (từ nền tới sàn lầu): thang 22 bậc × 17,2 cm (2 vế × 11 bậc), mặt bậc 21 cm. Trừ sàn bê tông, lớp lát (khoảng 17 cm) và trần thạch cao (khoảng 30 cm), từ nền tới trần còn khoảng 3,3 m.</li>
       <li><b>Tầng lầu cao 3,6 m</b> tính từ sàn lầu đến mái.</li>
+      <li><b>Đảo bên cả nhà:</b> đứng ở cửa chính nhìn vào, hành lang và lối đi nằm bên trái, cầu thang và các phòng ngủ nằm bên phải. Tầng lầu đảo theo để lõi thang vẫn trùng nhau. Toạ độ y trong ghi chú tính từ tường hông bên phải (y = 0) sang bên trái (y = 4,2).</li>
       <li><b>Nền trệt cao hơn mặt đường 0,32 m</b> để nước mưa không tràn vào. Tam cấp 2 bậc × 16 cm, mỗi bậc sâu 0,3 m, nằm trong ranh đất ở x = 0–0,6. Tường mặt tiền và cửa chính lùi vào x = 0,6, nên phòng khách còn 5,4 × 4,2 m (22,68 m²). Sàn lầu và ban công phía trên che mưa cho tam cấp. Nếu dắt xe máy vào nhà: 0,6 m quá ngắn để làm dốc cố định (dốc khoảng 28°), nên dùng cầu dắt xe tháo rời.</li>
     </ol>
     <h3>Chỗ lệch so với file KT-02 và cách xử lý</h3>
@@ -211,14 +212,17 @@ const f2 = n => n.toFixed(2).replace('.', ',');
 let out, id;
 const add = s => out.push(s);
 
-// Toạ độ bản vẽ: X dọc nhà (0 = mặt tiền), Y bề ngang. SVG: x = Y, y = X (mặt tiền ở trên).
-const rect = (x1, y1, x2, y2, cls, extra = '') =>
-  add(`<rect x="${k(y1)}" y="${k(x1)}" width="${k(y2 - y1)}" height="${k(x2 - x1)}" class="${cls}" ${extra}/>`);
+// Toạ độ bản vẽ: X dọc nhà (0 = mặt tiền), Y bề ngang tính từ tường hông bên phải (đứng ở cửa nhìn vào).
+// SVG mặt bằng: x = 4,2 − Y, y = X (mặt tiền ở trên, đi vào thì hành lang bên trái, thang bên phải).
+let mir = false;
+const my = y => mir ? 4.2 - y : y;
+const rect = (x1, y1, x2, y2, cls, extra = '') => { const a = my(y1), b = my(y2);
+  add(`<rect x="${k(Math.min(a, b))}" y="${k(x1)}" width="${k(Math.abs(b - a))}" height="${k(x2 - x1)}" class="${cls}" ${extra}/>`); };
 const line = (x1, y1, x2, y2, cls) =>
-  add(`<line x1="${k(y1)}" y1="${k(x1)}" x2="${k(y2)}" y2="${k(x2)}" class="${cls}"/>`);
+  add(`<line x1="${k(my(y1))}" y1="${k(x1)}" x2="${k(my(y2))}" y2="${k(x2)}" class="${cls}"/>`);
 
 function text(x, y, lines, { rot = 0, cls = '' } = {}) {
-  const cx = k(y), cy = k(x), lh = 25;
+  const cx = k(my(y)), cy = k(x), lh = 25;
   const t = lines.map((s, i) =>
     `<tspan x="${cx}" y="${(cy + (i - (lines.length - 1) / 2) * lh).toFixed(1)}" class="${i ? 'rs' : 'rn'}">${s}</tspan>`).join('');
   add(`<text class="lbl ${cls}" ${rot ? `transform="rotate(-90 ${cx} ${cy})"` : ''}>${t}</text>`);
@@ -248,7 +252,7 @@ function win(x1, y1, x2, y2) {
 // Cửa đi: bản lề H, mép đóng E, (ox, oy) = hướng mở
 function door(hx, hy, ex, ey, ox, oy) {
   const w = Math.hypot(ex - hx, ey - hy), lx = hx + ox * w, ly = hy + oy * w;
-  const H = [k(hy), k(hx)], L = [k(ly), k(lx)], E = [k(ey), k(ex)];
+  const H = [k(my(hy)), k(hx)], L = [k(my(ly)), k(lx)], E = [k(my(ey)), k(ex)];
   const cr = (L[0] - H[0]) * (E[1] - H[1]) - (L[1] - H[1]) * (E[0] - H[0]);
   add(`<path class="arc" d="M${L} A${k(w)} ${k(w)} 0 0 ${cr > 0 ? 1 : 0} ${E}"/>` +
       `<line class="leaf" x1="${H[0]}" y1="${H[1]}" x2="${L[0]}" y2="${L[1]}"/>`);
@@ -266,9 +270,9 @@ const tick = (sx, sy) => add(`<line class="dim" x1="${sx - 6}" y1="${sy + 6}" x2
 
 // Chuỗi kích thước theo X, đường kích thước ở Y = pos, đường dóng bắt đầu từ Y = from
 function chainX(pts, pos, from, lab = []) {
-  const P = k(pos), dir = Math.sign(pos - from);
+  const P = k(my(pos)), dir = Math.sign(my(pos) - my(from));
   add(`<line class="dim" x1="${P}" y1="${k(pts[0])}" x2="${P}" y2="${k(pts.at(-1))}"/>`);
-  for (const p of pts) { add(`<line class="ext" x1="${k(from)}" y1="${k(p)}" x2="${P + dir * 10}" y2="${k(p)}"/>`); tick(P, k(p)); }
+  for (const p of pts) { add(`<line class="ext" x1="${k(my(from))}" y1="${k(p)}" x2="${P + dir * 10}" y2="${k(p)}"/>`); tick(P, k(p)); }
   for (let i = 1; i < pts.length; i++) {
     const m = k((pts[i - 1] + pts[i]) / 2), tx = P - 8;
     add(`<text class="dt" x="${tx}" y="${m}" transform="rotate(-90 ${tx} ${m})">${lab[i - 1] ?? f1(pts[i] - pts[i - 1])}</text>`);
@@ -277,10 +281,10 @@ function chainX(pts, pos, from, lab = []) {
 // Chuỗi kích thước theo Y, đường kích thước ở X = pos
 function chainY(pts, pos, from, lab = []) {
   const P = k(pos), dir = Math.sign(pos - from);
-  add(`<line class="dim" x1="${k(pts[0])}" y1="${P}" x2="${k(pts.at(-1))}" y2="${P}"/>`);
-  for (const p of pts) { add(`<line class="ext" x1="${k(p)}" y1="${k(from)}" x2="${k(p)}" y2="${P + dir * 10}"/>`); tick(k(p), P); }
+  add(`<line class="dim" x1="${k(my(pts[0]))}" y1="${P}" x2="${k(my(pts.at(-1)))}" y2="${P}"/>`);
+  for (const p of pts) { add(`<line class="ext" x1="${k(my(p))}" y1="${k(from)}" x2="${k(my(p))}" y2="${P + dir * 10}"/>`); tick(k(my(p)), P); }
   for (let i = 1; i < pts.length; i++)
-    add(`<text class="dt" x="${k((pts[i - 1] + pts[i]) / 2)}" y="${P - 8}">${lab[i - 1] ?? f1(pts[i] - pts[i - 1])}</text>`);
+    add(`<text class="dt" x="${k(my((pts[i - 1] + pts[i]) / 2))}" y="${P - 8}">${lab[i - 1] ?? f1(pts[i] - pts[i - 1])}</text>`);
 }
 
 // Thang chữ U trong lõi x=6,0–8,8 / y=1,0–4,2: vế chạy theo bề ngang, chiếu nghỉ phía y=4,2
@@ -293,8 +297,8 @@ function stair(upper) {
     for (let i = 0; i < n; i++) line(a, y0 + i * TREAD, b, y0 + i * TREAD, 'riser');
   }
   rect(7.35, yL - (N1 - 1) * TREAD, 7.45, yL, 'well');
-  add(`<circle class="dot" cx="${k(1.3)}" cy="${k(6.7)}" r="5"/>`);
-  add(`<path class="up" marker-end="url(#ar-${id})" d="M${k(1.3)},${k(6.7)} L${k(3.5)},${k(6.7)} L${k(3.5)},${k(8.1)} L${k(1.5)},${k(8.1)}"/>`);
+  add(`<circle class="dot" cx="${k(my(1.3))}" cy="${k(6.7)}" r="5"/>`);
+  add(`<path class="up" marker-end="url(#ar-${id})" d="M${k(my(1.3))},${k(6.7)} L${k(my(3.5))},${k(6.7)} L${k(my(3.5))},${k(8.1)} L${k(my(1.5))},${k(8.1)}"/>`);
   text(6.42, 1.62, ['LÊN'], { cls: 'up-t' });
   text(7.4, 3.88, ['CHIẾU NGHỈ 0,9 m'], { rot: 1, cls: 'sm' });
   if (upper) { line(6.05, 1.08, 7.45, 1.08, 'rail'); line(6.05, 1.12, 7.45, 1.12, 'rail'); } // lan can ô thang
@@ -325,7 +329,7 @@ const GROUND = {
     door(12.65, 1, 13.55, 1, 0, 1); door(16.65, 1, 17.35, 1, 0, 1);
     // bệ bếp chữ L + bếp nấu + chậu rửa
     rect(9.0, 3.55, 12.45, 4.15, 'counter'); rect(11.85, 2.0, 12.45, 3.55, 'counter');
-    for (const x of [9.45, 9.9]) add(`<circle class="furn" cx="${k(3.85)}" cy="${k(x)}" r="13"/>`);
+    for (const x of [9.45, 9.9]) add(`<circle class="furn" cx="${k(my(3.85))}" cy="${k(x)}" r="13"/>`);
     rect(10.6, 3.65, 11.2, 4.05, 'furn');
     bed(14.7, 2.15, 16.3, 4.15);
   },
@@ -362,11 +366,13 @@ const UPPER = {
   },
 };
 
-// Mặt cắt A–A: cắt dọc nhà ở y = 0,5 (hành lang), nhìn về phía y = 4,2. Toạ độ (X, Z = cao độ); SVG: x = X, y = −Z
+// Mặt cắt A–A: cắt dọc nhà ở y = 0,5 (hành lang), nhìn về phía y = 4,2 (phía thang), nên mặt tiền nằm bên phải.
+// Toạ độ (X, Z = cao độ); SVG: x = 18 − X, y = −Z
 const H_LAU = 3.6, SLAB = 0.12, ROAD = -0.32, CEIL = 3.3, ZR = H_TRET + H_LAU, DOOR = 2.2;
-const sr = (x1, z1, x2, z2, cls, extra) => rect(-z2, x1, -z1, x2, cls, extra);
-const sl = (x1, z1, x2, z2, cls) => line(-z1, x1, -z2, x2, cls);
-const st = (x, z, lines, o) => text(-z, x, lines, o);
+const Q = x => 18 - x;
+const sr = (x1, z1, x2, z2, cls, extra) => rect(-z2, Q(x2), -z1, Q(x1), cls, extra);
+const sl = (x1, z1, x2, z2, cls) => line(-z1, Q(x1), -z2, Q(x2), cls);
+const st = (x, z, lines, o) => text(-z, Q(x), lines, o);
 const lvl = z => (z > 0 ? '+' : z < 0 ? '−' : '±') + f2(Math.abs(z));
 
 function section() {
@@ -380,7 +386,7 @@ function section() {
   sr(-2.6, ROAD - 0.28, 19.2, ROAD, '', hx);
   sl(-2.6, ROAD, 0, ROAD, 'rail'); sl(18.05, ROAD, 19.2, ROAD, 'rail');
   for (const [a, b, z] of [[0, 0.3, ROAD + 0.16], [0.3, 18.05, 0]]) { sr(a, ROAD, b, z, 'flight'); sr(a, ROAD, b, z, '', hx); }
-  st(-1.3, 0.25, ['2 bậc × 16 cm →'], { cls: 'sm' });
+  st(-1.3, 0.25, ['← 2 bậc × 16 cm'], { cls: 'sm' });
   // thấy phía sau mặt cắt (nét mảnh)
   for (const x of [6, 8.8, 12.5, 16.5]) sr(x - h, 0, x + h, HG, 'bey');            // đầu tường tại y = 1
   for (const x of [6, 8.8]) sr(x - h, H1, x + h, HU, 'bey');
@@ -413,28 +419,29 @@ function section() {
   st(15.6, 5.6, ['KHU PHƠI', 'lộ thiên']); st(17.2, 5.6, ['NHÀ TẮM']);
   // cao độ
   for (const [z, s] of [[ZR, 'MÁI'], [H1, 'SÀN LẦU'], [0, 'NỀN TRỆT'], [ROAD, 'MẶT ĐƯỜNG']]) {
-    add(`<path class="ink-head" d="M${k(18.5)},${k(-z)} l-9,-15 h18 z"/>`);
+    add(`<path class="ink-head" d="M${k(Q(18.5))},${k(-z)} l-9,-15 h18 z"/>`);
     sl(18.5, z, 19.9, z, 'thin');
-    add(`<text class="lv" x="${k(18.68)}" y="${k(-z) - 5}">${lvl(z)} ${s}</text>`);
+    add(`<text class="lv" text-anchor="end" x="${k(Q(18.68))}" y="${k(-z) - 5}">${lvl(z)} ${s}</text>`);
   }
-  // kích thước
-  chainX([-ZR, -H1, 0, -ROAD], 20.45, 19.95, [f2(H_LAU), f2(H1), f2(-ROAD)]);
-  chainX([-CEIL, 0], -2.3, -1.3, ['≈ 3,30 tới trần']);
-  chainX([-HU, -H1], -2.3, -1.3, [`${f2(HU - H1)} tới đáy mái`]);
-  chainY([-1.2, 0, 2, 6, 8.8, 14.8, 16.4, 18], -8, -7.45);
-  chainY([0, 0.6, 6, 8.8, 12.5, 16.5, 18], 1.05, 0.62);
+  // kích thước (chainX/chainY nhận toạ độ SVG nên đổi qua Q)
+  const qs = a => a.map(Q).reverse();
+  chainX([-ZR, -H1, 0, -ROAD], Q(20.45), Q(19.95), [f2(H_LAU), f2(H1), f2(-ROAD)]);
+  chainX([-CEIL, 0], Q(-2.3), Q(-1.3), ['≈ 3,30 tới trần']);
+  chainX([-HU, -H1], Q(-2.3), Q(-1.3), [`${f2(HU - H1)} tới đáy mái`]);
+  chainY(qs([-1.2, 0, 2, 6, 8.8, 14.8, 16.4, 18]), -8, -7.45);
+  chainY(qs([0, 0.6, 6, 8.8, 12.5, 16.5, 18]), 1.05, 0.62);
   // mặt tiền, thước tỷ lệ
-  add(`<line class="arrow" x1="${k(-0.35)}" y1="${k(-1.7)}" x2="${k(-1.45)}" y2="${k(-1.7)}" marker-end="url(#am-s)"/>`);
-  add(`<text class="mt" text-anchor="middle" x="${k(-0.9)}" y="${k(-2.05)}">MẶT TIỀN</text>`);
-  for (let i = 0; i < 4; i++) sr(i, -1.53, i + 1, -1.45, i % 2 ? 'sb1' : 'sb0');
+  add(`<line class="arrow" x1="${k(Q(-0.35))}" y1="${k(-1.7)}" x2="${k(Q(-1.45))}" y2="${k(-1.7)}" marker-end="url(#am-s)"/>`);
+  add(`<text class="mt" text-anchor="middle" x="${k(Q(-0.9))}" y="${k(-2.05)}">MẶT TIỀN</text>`);
+  for (let i = 0; i < 4; i++) rect(1.45, i, 1.53, i + 1, i % 2 ? 'sb1' : 'sb0');
   for (let i = 0; i <= 4; i++) add(`<text class="dt" x="${k(i)}" y="${k(1.85)}">${i}${i === 4 ? ' m' : ''}</text>`);
-  return `<svg viewBox="-275 -865 2360 1065" role="img" aria-label="Mặt cắt dọc A–A">${out.join('')}</svg>`;
+  return `<svg viewBox="-285 -865 2360 1065" role="img" aria-label="Mặt cắt dọc A–A, mặt tiền bên phải">${out.join('')}</svg>`;
 }
 
 const dims = r => [r.x[1] - r.x[0], r.y[1] - r.y[0]];
 
 function draw(f) {
-  out = []; id = f.id;
+  out = []; id = f.id; mir = true;
   const Xf = f.front, top = Xf - 2.05, bottom = 19.55;
   add(`<defs>
     <marker id="ar-${id}" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto"><path class="up-head" d="M0,0 L10,5 L0,10 z"/></marker>
@@ -459,15 +466,16 @@ function draw(f) {
   chainY([0, 1, 4.2], Xf - 0.4, Xf - 0.05);
   chainY([0, 4.2], Xf - 0.85, Xf - 0.05);
   if (f.back) chainY(f.back, 18.45, 18.05);
-  // mũi tên mặt tiền
-  add(`<line class="arrow" x1="${k(1.6)}" y1="${k(Xf - 1.15)}" x2="${k(1.6)}" y2="${k(Xf - 1.85)}" marker-end="url(#am-${id})"/>`);
-  add(`<text class="mt" x="${k(1.85)}" y="${k(Xf - 1.5)}">MẶT TIỀN</text>`);
   // ký hiệu mặt cắt A–A ở y = 0,5, mũi tên chỉ hướng nhìn (về phía y = 4,2)
   for (const [a, b, e] of [[Xf - 1.85, Xf - 1.25, Xf - 1.85], [18.15, 18.75, 18.75]]) {
-    add(`<line class="cut" x1="${k(.5)}" y1="${k(a)}" x2="${k(.5)}" y2="${k(b)}"/>`);
-    add(`<line class="arrow" x1="${k(.5)}" y1="${k(e)}" x2="${k(1.05)}" y2="${k(e)}" marker-end="url(#am-${id})"/>`);
-    add(`<text class="mt" x="${k(.62)}" y="${k(a + b - e)}">A</text>`);
+    add(`<line class="cut" x1="${k(my(.5))}" y1="${k(a)}" x2="${k(my(.5))}" y2="${k(b)}"/>`);
+    add(`<line class="arrow" x1="${k(my(.5))}" y1="${k(e)}" x2="${k(my(1.05))}" y2="${k(e)}" marker-end="url(#am-${id})"/>`);
+    add(`<text class="mt" x="${k(my(.38))}" y="${k(a + b - e)}">A</text>`);
   }
+  mir = false;   // phần dưới vẽ theo toạ độ SVG trực tiếp
+  // mũi tên mặt tiền
+  add(`<line class="arrow" x1="${k(.6)}" y1="${k(Xf - 1.15)}" x2="${k(.6)}" y2="${k(Xf - 1.85)}" marker-end="url(#am-${id})"/>`);
+  add(`<text class="mt" x="${k(.85)}" y="${k(Xf - 1.5)}">MẶT TIỀN</text>`);
   // thước tỷ lệ 0–4 m
   for (let i = 0; i < 4; i++) rect(19.0, i, 19.1, i + 1, i % 2 ? 'sb1' : 'sb0');
   for (let i = 0; i <= 4; i++) add(`<text class="dt" x="${k(i)}" y="${k(19.4)}">${i}${i === 4 ? ' m' : ''}</text>`);
