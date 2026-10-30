@@ -55,8 +55,9 @@ section{display:grid;gap:12px}
 .part .pl{color:var(--ink2);font-size:14px;flex-basis:100%}
 .opt{display:inline-flex;gap:6px;align-items:baseline;cursor:pointer}
 .opt input[type=radio],.opt input[type=checkbox]{margin:0;width:16px;height:16px;flex:none;transform:translateY(2px);accent-color:var(--dim)}
-input[type=text]{font:inherit;color:inherit;background:transparent;border:none;border-bottom:1px dotted var(--ink2);
+input[type=text]{font:inherit;font-size:16px;color:inherit;background:transparent;border:none;border-bottom:1px dotted var(--ink2);
   padding:0 4px;min-width:3em;max-width:100%}
+input::placeholder{color:var(--ink2);opacity:.55}
 input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);background:var(--hi)}
 .note{display:flex;gap:8px;align-items:baseline;padding-left:calc(1.6em + 8px);font-size:14px;color:var(--ink2)}
 .note input{flex:1}
@@ -65,12 +66,33 @@ input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);backgro
 .sign small{color:var(--ink2)}
 .sign .box{height:80px}
 .foot{color:var(--ink2);font-size:13px}
+/* điện thoại: lựa chọn thành nút to, dễ bấm bằng ngón tay; thanh tiến độ dính dưới màn hình */
+@media (max-width:640px){
+  body{padding-bottom:72px}
+  .part,.note,.why{padding-left:0}
+  .part{gap:8px}
+  .opt{border:1px solid var(--rule);border-radius:6px;padding:8px 12px;align-items:center;min-height:44px}
+  .opt:has(input:checked){border-color:var(--dim);background:var(--hi)}
+  .opt input[type=radio],.opt input[type=checkbox]{width:20px;height:20px;transform:none}
+  .tools{display:none}
+}
+.bar{display:none}
+@media (max-width:640px){
+  .bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;gap:8px;align-items:center;
+    padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+    background:var(--paper);border-top:1px solid var(--rule)}
+  .bar .prog{flex:1;font-size:14px;color:var(--ink2)}
+  .bar button{min-height:44px}
+}
+dialog{max-width:min(560px,calc(100vw - 32px));width:100%;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);padding:16px}
+dialog textarea{width:100%;height:50vh;font:14px/1.45 var(--f-body);color:inherit;background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:8px}
+dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
 @page{size:A4;margin:12mm}
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   :root{--bg:#fff;--paper:#fff;--ink:#000;--ink2:#444;--rule:#bbb;--hi:#fff}
   body{font-size:11.5px;line-height:1.4}
-  nav,.tools{display:none}
+  nav,.tools,.bar,dialog{display:none}
   main{max-width:none;padding:0;gap:10px}
   h1{font-size:22px} h2{font-size:16px}
   .card{border:none;padding:4px 0}
@@ -93,6 +115,7 @@ input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);backgro
     <p class="lead">Đánh dấu vào ô, điền vào chỗ trống. Câu có <span class="star">★</span> cần trả lời ở buổi gặp đầu vì ảnh hưởng tới kết cấu và hồ sơ xin phép. Câu nào chưa có ô phù hợp thì ghi vào dòng ghi chú.</p>
     <div class="tools">
       <button type="button" onclick="print()">In phiếu</button>
+      <button type="button" class="alt share">Chia sẻ câu trả lời</button>
       <button type="button" class="alt" id="clear">Xoá hết</button>
       <span class="saved" id="saved">Câu trả lời tự lưu trong trình duyệt này.</span>
     </div>
@@ -118,6 +141,17 @@ input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);backgro
     <p class="foot">Câu trả lời trong phiếu là cơ sở để hiệu chỉnh mặt bằng KT-03, tính kết cấu và lập hồ sơ xin phép. Thay đổi sau khi đã đổ móng thường tốn kém hơn nhiều.</p>
   </section>
 </main>
+
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <button type="button" class="share">Chia sẻ</button>
+  <button type="button" class="alt" onclick="print()">In / PDF</button>
+</div>
+<dialog id="dlg">
+  <p style="margin:0 0 8px">Câu trả lời dạng chữ. Sao chép rồi dán vào Zalo, Messenger hoặc email.</p>
+  <textarea id="txt" readonly></textarea>
+  <div class="row"><button type="button" id="copy">Sao chép</button><button type="button" class="alt" onclick="dlg.close()">Đóng</button></div>
+</dialog>
 
 <script>
 // Cú pháp: r = chọn một, c = chọn nhiều, f = dòng điền; "___" trong chữ là ô điền (càng nhiều gạch càng dài)
@@ -241,11 +275,55 @@ document.addEventListener('click', e => { const r = e.target.closest('label.opt'
   if (r && r === downChecked && e.target === r) { r.checked = false; downChecked = null; save(); } });
 document.addEventListener('input', save);
 document.addEventListener('change', save);
+
+// tiến độ: câu đã có ít nhất một lựa chọn hoặc một ô điền
+const cards = [...document.querySelectorAll('.q')];
+const answered = c => [...c.querySelectorAll('input')].some(el => el.type === 'text' ? el.value.trim() : el.checked);
+const progress = () => { document.getElementById('prog').textContent = `Đã trả lời ${cards.filter(answered).length}/${cards.length} câu`; };
+document.addEventListener('input', progress); document.addEventListener('change', progress); progress();
+
+// tóm tắt câu trả lời thành chữ để gửi qua Zalo, Messenger…
+const optText = lab => [...lab.childNodes].map(n => n.nodeType === 3 ? n.textContent : n.type === 'text' ? (n.value.trim() || '…') : '').join('').trim();
+function summary() {
+  const L = ['PHIẾU KHẢO SÁT CHỦ ĐẦU TƯ – NHÀ PHỐ 4,2 × 18 M'];
+  for (const lab of document.querySelectorAll('.info label')) {
+    const v = lab.querySelector('input').value.trim();
+    if (v) L.push(`${lab.querySelector('span').textContent}: ${v}`);
+  }
+  for (const c of cards) {
+    const parts = [];
+    for (const p of c.querySelectorAll('.part')) {
+      const pl = p.querySelector('.pl')?.textContent;
+      const opts = [...p.querySelectorAll('label.opt')];
+      let v;
+      if (opts.length) v = opts.filter(o => o.querySelector('input:not([type=text])').checked).map(optText).join(', ');
+      else v = [...p.childNodes].some(n => n.type === 'text' && n.value.trim()) ? optText(p) : '';
+      if (v) parts.push((pl ? pl + ': ' : '') + v);
+    }
+    const note = c.querySelector('.note input').value.trim();
+    if (note) parts.push('Ghi chú: ' + note);
+    const head = c.querySelector('.n').textContent + '. ' + c.querySelector('.qt span:last-child').textContent.trim();
+    L.push('', head, ...(parts.length ? parts.map(x => '  - ' + x) : ['  - (chưa trả lời)']));
+  }
+  return L.join('\n');
+}
+const dlg = document.getElementById('dlg');
+for (const b of document.querySelectorAll('.share')) b.onclick = async () => {
+  const text = summary();
+  if (navigator.share) { try { await navigator.share({ title: 'Phiếu khảo sát chủ đầu tư', text }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  document.getElementById('txt').value = text; dlg.showModal();
+};
+document.getElementById('copy').onclick = async () => {
+  const t = document.getElementById('txt');
+  try { await navigator.clipboard.writeText(t.value); } catch { t.select(); document.execCommand('copy'); }
+  document.getElementById('copy').textContent = 'Đã sao chép';
+};
 document.getElementById('clear').onclick = () => {
   if (!confirm('Xoá hết câu trả lời đã điền?')) return;
   for (const el of inputs()) el.type === 'text' ? el.value = '' : el.checked = false;
   try { localStorage.removeItem(KEY); } catch {}
   document.getElementById('saved').textContent = 'Đã xoá.';
+  progress();
 };
 </script>
 </body>
