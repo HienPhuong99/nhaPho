@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Đi Bộ Trong Nhà</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@500;600&display=swap">
+<link rel="stylesheet" href="mat-bang.css">
+<style>
+/* Màn hình đi bộ: canvas tràn màn hình; chip vị trí trên cùng, bản đồ nhỏ góc phải, cần điều khiển góc trái dưới (điện thoại) */
+:root{--panel:rgba(255,255,255,.92); --line:#d2d9d5; --accent:#285b8c; --accent-ink:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--panel:rgba(23,32,40,.92); --line:#2a3540; --accent:#82b4e3; --accent-ink:#0f1418}}
+:root[data-theme="dark"]{--panel:rgba(23,32,40,.92); --line:#2a3540; --accent:#82b4e3; --accent-ink:#0f1418}
+html,body{height:100%;margin:0}
+body{background:#cfdbe3;color:var(--ink);font-family:var(--f-body);overflow:hidden;user-select:none;-webkit-user-select:none}
+#stage{position:fixed;inset:0;touch-action:none;cursor:grab}
+#stage:active{cursor:grabbing}
+#stage canvas{display:block;width:100%;height:100%}
+.top{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));
+  display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;pointer-events:none}
+.top > *{pointer-events:auto}
+.where{background:var(--panel);border-radius:6px;padding:6px 12px;display:grid;line-height:1.15}
+.where b{font:700 20px var(--f-label);letter-spacing:.3px}
+.where span{font-size:13px;color:var(--ink2)}
+.top a,.top select,.top button{font:600 15px var(--f-label);letter-spacing:.3px;color:var(--ink);background:var(--panel);border:1px solid var(--line);
+  border-radius:6px;padding:7px 10px;min-height:38px;text-decoration:none;display:inline-flex;align-items:center}
+.top button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.map{position:fixed;right:max(10px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 64px);
+  width:min(120px,24vw);background:var(--panel);border-radius:6px;padding:4px;pointer-events:none}
+.map svg{display:block;width:100%;height:auto;max-height:calc(100vh - 220px)}
+.map[hidden]{display:none}
+.me{fill:var(--up);stroke:#fff;stroke-width:8}
+.help{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);transform:translateX(-50%);background:var(--panel);
+  border-radius:6px;padding:6px 12px;font-size:13px;color:var(--ink2);text-align:center;max-width:calc(100vw - 24px)}
+.help b{color:var(--ink)}
+/* cần điều khiển: chỉ hiện trên màn hình cảm ứng */
+.joy{position:fixed;left:calc(env(safe-area-inset-left,0px) + 24px);bottom:calc(env(safe-area-inset-bottom,0px) + 56px);width:130px;height:130px;
+  border-radius:50%;background:rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.8);touch-action:none;display:none}
+.joy i{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+@media (pointer:coarse){.joy{display:block} .help .kb{display:none} .map{width:62px} .map svg{max-height:36vh}}
+@media (pointer:fine){.help .tc{display:none}}
+#err{position:fixed;inset:auto 16px 50% 16px;text-align:center;background:var(--panel);padding:12px;border-radius:6px}
+</style>
+</head>
+<body>
+<div id="stage" aria-label="Đi bộ trong mô hình 3D nhà phố 4,2 × 18 m"></div>
+<div class="top">
+  <div class="where"><b id="room">Ngoài đường</b><span id="floor">Trước mặt tiền</span></div>
+  <select id="go" aria-label="Đi tới phòng">
+    <option value="">Đi tới…</option>
+  </select>
+  <button id="t-map" aria-pressed="true">Bản đồ</button>
+  <a href="3d.html">Xem từ ngoài</a>
+</div>
+<div class="map" id="map"></div>
+<div class="joy" id="joy" aria-hidden="true"><i></i></div>
+<div class="help">
+  <span class="kb"><b>W A S D</b> hoặc phím mũi tên để đi · <b>kéo chuột</b> để nhìn quanh · giữ <b>Shift</b> để đi nhanh</span>
+  <span class="tc"><b>Ngón trái</b> kéo cần để đi · <b>vuốt</b> chỗ khác để nhìn quanh</span>
+</div>
+<div id="err" hidden>Không tải được thư viện 3D. Kiểm tra kết nối mạng rồi mở lại trang.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="mo-hinh-3d.js"></script>
+<script src="mat-bang.js"></script>
+<script>
+(() => {
+if (!window.THREE) { document.getElementById('err').hidden = false; return; }
+
+const { scene, RF, CEIL, LG, LU, sun, boxes, WX, H1, ROAD } = nha3D();
+LG.visible = LU.visible = false;           // đi bộ thì thấy tận mắt, không cần nhãn nổi
+RF.visible = CEIL.visible = true;
+sun.castShadow = false;                      // nhẹ máy điện thoại; trong nhà có trần nên bóng nắng không cần
+// trong nhà toàn tường trắng: giảm sáng cho tường các hướng khác sắc độ, thêm nét cạnh để nhận ra góc tường, mép cửa, bậc thang
+scene.traverse(o => { if (o.isHemisphereLight) o.intensity = .55; });
+sun.intensity = .6;
+scene.add(new THREE.AmbientLight(0xffffff, .12));
+scene.background = new THREE.Color(0xcfdbe3);
+const edge = new THREE.LineBasicMaterial({ color: 0x5b6873, transparent: true, opacity: .45 });
+const solids = []; scene.traverse(o => { if (o.isMesh && !o.material.transparent) solids.push(o); });
+for (const o of solids) o.add(new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 20), edge));
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+stage.appendChild(renderer.domElement);
+const camera = new THREE.PerspectiveCamera(70, 1, .05, 200);
+camera.rotation.order = 'YXZ';
+function resize() {
+  renderer.setSize(stage.clientWidth, stage.clientHeight, false);
+  camera.aspect = stage.clientWidth / stage.clientHeight; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+// Người đi: toạ độ bản vẽ (X dọc nhà, Y bề ngang), fz = cao độ bàn chân. Mắt cao 1,6 m, người cao 1,75 m, bán kính 0,2 m.
+// Bước lên được chỗ cao hơn chân tối đa 0,4 m (bậc thang 17,2 cm, tam cấp 16 cm); khối cao hơn thì chắn đường.
+const EYE = 1.6, BODY = 1.75, RAD = 0.2, STEP = 0.4, WALK = 1.4, RUN = 3;
+const me = window.me = { X: -4, Y: 2.1, fz: ROAD, yaw: Math.PI, pitch: 0 };
+const near = (b, X, Y) => X + RAD > b.X1 && X - RAD < b.X2 && Y + RAD > b.Y1 && Y - RAD < b.Y2;
+const blocked = (X, Y, fz) => boxes.some(b => near(b, X, Y) && b.z2 > fz + STEP && b.z1 < fz + BODY);
+function ground(X, Y, fz) {           // mặt cao nhất ngay dưới chân mà bước lên được
+  let top = -Infinity;
+  for (const b of boxes) if (near(b, X, Y) && b.z2 <= fz + STEP && b.z2 > top) top = b.z2;
+  return top;
+}
+
+// Bàn phím
+const keys = new Set();
+addEventListener('keydown', e => { if (e.target.tagName !== 'SELECT') keys.add(e.code); });
+addEventListener('keyup', e => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+
+// Nhìn quanh: kéo chuột hoặc vuốt trên màn hình (trừ cần điều khiển)
+let look = null;
+stage.addEventListener('pointerdown', e => { look = { id: e.pointerId, x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); });
+stage.addEventListener('pointermove', e => {
+  if (!look || e.pointerId !== look.id) return;
+  const k = e.pointerType === 'touch' ? .006 : .004;
+  me.yaw += (e.clientX - look.x) * k; me.pitch = Math.max(-1.3, Math.min(1.3, me.pitch + (e.clientY - look.y) * k));
+  look.x = e.clientX; look.y = e.clientY;
+});
+const endLook = e => { if (look && e.pointerId === look.id) look = null; };
+stage.addEventListener('pointerup', endLook); stage.addEventListener('pointercancel', endLook);
+
+// Cần điều khiển trên điện thoại: kéo núm để đi, càng xa tâm càng nhanh
+const joy = document.getElementById('joy'), knob = joy.querySelector('i');
+let stick = { id: null, x: 0, y: 0 };
+joy.addEventListener('pointerdown', e => { stick.id = e.pointerId; joy.setPointerCapture(e.pointerId); moveStick(e); e.stopPropagation(); });
+joy.addEventListener('pointermove', e => { if (e.pointerId === stick.id) moveStick(e); });
+const endStick = e => { if (e.pointerId !== stick.id) return; stick = { id: null, x: 0, y: 0 }; knob.style.transform = ''; };
+joy.addEventListener('pointerup', endStick); joy.addEventListener('pointercancel', endStick);
+function moveStick(e) {
+  const r = joy.getBoundingClientRect(), R = r.width / 2;
+  let x = (e.clientX - r.left - R) / R, y = (e.clientY - r.top - R) / R;
+  const l = Math.hypot(x, y); if (l > 1) { x /= l; y /= l; }
+  stick.x = x; stick.y = y; knob.style.transform = `translate(${x * R * .6}px,${y * R * .6}px)`;
+}
+
+// Vị trí hiện tại: tên phòng lấy từ dữ liệu mặt bằng (mat-bang.js)
+const FLOORS = [GROUND, UPPER];
+function whereAmI() {
+  const up = me.fz > H1 - 0.5, f = up ? UPPER : GROUND;
+  const r = f.rooms.find(r => me.X >= r.x[0] && me.X < r.x[1] && me.Y >= r.y[0] && me.Y < r.y[1]);
+  if (me.X < (up ? -1.2 : 0) || me.Y < 0 || me.Y > 4.2 || me.X > 18) return ['Ngoài đường', 'Trước mặt tiền'];
+  if (!r) return [f.name, ''];
+  const L = r.x[1] - r.x[0], W = r.y[1] - r.y[0];
+  return [r.n, `${f.name} · ${f1(L)} × ${f1(W)} m · ${f2(L * W)} m²`];
+}
+
+// Bản đồ nhỏ: dùng lại mặt bằng 2D, chấm cam là vị trí và hướng nhìn
+const mapBox = document.getElementById('map');
+let mapFloor = null;
+function drawMap(f) {
+  mapFloor = f; mapBox.innerHTML = draw(f);
+  mapBox.querySelector('svg').insertAdjacentHTML('beforeend', '<g id="me"><path class="me" d="M0,-34 L22,24 L0,12 L-22,24 Z"/></g>');
+}
+document.getElementById('t-map').addEventListener('click', e => {
+  const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+  e.currentTarget.setAttribute('aria-pressed', String(on)); mapBox.hidden = !on;
+});
+
+// Đi tới nhanh
+const SPOTS = [
+  ['Ngoài đường, trước nhà', -4, 2.1, ROAD, Math.PI],
+  ['Phòng khách', 1.2, 2.1, 0, Math.PI],
+  ['Bếp', 9.4, 0.6, 0, Math.PI],
+  ['Chân cầu thang', 6.5, 0.5, 0, Math.PI / 2],
+  ['Phòng ngủ 1', 13.1, 1.5, 0, Math.PI],
+  ['Phòng thờ (lầu)', 1.0, 0.5, H1, 0],
+  ['Ban công (lầu)', -0.6, 2.1, H1, 0],
+  ['Phòng ngủ 2 (lầu)', 2.6, 1.6, H1, Math.PI],
+  ['Phòng ngủ 3 (lầu)', 9.3, 1.6, H1, Math.PI],
+  ['Khu phơi (lầu)', 15.0, 0.5, H1, Math.PI],
+];
+const go = document.getElementById('go');
+go.insertAdjacentHTML('beforeend', SPOTS.map((s, i) => `<option value="${i}">${s[0]}</option>`).join(''));
+go.addEventListener('change', () => {
+  const s = SPOTS[go.value]; if (!s) return;
+  Object.assign(me, { X: s[1], Y: s[2], fz: s[3], yaw: s[4], pitch: 0 });
+  go.value = ''; go.blur();
+});
+
+// Vòng lặp: đọc phím / cần, đi theo hướng nhìn (tách trục để trượt dọc tường), bám mặt đất, đặt camera
+let last = performance.now(), shownRoom = '';
+renderer.setAnimationLoop(now => {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  let f = 0, s = 0;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) f += 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) f -= 1;
+  if (keys.has('KeyA')) s -= 1;
+  if (keys.has('KeyD')) s += 1;
+  if (keys.has('ArrowLeft')) me.yaw += 1.8 * dt;
+  if (keys.has('ArrowRight')) me.yaw -= 1.8 * dt;
+  if (stick.id !== null) { f -= stick.y; s += stick.x; }
+  const len = Math.hypot(f, s);
+  if (len > 0.05) {
+    const sp = (keys.has('ShiftLeft') || keys.has('ShiftRight') ? RUN : WALK) * Math.min(1, len) * dt / len;
+    // hướng trong thế giới 3D: nhìn về −z khi yaw = 0; x = 4,2 − Y, z = X
+    const fx = -Math.sin(me.yaw), fzz = -Math.cos(me.yaw), rx = Math.cos(me.yaw), rz = -Math.sin(me.yaw);
+    const dX = (fzz * f + rz * s) * sp, dY = -(fx * f + rx * s) * sp;
+    if (!blocked(me.X + dX, me.Y, me.fz)) me.X += dX;
+    if (!blocked(me.X, me.Y + dY, me.fz)) me.Y += dY;
+  }
+  const g = ground(me.X, me.Y, me.fz);
+  me.fz = g > me.fz ? g : Math.max(g, me.fz - 6 * dt);
+  camera.position.set(WX(me.Y), me.fz + EYE, me.X);
+  camera.rotation.set(me.pitch, me.yaw, 0);
+  renderer.render(scene, camera);
+
+  const [n, sub] = whereAmI();
+  if (n + sub !== shownRoom) { shownRoom = n + sub; document.getElementById('room').textContent = n; document.getElementById('floor').textContent = sub; }
+  const fl = me.fz > H1 - 0.5 ? UPPER : GROUND;
+  if (fl !== mapFloor) drawMap(fl);
+  const fx = -Math.sin(me.yaw), fzz = -Math.cos(me.yaw);
+  mapBox.querySelector('#me').setAttribute('transform', `translate(${k(WX(me.Y))} ${k(me.X)}) rotate(${Math.atan2(fzz, fx) * 180 / Math.PI + 90})`);
+});
+})();
+</script>
+</body>
+</html>
