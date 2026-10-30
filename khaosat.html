@@ -107,7 +107,7 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-w
 </style>
 </head>
 <body>
-<nav><a href="index.html">Mặt bằng</a><a href="3d.html">Mô hình 3D</a><a href="Mat_Bang_KT-03.pdf">Tải PDF</a></nav>
+<nav><a href="index.html">Mặt bằng</a><a href="cot-dien.html">Cột và điện</a><a href="3d.html">Mô hình 3D</a><a href="Mat_Bang_KT-03.pdf">Tải PDF</a></nav>
 <main>
   <header>
     <span class="tag">KÈM KT-03 · NHÀ PHỐ 4,2 × 18 M</span>
@@ -231,7 +231,34 @@ const S = [
       {f:'Khởi công dự kiến ________ · Phải xong trước ________'},
       {l:'Xem ngày, xem tuổi', r:['Có','Không']}]},
     {t:'Nhà thầu', p:[{r:['Đã có: ____________','Cần giới thiệu']}]},
-    {t:'Giám sát thi công', p:[{r:['Chủ nhà tự giám sát','Thuê đơn vị giám sát','Nhờ người quen']}]}]]
+    {t:'Giám sát thi công', p:[{r:['Chủ nhà tự giám sát','Thuê đơn vị giám sát','Nhờ người quen']}]}]],
+  ['6. Chi tiết điện (để bố trí ổ cắm)', [
+    {k:1, t:'TV phòng khách', w:'Đổi tường TV thì các ổ TV và ổ sofa đổi chỗ cho nhau.', p:[
+      {r:['Treo tường','Đặt trên kệ']},
+      {l:'Đặt ở', r:['Tường phía hành lang (như bản vẽ)','Tường phía cầu thang']}]},
+    {k:1, t:'Giường phòng ngủ', w:'Quyết định vị trí ổ đầu giường và dàn lạnh máy lạnh.', p:[
+      {l:'Cỡ giường', r:['1,6 m','1,8 m','1,2 m (đơn)']},
+      {l:'Kê đầu giường', r:['Vào tường hông (như bản vẽ)','Khác: ________']}]},
+    {t:'TV trong phòng ngủ', p:[{c:['PN1','PN2','PN3','Không phòng nào']}]},
+    {k:1, t:'Loại bếp điện', w:'Bếp từ ba (5–6 kW) cần dây to hơn bếp từ đôi.', p:[
+      {r:['Bếp từ đôi','Bếp từ ba','Bếp từ + hồng ngoại','Chưa dùng, chừa dây chờ']}]},
+    {t:'Máy hút mùi và tủ lạnh', p:[
+      {l:'Máy hút mùi', r:['Có ống thải ra ngoài','Lọc than (không cần ống)','Không dùng']},
+      {l:'Tủ lạnh', r:['Loại thường (rộng ≤ 0,7 m)','Side-by-side (rộng khoảng 0,9 m)']}]},
+    {k:1, t:'Bình nước nóng', p:[{r:['Gián tiếp 2,5 kW','Trực tiếp 4,5 kW','Năng lượng mặt trời + điện phụ','Bơm nhiệt']}]},
+    {t:'Máy giặt, máy sấy', p:[
+      {l:'Máy giặt đặt ở', r:['Khu phơi (như bản vẽ)','Nhà tắm lầu','Tầng trệt']},
+      {l:'Máy sấy quần áo', r:['Có','Không']}]},
+    {k:1, t:'Xe điện', w:'Sạc ô tô điện cần mạch riêng dây to; chừa lúc xây rẻ hơn nhiều.', p:[
+      {c:['Xe máy điện, ___ chiếc','Ô tô điện','Dự định mua trong 5 năm','Không']}]},
+    {t:'Camera', p:[
+      {f:'Số mắt camera ___ · Vị trí: ____________'},
+      {l:'Đầu ghi đặt ở', r:['Gầm thang (như bản vẽ)','Khác: ________']}]},
+    {t:'Loại ổ cắm, công tắc', p:[{c:['Ổ có cổng USB','Ổ có màn che an toàn trẻ em','Công tắc cảm ứng','Nhà thông minh']}]},
+    {t:'Máy lạnh phòng khách và bếp', p:[{r:['Chừa sẵn ống chờ','Lắp luôn','Không cần']}]},
+    {k:1, t:'Điện lực khu vực', w:'Nhà dùng cùng lúc tới khoảng 11–12 kW; công tơ nhỏ quá sẽ hay nhảy.', p:[
+      {f:'Công tơ 1 pha được cấp tối đa ___ A'},
+      {r:['Xin được 3 pha','Chỉ 1 pha','Chưa hỏi']}]}], 'dien']
 ];
 
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -240,7 +267,7 @@ let qi = 0;
 const blanks = (s, base) => { let j = 0;
   return esc(s).replace(/_{3,}/g, m => `<input type="text" name="${base}_t${j++}" style="width:${Math.max(3, m.length * 0.9)}em" aria-label="điền">`); };
 
-document.getElementById('form').innerHTML = S.map(([title, qs]) => `<section><h2>${title}</h2>${
+document.getElementById('form').innerHTML = S.map(([title, qs, sid]) => `<section${sid ? ` id="${sid}"` : ''}><h2>${title}</h2>${
   qs.map(q => { const n = ++qi;
     const parts = q.p.map((p, pi) => { const base = `q${n}_${pi}`;
       if (p.f) return `<div class="part">${blanks(p.f, base)}</div>`;

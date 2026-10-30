@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bố Trí Cột và Điện</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="mat-bang.css">
+<style>
+/* Hai mặt bằng (trệt | lầu) cạnh nhau trên màn rộng, xếp dọc trên điện thoại; bảng lý do bên dưới */
+:root{--col:#9a3412; --beam:#9a3412; --ac:#0e7490; --data:#1d7a3e; --pw:#c2410c; --hi:#fff4e5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--col:#fb8a45; --beam:#fb8a45; --ac:#5fc4d8; --data:#5ccb8b; --pw:#fb8a45; --hi:#2b2016}}
+:root[data-theme="dark"]{--col:#fb8a45; --beam:#fb8a45; --ac:#5fc4d8; --data:#5ccb8b; --pw:#fb8a45; --hi:#2b2016}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+nav{max-width:1040px;margin:0 auto;padding:14px 16px 0;display:flex;flex-wrap:wrap;gap:8px 20px;font-weight:600}
+nav a{color:var(--dim)}
+main{max-width:1040px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:36px}
+h1,h2,h3{font-family:var(--f-label);text-wrap:balance;margin:0;letter-spacing:.3px}
+h1{font-size:30px;line-height:1.1}
+h2{font-size:22px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:4px}
+h2 small{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--dim)}
+h3{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink2)}
+p{margin:0;max-width:75ch}
+header{display:grid;gap:8px}
+.tag{font-family:var(--f-label);font-weight:700;letter-spacing:1px;background:var(--ink);color:var(--paper);padding:1px 8px;border-radius:3px;justify-self:start}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--ink2);font-size:14px}
+.meta b{color:var(--ink);font-weight:600}
+section{display:grid;gap:14px;min-width:0}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:14px 16px}
+.plans{display:grid;gap:14px}
+@media (min-width:820px){.plans{grid-template-columns:1fr 1fr;align-items:start}}
+.plan{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 6px;display:grid;gap:6px}
+.plan h3{padding-left:8px}
+.plan svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:14px;padding:12px 14px;background:var(--paper);border:1px solid var(--rule);border-radius:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:34px;height:22px;flex:none}
+.tblwrap{overflow-x:auto;background:var(--paper);border:1px solid var(--rule);border-radius:4px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+thead th{font-family:var(--f-label);font-size:14px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);border-bottom:2px solid var(--ink);white-space:nowrap}
+td.n{white-space:nowrap;text-align:right}
+tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
+.wide table{min-width:640px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checks li{display:flex;gap:8px;align-items:flex-start}
+.checks b{flex:none;font-family:var(--f-label);font-size:13px;padding:0 6px;border-radius:3px;color:var(--paper);min-width:52px;text-align:center}
+.checks .ok b{background:var(--ok)} .checks .ask b{background:var(--pw)}
+.notes{margin:0;padding-left:20px;display:grid;gap:8px;max-width:80ch}
+/* danh sách điểm điện: mỗi điểm một dòng, lý do ở dưới; điện thoại đọc dọc không cần vuốt ngang */
+.pts{display:grid;gap:18px}
+.room{display:grid;gap:0;background:var(--paper);border:1px solid var(--rule);border-radius:4px}
+.room > h3{padding:10px 14px;border-bottom:2px solid var(--ink);color:var(--ink)}
+.pt{display:grid;grid-template-columns:34px 1fr;gap:4px 12px;padding:10px 14px;border-bottom:1px solid var(--rule)}
+.pt:last-child{border-bottom:none}
+.pt svg{width:30px;height:30px;grid-row:span 2}
+.pt .h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.pt .h b{font-weight:600}
+.pt .h span{font-size:13px;color:var(--ink2)}
+.pt .h .ht{font-family:var(--f-label);font-size:15px;font-weight:600;color:var(--dim)}
+.pt .w{font-size:14px;color:var(--ink2)}
+.foot{color:var(--ink2);font-size:13px}
+/* ký hiệu riêng của trang này */
+.col{fill:var(--col)}
+.axis{stroke:var(--col);stroke-width:1;stroke-dasharray:14 5 3 5;opacity:.7}
+.bub{fill:var(--paper);stroke:var(--col);stroke-width:2}
+.bt{fill:var(--col);font-size:17px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.bm{fill:var(--beam);opacity:.16;stroke:var(--beam);stroke-width:1;stroke-dasharray:6 4;stroke-opacity:1}
+.bm2{fill:none;stroke:var(--beam);stroke-width:1.4;stroke-dasharray:6 4}
+.colf{fill:var(--col);opacity:.45}
+.mk{stroke-width:2}
+.mk-o{fill:var(--paper);stroke:var(--dim)} .mk-p{fill:var(--pw);stroke:var(--pw)} .mk-d{fill:var(--data);stroke:var(--data)} .mk-w{fill:var(--wet);stroke:var(--dim)}
+.mt-o,.mt-w{fill:var(--dim)} .mt-p,.mt-d{fill:var(--paper)}
+.mkt{font-size:15px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.ml{fill:var(--ac);opacity:.9} .dn{fill:var(--paper);stroke:var(--ac);stroke-width:2.4}
+.dn-x{stroke:var(--ac);stroke-width:1.2}
+.opt{stroke-dasharray:6 4}
+.pipe{fill:none;stroke:var(--ac);stroke-width:3;stroke-dasharray:9 5}
+.act{fill:var(--ac);font-size:15px;font-weight:700;dominant-baseline:central;paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
+.tdien{fill:var(--ink)}
+.tdt{fill:var(--ink);font-size:15px;font-weight:700;dominant-baseline:central;paint-order:stroke;stroke:var(--paper);stroke-width:5px}
+@page{size:A4;margin:10mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:var(--paper);font-size:11px} nav{display:none}
+  main{max-width:none;padding:0;gap:6mm}
+  .plans{grid-template-columns:1fr 1fr;break-inside:avoid} .plan{border:none;padding:0;break-inside:avoid}
+  .plan svg{height:222mm;width:auto;max-width:100%;margin:0 auto}
+  .legend{font-size:10px;padding:2mm 3mm;gap:3px 10px}
+  #cot,#ml,#diem,#mach{break-before:page}
+  .room,.pt,tr,.tblwrap{break-inside:avoid}
+  tfoot{display:table-row-group}
+  table{font-size:10.5px} th,td{padding:3px 6px}
+}
+</style>
+</head>
+<body>
+<nav><a href="index.html">Mặt bằng</a><a href="3d.html">Mô hình 3D</a><a href="khaosat.html">Phiếu khảo sát</a><a href="Mat_Bang_KT-03.pdf">Tải PDF</a></nav>
+<main>
+  <header>
+    <span class="tag">KÈM KT-03 · SƠ BỘ</span>
+    <h1>Bố trí cột và ổ điện, nhà phố 4,2 × 18 m</h1>
+    <div class="meta">
+      <span><b>Ban công</b> đua ra vỉa hè 1,2 m (đã được phép)</span>
+      <span><b>Cột</b> 10 cột 200 × 200, 5 trục</span>
+      <span><b>Máy lạnh</b> 3 phòng ngủ, mỗi phòng 1 máy</span>
+      <span><b>Điểm điện</b> <span id="cnt"></span></span>
+    </div>
+    <p>Bản này để chủ đầu tư và thợ thống nhất vị trí trước khi đổ bê tông và đi ống âm tường. Kích thước cột, dầm, tiết diện dây và CB là số sơ bộ theo kinh nghiệm nhà phố 2 tầng; kỹ sư kết cấu và kỹ sư điện phải tính lại khi làm hồ sơ thi công.</p>
+  </header>
+
+  <section id="bancong">
+    <h2>1. Ban công đua 1,2 m <small>đối chiếu QCVN 01:2021/BXD</small></h2>
+    <ul class="checks card">
+      <li class="ok"><b>ĐÃ CHỐT</b><span>Chủ đầu tư cho biết được phép đua ban công ra vỉa hè 1,2 m. Mặt bằng lầu giữ nguyên ban công 1,2 × 4,2 m.</span></li>
+      <li class="ok"><b>ĐẠT</b><span>Đáy sàn ban công cao +3,66 m so với nền trệt, tức khoảng +3,98 m so với mặt đường (nền cao hơn đường 0,32 m). Quy chuẩn yêu cầu phần đua ra phải cao từ 3,5 m trở lên so với mặt vỉa hè.</span></li>
+      <li class="ask"><b>CẦN XEM</b><span>Mức đua tối đa theo lộ giới: đường rộng 7–12 m được đua 0,9 m, trên 12–15 m được 1,2 m, trên 15 m được 1,4 m, dưới 7 m không được đua. Đua 1,2 m cần lộ giới trên 12 m. Ghi lộ giới vào phiếu khảo sát (câu 2).</span></li>
+      <li class="ask"><b>CẦN XEM</b><span>Phần đua không được vượt quá bề rộng vỉa hè trừ 1,0 m, nên vỉa hè phải rộng từ 2,2 m trở lên. Nhờ người đo bề rộng vỉa hè trước nhà.</span></li>
+      <li class="ask"><b>LƯU Ý</b><span>Ban công phải để thoáng: không được xây tường hay lắp kính bao kín biến thành phòng. Cục nóng máy lạnh PN2 đặt trên ban công phải nằm gọn sau lan can, không nhô ra ngoài.</span></li>
+    </ul>
+    <p class="foot">Một số tỉnh, thành có quy định riêng chặt hơn quy chuẩn. Khi làm hồ sơ xin phép, kiến trúc sư cần đối chiếu thêm với thông tin quy hoạch của lô đất.</p>
+  </section>
+
+  <section id="cot">
+    <h2>2. Bố trí cột và dầm <small>5 trục dọc nhà × 2 trục bề ngang = 10 cột</small></h2>
+    <div class="legend">
+      <span><svg viewBox="0 0 34 22"><rect class="col" x="10" y="4" width="14" height="14"/></svg>Cột BTCT 200 × 200</span>
+      <span><svg viewBox="0 0 34 22"><rect class="bm" x="1" y="7" width="32" height="8"/></svg>Dầm chính (đi qua cột)</span>
+      <span><svg viewBox="0 0 34 22"><line class="bm2" x1="1" y1="11" x2="33" y2="11"/></svg>Dầm phụ (đỡ tường tầng trên, viền lỗ thang)</span>
+      <span><svg viewBox="0 0 34 22"><circle class="bub" cx="17" cy="11" r="9"/><text class="bt" x="17" y="11" style="font-size:11px">1</text></svg>Tên trục</span>
+    </div>
+    <div class="plans">
+      <div class="plan"><h3>Tầng trệt · cột và dầm sàn lầu (phía trên)</h3><div id="cot-g"></div></div>
+      <div class="plan"><h3>Tầng lầu · cột và dầm mái (phía trên)</h3><div id="cot-u"></div></div>
+    </div>
+    <div class="tblwrap wide"><table>
+      <thead><tr><th>Trục</th><th>Vị trí</th><th>Nhịp tới trục sau</th><th>Vì sao đặt ở đây</th></tr></thead>
+      <tbody id="tbl-truc"></tbody>
+    </table></div>
+    <h3>Vì sao chọn cách bố trí này</h3>
+    <ol class="notes">
+      <li><b>Cột đặt trong hai tường hông, không đặt giữa nhà.</b> Nhà rộng 4,2 m nên dầm ngang chỉ dài 4,2 m, không cần cột giữa. Nhờ vậy phòng khách, bếp và phòng ngủ không vướng cột.</li>
+      <li><b>Trục 2, 3 trùng vách lõi thang (x = 6,0 và 8,8).</b> Lõi thang trùng ở cả 2 tầng, vách cứng, giữ thang và chiếu nghỉ chắc. Dầm quanh lỗ thang tầng lầu tựa thẳng lên cột.</li>
+      <li><b>Trục 1 ở x = 0 (mép tam cấp), không ở x = 0,6 (cửa chính).</b> Tường mặt tiền tầng lầu và ban công nằm ở x = 0. Nếu đặt cột ở x = 0,6, ban công phải đua 1,8 m tính từ dầm, quá dài cho dầm công-xôn. Cột ở x = 0 thì ban công đua đúng 1,2 m, còn sàn lầu che mưa cho tam cấp.</li>
+      <li><b>Trục 4 ở x = 12,5 (vách bếp – PN1).</b> Trục này nằm trên tường ở tầng trệt. Nhịp trước nó 3,7 m, nhịp sau 5,5 m. Nếu dời trục 4 sang x = 14,8, cột sẽ đụng đầu giường PN1 và cửa khu phơi trên lầu.</li>
+      <li><b>Tường tầng lầu không nằm trên trục</b> (x = 2,0; 14,8; 16,4 và hai đoạn tường y = 1,0) được đỡ bằng dầm phụ, không xây thẳng lên sàn. Nếu xây tường gạch trực tiếp lên sàn 12 cm, sàn dễ võng và nứt.</li>
+      <li><b>Cột sát ranh đất.</b> Mặt ngoài cột thẳng với mặt ngoài tường hông. Móng cột hông sẽ bị lệch tâm vì không được đào sang đất nhà bên. Kỹ sư phải bố trí dầm móng (giằng) để cân lại, và cần chụp ảnh hiện trạng nhà bên trước khi đào.</li>
+      <li><b>Chỗ cột lấn 10 cm vào phòng</b> vì cột dày 200 mm, tường 100 mm: đầu giường PN3 dịch 10 cm về phía trong (x = 12,6–14,2); góc chiếu nghỉ thang; mép cuối tủ bếp. Hành lang trệt tại cột còn 0,9 m.</li>
+    </ol>
+    <div class="tblwrap wide"><table>
+      <thead><tr><th>Cấu kiện</th><th>Kích thước sơ bộ</th><th>Ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td>Cột</td><td class="n">200 × 200</td><td>Nhà 2 tầng mái bằng. Nếu sau này muốn xây thêm tầng, tăng lên 220 × 220 hoặc 200 × 300 và tính móng dư tải ngay từ bây giờ (phiếu khảo sát, câu 8).</td></tr>
+        <tr><td>Dầm dọc nhịp 6,0 m và 5,5 m</td><td class="n">200 × 450</td><td>Dầm dài nhất nằm ở nhịp phòng khách và nhịp bếp – PN1.</td></tr>
+        <tr><td>Dầm dọc nhịp 2,8 m và 3,7 m, dầm ngang 4,2 m</td><td class="n">200 × 300</td><td>Dầm ngang nằm trong tường, được trần thạch cao che.</td></tr>
+        <tr><td>Dầm phụ dưới tường</td><td class="n">200 × 300</td><td>Dầm ở x = 2,0 và x = 14,8 nằm trên trần phòng khách và PN1, được trần thạch cao che.</td></tr>
+        <tr><td>Dầm công-xôn ban công</td><td class="n">200 × 300 → 200</td><td>Hai dầm nối dài từ dầm dọc, vuốt mỏng dần ra mép, kèm dầm bo mép ban công.</td></tr>
+        <tr><td>Sàn, mái</td><td class="n">120</td><td>Khớp với mặt cắt A–A. Mái bằng cần thêm lớp chống nóng (xem phần máy lạnh).</td></tr>
+        <tr><td>Móng</td><td class="n">tuỳ địa chất</td><td>Đất tốt: móng băng giao thoa. Đất yếu (ruộng cũ, gần sông): cọc ép hoặc cọc khoan nhồi. Cần khoan khảo sát hoặc hỏi móng các nhà bên cạnh.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="ml">
+    <h2>3. Máy lạnh 3 phòng ngủ</h2>
+    <div class="tblwrap wide"><table>
+      <thead><tr><th>Máy</th><th>Phòng</th><th>Công suất</th><th>Dàn lạnh (trong phòng)</th><th>Dàn nóng (ngoài trời)</th><th>Ống đồng, nước ngưng</th></tr></thead>
+      <tbody id="tbl-ml"></tbody>
+    </table></div>
+    <ol class="notes">
+      <li><b>Cách chọn công suất.</b> Với nhà ở miền Nam, ước tính khoảng 600–700 BTU cho mỗi m²: phòng dưới 15 m² dùng 9.000 BTU (1 HP), phòng 15–20 m² dùng 12.000 BTU (1,5 HP). PN3 rộng 19,2 m² và nằm ngay dưới mái bằng nên dùng 12.000. Nên chọn máy inverter vì phòng ngủ chạy lâu suốt đêm, tiết kiệm điện hơn.</li>
+      <li><b>Dàn lạnh không thổi thẳng vào người nằm.</b> PN1 và PN3 gắn dàn lạnh trên đầu giường, gió thổi về phía chân giường. PN2 gắn ở vách phòng thờ, gió thổi dọc phòng và đi qua phía cuối giường.</li>
+      <li><b>Dàn nóng gom ra khu phơi lộ thiên.</b> Khu phơi thoáng, hơi nóng thoát thẳng lên trời, không phả vào nhà bên và không nằm ở mặt tiền. Gom dàn nóng PN1 và PN3 lên một giá treo 2 tầng trên tường hông (y = 4,2), gió thổi ngang khu phơi và không thổi vào cửa sổ PN3. Lót đệm cao su dưới chân dàn nóng để không truyền rung sang tường nhà bên.</li>
+      <li><b>Ống đồng ngắn</b>, khoảng 2,5–3 m mỗi máy, nên máy chạy hiệu quả, ít phải nạp thêm gas và ít chỗ nối dễ rò. Nếu hãng máy yêu cầu ống dài tối thiểu 3 m thì quấn thêm một vòng ống ở dàn nóng.</li>
+      <li><b>Việc phải làm trước khi đổ sàn lầu.</b> Chôn ống lồng PVC Ø60 xuyên sàn tại vị trí ống ML1 lên khu phơi. Miệng ống cao hơn mặt sàn khu phơi 10 cm và phải chống thấm quanh ống, vì khu phơi là sàn ướt. Chừa lỗ xuyên tường cho ống ML2 và ML3.</li>
+      <li><b>Chống nóng mái.</b> Tầng lầu nằm ngay dưới mái bằng. Nên làm thêm lớp chống nóng như gạch thông tâm, tấm cách nhiệt hoặc mái tôn phủ phía trên, và làm trần thạch cao. Như vậy máy lạnh đỡ phải chạy hết công suất.</li>
+      <li><b>Phòng khách và bếp (tuỳ chọn).</b> Chưa lắp máy lúc này, nhưng nên chừa sẵn ống đồng, dây điện và ống thoát nước ngưng chờ cho một máy 18.000 BTU ở vách thang (ký hiệu nét đứt trên bản vẽ). Đi ống sau khi đã làm trần thì phải đục và vá lại.</li>
+    </ol>
+  </section>
+
+  <section id="diem">
+    <h2>4. Bố trí ổ điện <small>số trên bản vẽ khớp với danh sách lý do bên dưới</small></h2>
+    <div class="legend">
+      <span><svg viewBox="0 0 34 22"><circle class="mk mk-o" cx="17" cy="11" r="8"/></svg>Ổ cắm đôi thường</span>
+      <span><svg viewBox="0 0 34 22"><circle class="mk mk-p" cx="17" cy="11" r="8"/></svg>Ổ hoặc dây chờ trên mạch riêng (tải lớn)</span>
+      <span><svg viewBox="0 0 34 22"><rect class="mk mk-d" x="10" y="4" width="14" height="14" transform="rotate(45 17 11)"/></svg>Ổ điện kèm TV, mạng LAN, wifi</span>
+      <span><svg viewBox="0 0 34 22"><rect class="mk mk-w" x="9" y="3" width="16" height="16"/></svg>Ổ có nắp chống nước (IP44, IP55) ở chỗ ướt, ngoài trời</span>
+      <span><svg viewBox="0 0 34 22"><rect class="ml" x="2" y="7" width="30" height="8"/></svg>Dàn lạnh máy lạnh</span>
+      <span><svg viewBox="0 0 34 22"><rect class="dn" x="5" y="4" width="24" height="14"/><line class="dn-x" x1="5" y1="4" x2="29" y2="18"/></svg>Dàn nóng</span>
+      <span><svg viewBox="0 0 34 22"><line class="pipe" x1="1" y1="11" x2="33" y2="11"/></svg>Ống đồng</span>
+      <span><svg viewBox="0 0 34 22"><rect class="tdien" x="6" y="6" width="22" height="10"/></svg>Tủ điện</span>
+    </div>
+    <div class="plans">
+      <div class="plan"><h3>Tầng trệt</h3><div id="dien-g"></div></div>
+      <div class="plan"><h3>Tầng lầu</h3><div id="dien-u"></div></div>
+    </div>
+    <h3>Nguyên tắc chung</h3>
+    <ol class="notes">
+      <li><b>Đặt ổ theo vị trí đồ đạc, không đặt rải đều.</b> Mỗi ổ ứng với một món đồ cụ thể: TV, đầu giường, tủ lạnh, mặt bếp… Nếu đổi vị trí giường, TV hay bàn ăn thì phải dời ổ theo trước khi tô tường. Vì vậy phải chốt nội thất trước khi đi dây.</li>
+      <li><b>Mỗi phòng có ít nhất một ổ gần cửa</b> để cắm máy hút bụi hoặc quạt, khỏi phải kéo dây ngang phòng.</li>
+      <li><b>Thiết bị tải lớn chạy mạch riêng</b>: máy lạnh, bình nước nóng, bếp từ, máy giặt, sạc xe điện. Nếu cắm chung mạch, khi dùng cùng lúc CB sẽ nhảy, nặng hơn thì dây nóng chảy vỏ.</li>
+      <li><b>Chỗ ướt và chỗ cắm thiết bị ngoài trời có chống giật</b>: nhà vệ sinh, bếp, khu phơi, ban công, sạc xe. Các mạch này dùng CB chống giật (RCBO) 30 mA. Ổ trong nhà tắm đặt ngoài vùng nước bắn, có nắp che.</li>
+      <li><b>Dư thêm ổ là rẻ nhất lúc xây.</b> Thêm một ổ khi đang đi ống chỉ tốn khoảng một trăm nghìn đồng. Thêm sau khi đã sơn thì phải đục tường hoặc đi nẹp nổi.</li>
+    </ol>
+    <div class="pts" id="pts"></div>
+  </section>
+
+  <section id="mach">
+    <h2>5. Mạch điện và tủ điện</h2>
+    <p>Tủ điện tổng (TĐ) đặt ở tầng trệt, ngay sau cửa chính phía hành lang. Ở đó gần chỗ dây điện lưới vào nhà nên cáp vào ngắn, và khi có sự cố người nhà ngắt điện nhanh mà không phải đi sâu vào trong. Tủ cao 1,5 m tính tới đáy, trẻ nhỏ không với tới. Tầng lầu có tủ phụ (TĐ2) ở hành lang, gần đầu thang. Mỗi tầng ngắt riêng được, và cáp từ tủ tổng đi lên theo vách thang nên ngắn.</p>
+    <div class="tblwrap wide"><table>
+      <thead><tr><th>Mạch</th><th>Cấp cho</th><th>Dây đồng</th><th>CB</th><th>Vì sao</th></tr></thead>
+      <tbody id="tbl-mach"></tbody>
+    </table></div>
+    <h3>Ước tính công suất cả nhà</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Thiết bị</th><th style="text-align:right">kW</th></tr></thead>
+      <tbody id="tbl-tai"></tbody>
+      <tfoot id="tf-tai"></tfoot>
+    </table></div>
+    <ol class="notes">
+      <li><b>Không phải lúc nào mọi thiết bị cũng chạy cùng lúc.</b> Bảng trên lấy hệ số đồng thời 0,6. Lúc dùng nhiều nhất thường là tối mùa nóng: 3 máy lạnh, bếp từ, nồi cơm, bình nước nóng và TV cùng chạy, tổng khoảng 11–12 kW.</li>
+      <li><b>CB tổng 2P 63 A, cáp sau công tơ 2 × 16 mm².</b> Cáp vào đặt dư một cấp, vì thay cáp sau này phải đục tường và xin cắt điện.</li>
+      <li><b>Hỏi điện lực khu vực xem công tơ 1 pha được cấp tối đa bao nhiêu.</b> Nếu không đủ khoảng 12 kW, có ba cách: xin điện 3 pha; dùng bình nước nóng gián tiếp (2,5 kW) thay loại trực tiếp (4,5 kW); hoặc chọn bếp từ có chế độ giới hạn công suất.</li>
+      <li><b>Nối đất.</b> Đóng cọc tiếp địa cho tủ điện. Dây PE (vàng–xanh) phải đi tới mọi ổ cắm, nhất là ổ bình nước nóng, máy giặt, bếp từ và tủ lạnh. Đây là điều kiện để CB chống giật hoạt động đúng.</li>
+      <li><b>Điện nhẹ (mạng, camera) đi ống riêng</b>, không chung ống với dây điện, để tránh nhiễu. Chừa ống chờ từ ngoài đường vào gầm thang cho cáp quang, và ống từ gầm thang lên hành lang lầu cho bộ phát wifi thứ 2.</li>
+    </ol>
+  </section>
+
+  <section id="cao">
+    <h2>6. Chiều cao lắp đặt <small>tính từ mặt sàn đã lát tới tâm ổ</small></h2>
+    <div class="tblwrap wide"><table>
+      <thead><tr><th>Loại</th><th>Cao (m)</th><th>Vì sao</th></tr></thead>
+      <tbody id="tbl-cao"></tbody>
+    </table></div>
+    <p class="foot">Số trên là thông lệ khi thi công nhà ở. Có thể tham khảo thêm TCVN 9206:2012 (đặt thiết bị điện trong nhà ở) và TCVN 7447 (lắp đặt điện hạ áp, phần nhà tắm). Nếu khu vực hay ngập trên 30 cm, nâng các ổ tầng trệt lên 0,6 m và đặt tủ điện cao hơn.</p>
+  </section>
+
+  <section id="hoi">
+    <h2>7. Cần chủ đầu tư chốt trước khi đi dây</h2>
+    <p>Mỗi câu dưới đây làm thay đổi vị trí ổ hoặc tiết diện dây. Các câu này đã được thêm vào <a href="khaosat.html#dien">phiếu khảo sát</a> (mục 6), có ô chọn sẵn.</p>
+    <ol class="notes" id="hoi-ds"></ol>
+  </section>
+</main>
+
+<script src="mat-bang.js"></script>
+<script>
+// Lớp cột và dầm. Cột 200 × 200 nằm trong tường hông: mặt ngoài thẳng mặt ngoài tường (y = −0,05 và 4,25)
+const AX = [0, 6, 8.8, 12.5, 18];
+const cx = a => a === 0 ? [-0.05, 0.15] : a === 18 ? [17.85, 18.05] : [a - 0.1, a + 0.1];
+const SIDES = [[-0.05, 0.15], [4.05, 4.25]];
+const band = (x1, y1, x2, y2, cls) => rect(x1, y1, x2, y2, cls);
+const beamX = (x1, x2, y, cls = 'bm') => cls === 'bm' ? band(x1, y - 0.1, x2, y + 0.1, cls) : line(x1, y, x2, y, cls);   // dầm chạy dọc nhà
+const beamY = (x, y1, y2, cls = 'bm') => cls === 'bm' ? band(x - 0.1, y1, x + 0.1, y2, cls) : line(x, y1, x, y2, cls);   // dầm chạy theo bề ngang
+
+function columns(f, withBeams) {
+  if (withBeams) {
+    const up = f.id === 'u';
+    // dầm chính: 2 dầm dọc theo tường hông + dầm ngang tại mỗi trục
+    for (const y of [0.05, 4.15]) beamX(up ? 0 : -1.2, 18.05, y);
+    for (const a of AX) { const [p, q] = cx(a); band(p, -0.05, q, 4.25, 'bm'); }
+    if (up) {
+      // mái: viền lỗ mái kính trên thang, viền khu phơi lộ thiên
+      beamX(6, 8.8, 1, 'bm2');
+      for (const x of [14.8, 16.4]) beamY(x, 0.05, 4.15, 'bm2');
+    } else {
+      // sàn lầu: dầm bo mép ban công, dầm phụ dưới tường lầu, viền lỗ thang
+      beamY(-1.15, 0.05, 4.15, 'bm2');
+      for (const x of [2, 14.8, 16.45]) beamY(x, 0.05, 4.15, 'bm2');
+      beamX(2, 6, 1, 'bm2'); beamX(8.8, 14.8, 1, 'bm2');
+    }
+  }
+  for (const a of AX) for (const [y1, y2] of SIDES) { const [p, q] = cx(a); rect(p, y1, q, y2, withBeams ? 'col' : 'colf'); }
+  if (!withBeams) return;
+  // trục và tên trục ở mép phải bản vẽ
+  AX.forEach((a, i) => {
+    line(a, -0.3, a, 4.5, 'axis');
+    add(`<circle class="bub" cx="${k(my(-0.62))}" cy="${k(a)}" r="16"/><text class="bt" x="${k(my(-0.62))}" y="${k(a)}">${i + 1}</text>`);
+  });
+  chainX(AX, -0.3, -0.05);
+}
+
+// Điểm điện. t: o thường · p mạch riêng · d kèm TV/mạng · w chống nước. (x, y) theo toạ độ mặt bằng, h = cao lắp (m)
+const P = [
+  // tầng trệt
+  {f:'g', r:'Phòng khách', x:0.82, y:3.5, t:'o', h:'0,4', c:'C2', n:'Ổ đôi cạnh cửa chính', w:'Cắm máy hút bụi, quạt đứng, đèn trang trí ngày Tết mà không phải kéo dây từ trong nhà ra.'},
+  {f:'g', r:'Phòng khách', x:1.4, y:0.22, t:'p', h:'0,6–1,0', c:'C3', n:'Ổ sạc xe máy điện', w:'Xe thường dắt vào đậu ở góc trước, phía hành lang. Sạc qua đêm 0,5–1 kW trong nhiều giờ nên đi mạch riêng có chống giật. Đặt cao hơn mức nước có thể tràn vào nhà. Chừa sẵn kể cả khi chưa có xe điện, đi sau rất khó.'},
+  {f:'g', r:'Phòng khách', x:3.3, y:0.22, t:'d', h:'0,4 và 1,2', c:'C2', n:'Tường TV: ổ đôi + ổ TV + LAN', w:'TV treo trên tường hông phía hành lang, sofa kê đối diện sát tường bên kia, đi lại ở giữa. Ổ ở 1,2 m giấu sau TV treo; ổ ở 0,4 m cho đầu thu, loa, kệ. Cắm LAN cho TV xem phim không bị giật như dùng wifi.'},
+  {f:'g', r:'Phòng khách', x:1.7, y:3.98, t:'o', h:'0,4', c:'C2', n:'Ổ đôi đầu sofa (phía cửa)', w:'Sạc điện thoại, đèn đọc sách cạnh sofa. Ổ đặt ở hai đầu sofa vì lưng sofa che mất đoạn tường giữa.'},
+  {f:'g', r:'Phòng khách', x:4.7, y:3.98, t:'o', h:'0,4', c:'C2', n:'Ổ đôi đầu sofa (phía thang)', w:'Như ổ trên: cắm quạt, cây nước nóng lạnh, máy lọc không khí.'},
+  {f:'g', r:'Gầm thang', x:8.55, y:1.45, t:'d', h:'0,4', c:'C2', n:'Tủ mạng: modem, router wifi, đầu ghi camera', w:'Gầm thang nằm giữa chiều dài nhà nên wifi lan được cả trước lẫn sau. Chỗ này khuất, mở từ lối đi, đủ cao (khoảng 2,5 m) để đặt kệ. Cáp quang đi ống chờ âm nền từ ngoài đường vào.'},
+  {f:'g', r:'Bếp', x:12.28, y:1.5, t:'o', h:'0,5', c:'C4', n:'Ổ đơn tủ lạnh', w:'Tủ lạnh rộng 0,7 m đặt ở góc giáp lối vào PN1, không chắn mặt bếp. Dùng ổ đơn chỉ cho tủ lạnh, để không ai rút nhầm làm hỏng đồ.'},
+  {f:'g', r:'Bếp', x:12.28, y:2.75, t:'o', h:'1,1', c:'C4', n:'Ổ đôi mặt bếp (cạnh chữ L)', w:'Mặt đá cao 0,9 m, ổ cao hơn khoảng 20 cm. Dùng cho nồi cơm, ấm siêu tốc, máy xay. Đặt ở cánh ngắn của bệ bếp chữ L, xa chậu rửa và bếp nấu.'},
+  {f:'g', r:'Bếp', x:11.85, y:3.98, t:'o', h:'1,1', c:'C4', n:'Ổ đôi mặt bếp (cạnh chậu)', w:'Cho lò vi sóng, nồi chiên không dầu. Cách mép chậu rửa hơn 0,6 m để nước không bắn vào. Hai ổ mặt bếp chung mạch C4 20 A, vì bếp là chỗ dùng nhiều đồ điện cùng lúc nhất nhà.'},
+  {f:'g', r:'Bếp', x:9.2, y:3.98, t:'p', h:'0,6', c:'C5', n:'Dây chờ bếp từ (4 mm²)', w:'Bếp từ đôi dùng khoảng 3,5–4 kW, dòng gần 18 A, nên đi dây 4 mm² trên mạch riêng. Dây đặt trong tủ dưới mặt bếp. Nên chừa sẵn kể cả khi đang dùng bếp gas, vì đổi sang bếp từ sau này không phải đục.'},
+  {f:'g', r:'Bếp', x:10.2, y:3.98, t:'o', h:'2,1', c:'C4', n:'Ổ máy hút mùi', w:'Đặt trên bếp nấu, ẩn sau ống khói. Bếp nằm giữa hai tường hông nên không có đường thải thẳng ra ngoài: dùng máy hút mùi lọc than (tuần hoàn), hoặc đi ống thải trong trần ra phía sau. Hỏi chủ đầu tư.'},
+  {f:'g', r:'Bếp', x:10.9, y:3.75, t:'o', h:'0,4', c:'C4', n:'Ổ máy lọc nước (trong tủ dưới chậu)', w:'Máy lọc RO thường đặt dưới chậu rửa. Ổ đặt cao bên trong tủ, phía trên ống nước, để nếu rò nước không chạm ổ.'},
+  {f:'g', r:'Bếp', x:9.02, y:2.2, t:'o', h:'0,4', c:'C4', n:'Ổ đôi bàn ăn', w:'Bàn ăn kê sát vách thang. Ổ để cắm nồi lẩu, bếp nướng điện ngay trên bàn mà không kéo dây ngang lối đi.'},
+  {f:'g', r:'Phòng ngủ 1', x:14.45, y:3.98, t:'o', h:'0,6', c:'C6', n:'Ổ đôi đầu giường', w:'Cao hơn mặt tab đầu giường (khoảng 0,5 m) để cắm sạc, đèn ngủ mà không phải cúi xuống gầm giường.'},
+  {f:'g', r:'Phòng ngủ 1', x:16.32, y:3.7, t:'o', h:'0,6', c:'C6', n:'Ổ đôi đầu giường (phía tường NVS)', w:'Giường đôi thì hai người mỗi người một ổ. Phía này giường sát tường nên ổ nằm ngay sau mép giường.'},
+  {f:'g', r:'Phòng ngủ 1', x:15.5, y:1.22, t:'d', h:'1,2', c:'C6', n:'Ổ + TV + LAN đối diện giường', w:'TV treo trên vách hành lang, nằm trên giường nhìn thẳng. Nếu không đặt TV, ổ này dùng cho bàn trang điểm hoặc tủ quần áo có đèn.'},
+  {f:'g', r:'Phòng ngủ 1', x:12.72, y:2.8, t:'o', h:'0,4', c:'C6', n:'Ổ đôi bàn làm việc, cạnh cửa', w:'Cạnh cửa vào, dùng cho máy hút bụi và bàn làm việc nhỏ ở vách bếp.'},
+  {f:'g', r:'NVS trệt', x:16.72, y:3.7, t:'p', h:'2,0', c:'C8', n:'Dây chờ bình nước nóng', w:'Đặt ở trên cao, ngoài vùng vòi sen bắn nước. Mạch riêng 4 mm² kèm chống giật. Dây đủ cho cả bình trực tiếp 4,5 kW.'},
+  {f:'g', r:'NVS trệt', x:16.72, y:1.95, t:'w', h:'1,4', c:'C6', n:'Ổ lavabo (máy sấy tóc, cạo râu)', w:'Có nắp che IP44, cách vòi nước hơn 0,6 m, nằm trên mạch có chống giật 30 mA.'},
+  {f:'g', r:'NVS trệt', x:17.78, y:1.6, t:'w', h:'2,4', c:'C6', n:'Quạt hút', w:'Hút ẩm ra phía sau nhà, đi chung công tắc với đèn để tự chạy khi có người dùng.'},
+  {f:'g', r:'Hành lang trệt', x:14.6, y:0.22, t:'o', h:'0,4', c:'C6', n:'Ổ đôi hành lang', w:'Cắm máy hút bụi, đèn ngủ cảm biến cho người già đi vệ sinh ban đêm.'},
+  // tầng lầu
+  {f:'u', r:'Ban công', x:-0.2, y:1.12, t:'w', h:'0,8', c:'L2', n:'Ổ ngoài trời IP55', w:'Đèn trang trí, máy bơm tưới cây, máy rửa. Ở ngoài trời nên phải có nắp đậy kín và chống giật.'},
+  {f:'u', r:'Phòng thờ', x:1.8, y:3.45, t:'o', h:'1,3', c:'L2', n:'Ổ đèn thờ (cạnh bàn thờ)', w:'Cắm đèn thờ, nhang điện. Đặt sát cạnh bàn thờ, ngang mặt bàn và khuất sau đồ thờ; không khoan sau lưng bàn thờ. Nên có công tắc riêng gần cửa.'},
+  {f:'u', r:'Phòng thờ', x:1.0, y:3.98, t:'o', h:'0,4', c:'L2', n:'Ổ đôi thường', w:'Quạt và máy hút bụi khi dọn dẹp. Ngày giỗ, Tết đông người cần quạt.'},
+  {f:'u', r:'Phòng ngủ 2', x:3.95, y:3.98, t:'o', h:'0,6', c:'L2', n:'Ổ đôi đầu giường', w:'Như PN1: cao hơn mặt tab đầu giường.'},
+  {f:'u', r:'Phòng ngủ 2', x:5.82, y:3.7, t:'o', h:'0,6', c:'L2', n:'Ổ đôi đầu giường (phía thang)', w:'Phía giường sát vách thang.'},
+  {f:'u', r:'Phòng ngủ 2', x:5.0, y:1.22, t:'d', h:'1,2', c:'L2', n:'Ổ + TV + LAN đối diện giường', w:'Như PN1.'},
+  {f:'u', r:'Phòng ngủ 2', x:2.22, y:2.9, t:'o', h:'0,4', c:'L2', n:'Ổ đôi bàn học', w:'Bàn học kê ở vách phòng thờ, dưới dàn lạnh. Ổ gần cửa nên cắm máy hút bụi được luôn.'},
+  {f:'u', r:'Phòng ngủ 3', x:12.25, y:3.98, t:'o', h:'0,6', c:'L3', n:'Ổ đôi đầu giường (trái)', w:'Giường dịch 10 cm tránh cột trục 4. Ổ đặt ngay cạnh cột.'},
+  {f:'u', r:'Phòng ngủ 3', x:14.45, y:3.98, t:'o', h:'0,6', c:'L3', n:'Ổ đôi đầu giường (phải)', w:'Bên này còn khoảng trống 0,6 m để kê tab đầu giường.'},
+  {f:'u', r:'Phòng ngủ 3', x:13.4, y:1.22, t:'d', h:'1,2', c:'L3', n:'Ổ + TV + LAN đối diện giường', w:'Như PN1.'},
+  {f:'u', r:'Phòng ngủ 3', x:10.2, y:3.98, t:'d', h:'0,9', c:'L3', n:'Ổ đôi + LAN bàn làm việc', w:'PN3 dài 6 m nên nửa trước dùng làm góc làm việc. Ổ cao 0,9 m (trên mặt bàn 0,75 m) để cắm laptop, đèn bàn không phải chui xuống gầm. Cắm LAN cho họp trực tuyến ổn định.'},
+  {f:'u', r:'Phòng ngủ 3', x:9.02, y:3.7, t:'o', h:'0,4', c:'L3', n:'Ổ đôi gần cửa', w:'Không đặt sau cánh cửa mở; ổ nằm qua khỏi cửa sổ thông ra thang.'},
+  {f:'u', r:'Hành lang lầu', x:12.0, y:0.22, t:'o', h:'0,4', c:'L3', n:'Ổ đôi hành lang', w:'Máy hút bụi, đèn ngủ cảm biến.'},
+  {f:'u', r:'Hành lang lầu', x:6.6, y:0.5, t:'d', h:'trần', c:'L3', n:'Bộ phát wifi thứ 2 (gắn trần)', w:'Nhà dài 18 m, tường gạch, lại có sàn bê tông chặn sóng. Một router dưới gầm thang không phủ hết được PN3 và nhà tắm lầu. Đi cáp LAN từ tủ mạng lên đây (hệ mesh hoặc AP gắn trần).'},
+  {f:'u', r:'Khu phơi', x:16.18, y:1.45, t:'w', h:'1,3', c:'L6', n:'Ổ máy giặt IP55', w:'Máy giặt đặt ở khu phơi: gần chỗ phơi, có sẵn thoát nước sàn. Cần mái che nhỏ phía trên. Ổ cao hơn nắp máy, có nắp đậy và chống giật vì ở ngoài trời. Nếu chủ đầu tư muốn để máy giặt trong nhà tắm thì dời ổ theo.'},
+  {f:'u', r:'Nhà tắm lầu', x:16.62, y:3.6, t:'p', h:'2,0', c:'L7', n:'Dây chờ bình nước nóng', w:'Như NVS trệt.'},
+  {f:'u', r:'Nhà tắm lầu', x:16.62, y:1.6, t:'w', h:'1,4', c:'L6', n:'Ổ lavabo IP44', w:'Như NVS trệt.'},
+  {f:'u', r:'Nhà tắm lầu', x:17.78, y:2.2, t:'w', h:'2,4', c:'L6', n:'Quạt hút', w:'Như NVS trệt.'},
+];
+P.forEach((p, i) => p.i = i + 1);
+
+// Máy lạnh: dàn lạnh (ML), dàn nóng (DN), đường ống
+const AC = [
+  {id:'ML1', f:'g', room:'PN1 · 4,0 × 3,2 m = 12,8 m²', btu:'9.000 BTU (1 HP)', in:[15.05, 3.93, 15.95, 4.15],
+   inT:'Tường hông, phía trên đầu giường, đáy dàn cao khoảng 2,3 m. Gió thổi về phía chân giường.',
+   outT:'Khu phơi lầu, giá treo 2 tầng chung với DN3 trên tường hông (y = 4,2).',
+   pipe:'Ống đi thẳng lên qua sàn (ống lồng chờ sẵn), dài khoảng 3 m. Nước ngưng xuyên tường x = 16,5 sang NVS, đổ vào ống thoát sàn.'},
+  {id:'ML2', f:'u', room:'PN2 · 4,0 × 3,2 m = 12,8 m²', btu:'9.000 BTU (1 HP)', in:[2.05, 1.2, 2.27, 2.0],
+   inT:'Vách giáp phòng thờ (x = 2,0), lệch về phía cửa. Gió thổi dọc phòng, đi qua phía cuối giường, không thổi vào đầu giường.',
+   outT:'Ban công, sát tường mặt tiền ở góc phía hành lang, gió thổi ra đường.',
+   pipe:'Ống xuyên vách x = 2,0, đi trên trần phòng thờ sát mép phía hành lang (không đi ngang trên bàn thờ), dài khoảng 3 m. Nước ngưng đổ ra phễu thu ban công.'},
+  {id:'ML3', f:'u', room:'PN3 · 6,0 × 3,2 m = 19,2 m²', btu:'12.000 BTU (1,5 HP)', in:[12.95, 3.93, 13.85, 4.15],
+   inT:'Tường hông, phía trên đầu giường. Gió thổi về phía cửa và chân giường.',
+   outT:'Khu phơi, giá 2 tầng chung với DN1.',
+   pipe:'Ống chạy dọc tường hông rồi xuyên vách x = 14,8 phía trên cửa sổ, dài khoảng 2,5 m. Nước ngưng đổ ra thoát sàn khu phơi.'},
+];
+function acLayer(f) {
+  for (const a of AC.filter(a => a.f === f.id)) {
+    const [x1, y1, x2, y2] = a.in; rect(x1, y1, x2, y2, 'ml');
+    add(`<text class="act" text-anchor="middle" x="${k(my((y1 + y2) / 2 > 2 ? y1 - 0.2 : y2 + 0.2))}" y="${k((x1 + x2) / 2)}">${a.id}</text>`);
+  }
+  const pl = (pts, cls = 'pipe') => add(`<polyline class="${cls}" points="${pts.map(([x, y]) => `${k(my(y))},${k(x)}`).join(' ')}"/>`);
+  const dn = (x1, y1, x2, y2, label, lx, ly, extra = '') => {
+    rect(x1, y1, x2, y2, 'dn ' + extra);
+    add(`<line class="dn-x" x1="${k(my(y1))}" y1="${k(x1)}" x2="${k(my(y2))}" y2="${k(x2)}"/>`);
+    if (label) add(`<text class="act" text-anchor="middle" x="${k(my(ly))}" y="${k(lx)}">${label}</text>`);
+  };
+  if (f.id === 'g') {
+    pl([[15.5, 4.0], [15.5, 3.75]]);
+    add(`<circle class="dn" cx="${k(my(3.68))}" cy="${k(15.5)}" r="9"/>`);   // ống ML1 xuyên sàn lên khu phơi
+    // máy lạnh phòng khách: chỉ chừa ống chờ
+    rect(5.78, 2.15, 5.95, 3.05, 'ml opt'); pl([[5.86, 3.05], [5.86, 3.65], [0.6, 3.65]], 'pipe opt');
+    dn(0.3, 3.3, 0.55, 4.05, '', 0, 0, 'opt');
+    add(`<text class="act" text-anchor="middle" x="${k(my(2.6))}" y="${k(5.55)}">ML-K (chừa ống)</text>`);
+  } else {
+    dn(15.2, 3.82, 15.95, 4.15, 'DN1 + DN3', 16.15, 3.75);
+    pl([[13.85, 4.04], [15.2, 4.04]]);
+    add(`<circle class="dn" cx="${k(my(3.68))}" cy="${k(15.5)}" r="9"/>`);
+    dn(-0.35, 0.2, -0.05, 0.95, 'DN2', -0.6, 0.58);
+    pl([[2.05, 1.6], [2.05, 1.15], [-0.05, 1.15], [-0.2, 0.95]]);
+  }
+}
+function marker(p) {
+  const X = k(my(p.y)), Y = k(p.x), r = 14;
+  const shape = p.t === 'd' ? `<rect class="mk mk-d" x="${X - 11}" y="${Y - 11}" width="22" height="22" transform="rotate(45 ${X} ${Y})"/>`
+    : p.t === 'w' ? `<rect class="mk mk-w" x="${X - 13}" y="${Y - 13}" width="26" height="26"/>`
+    : `<circle class="mk mk-${p.t}" cx="${X}" cy="${Y}" r="${r}"/>`;
+  add(shape + `<text class="mkt mt-${p.t}" x="${X}" y="${Y}">${p.i}</text>`);
+}
+function elecLayer(f) {
+  columns(f, false);
+  acLayer(f);
+  if (f.id === 'g') { rect(0.65, 0.25, 0.8, 0.7, 'tdien'); add(`<text class="tdt" x="${k(my(0.85))}" y="${k(0.95)}">TĐ</text>`); }
+  else { rect(10.0, 0.05, 10.45, 0.2, 'tdien'); add(`<text class="tdt" text-anchor="middle" x="${k(my(0.45))}" y="${k(10.22)}">TĐ2</text>`); }
+  for (const p of P.filter(p => p.f === f.id)) marker(p);
+}
+
+document.getElementById('cot-g').innerHTML = draw(GROUND, f => columns(f, true));
+document.getElementById('cot-u').innerHTML = draw(UPPER, f => columns(f, true));
+document.getElementById('dien-g').innerHTML = draw(GROUND, elecLayer);
+document.getElementById('dien-u').innerHTML = draw(UPPER, elecLayer);
+
+// bảng trục
+const AXW = [
+  'Mép trước, ngay chỗ tam cấp. Đỡ tường mặt tiền lầu và hai dầm công-xôn ban công đua 1,2 m.',
+  'Vách trước lõi thang, cũng là vách giữa PN2 và thang ở lầu. Nhịp phòng khách 6,0 m là nhịp lớn nhất, dầm dọc cao 450.',
+  'Vách sau lõi thang, giữa bếp và thang. Thang nằm gọn giữa trục 2 và 3.',
+  'Vách giữa bếp và PN1 ở trệt. Lên lầu, trục nằm giữa PN3; dầm ngang ở đây được trần thạch cao che.',
+  'Tường sau. Dầm phụ ở x = 14,8 và 16,4 đỡ tường khu phơi và nhà tắm lầu.',
+];
+document.getElementById('tbl-truc').innerHTML = AX.map((a, i) =>
+  `<tr><td class="n">${i + 1}</td><td class="n">x = ${f1(a)}</td><td class="n">${i < AX.length - 1 ? f1(AX[i + 1] - a) + ' m' : '—'}</td><td>${AXW[i]}</td></tr>`).join('');
+
+document.getElementById('tbl-ml').innerHTML = AC.map(a =>
+  `<tr><td><b>${a.id}</b></td><td>${a.room}</td><td class="n">${a.btu}</td><td>${a.inT}</td><td>${a.outT}</td><td>${a.pipe}</td></tr>`).join('') +
+  `<tr><td><b>ML-K</b></td><td>Phòng khách + bếp (tuỳ chọn)</td><td class="n">18.000 BTU</td><td>Vách thang, nhìn ra cửa chính.</td><td>Mặt tiền tầng trệt, treo cao trên cửa chính, dưới sàn ban công.</td><td>Chỉ chôn ống chờ trong trần, dài khoảng 5,5 m.</td></tr>`;
+
+// danh sách điểm điện theo phòng
+const ico = t => `<svg viewBox="-16 -16 32 32">${t === 'd' ? '<rect class="mk mk-d" x="-10" y="-10" width="20" height="20" transform="rotate(45)"/>'
+  : t === 'w' ? '<rect class="mk mk-w" x="-12" y="-12" width="24" height="24"/>' : `<circle class="mk mk-${t}" r="13"/>`}</svg>`;
+const rooms = [...new Set(P.map(p => p.r))];
+document.getElementById('pts').innerHTML = rooms.map(r => `<div class="room"><h3>${r}</h3>${P.filter(p => p.r === r).map(p =>
+  `<div class="pt">${ico(p.t).replace('</svg>', `<text class="mkt mt-${p.t}" style="font-size:13px">${p.i}</text></svg>`)}
+   <div class="h"><b>${p.n}</b><span class="ht">cao ${p.h} m</span><span>mạch ${p.c}</span></div>
+   <div class="w">${p.w}</div></div>`).join('')}</div>`).join('');
+document.getElementById('cnt').textContent = `${P.length} điểm + 3 máy lạnh`;
+
+// mạch điện
+const pts = c => P.filter(p => p.c === c).map(p => p.i).join(', ');
+const M = [
+  ['TĐ', 'Tủ tổng tầng trệt', '2 × 16', '2P 63 A', 'Cáp từ công tơ vào. Dư một cấp so với tải tính toán (khoảng 57 A).'],
+  ['C1', 'Đèn tầng trệt', '1,5', '10 A', 'Đèn LED tốn ít điện, nên tách khỏi ổ cắm: ổ cắm bị chập thì nhà vẫn còn đèn.'],
+  ['C2', `Ổ phòng khách, tủ mạng (${pts('C2')})`, '2,5', 'RCBO 16 A', 'Ổ sinh hoạt thông thường, có chống giật vì trẻ em hay nghịch ổ ở phòng khách.'],
+  ['C3', `Sạc xe điện (${pts('C3')})`, '2,5', 'RCBO 16 A', 'Sạc kéo dài nhiều giờ. Đi riêng để không làm nhảy CB phòng khách.'],
+  ['C4', `Ổ bếp (${pts('C4')})`, '2,5', 'RCBO 20 A', 'Ấm siêu tốc 1,8 kW và nồi cơm 0,7 kW hay chạy cùng lúc. Bếp là khu ướt nên cần chống giật.'],
+  ['C5', `Bếp từ (${pts('C5')})`, '4', 'RCBO 25 A', 'Tải lớn nhất nhà. Đi riêng để khi nấu không làm sụt áp các ổ khác.'],
+  ['C6', `Ổ PN1, hành lang, NVS trệt (${pts('C6')})`, '2,5', 'RCBO 16 A', 'Gom các ổ phía sau tầng trệt. Có ổ lavabo nên cần chống giật.'],
+  ['C7', 'Máy lạnh ML1', '2,5', '16 A', 'Mỗi máy lạnh một CB: máy hỏng, ngắt riêng để sửa mà phòng khác vẫn có lạnh.'],
+  ['C8', `Bình nước nóng NVS trệt (${pts('C8')})`, '4', 'RCBO 25 A', 'Nước và điện gần nhau, nên bắt buộc có chống giật. Dây 4 mm² đủ cho cả bình trực tiếp.'],
+  ['C9', 'Cáp lên tủ lầu TĐ2', '2 × 10', '2P 40 A', 'Đi theo vách thang. Đặt dư để còn chỗ nếu sau này xây thêm tầng.'],
+  ['C10', 'Dự phòng: ML-K phòng khách', '2,5', '16 A', 'Chừa sẵn chỗ trong tủ và kéo sẵn dây cùng ống chờ.'],
+  ['L1', 'Đèn tầng lầu, ban công', '1,5', '10 A', ''],
+  ['L2', `Ổ ban công, phòng thờ, PN2 (${pts('L2')})`, '2,5', 'RCBO 16 A', 'Có ổ ngoài trời ở ban công.'],
+  ['L3', `Ổ PN3, hành lang, wifi (${pts('L3')})`, '2,5', 'RCBO 16 A', ''],
+  ['L4', 'Máy lạnh ML2', '2,5', '16 A', ''],
+  ['L5', 'Máy lạnh ML3', '2,5', '16 A', 'Máy 12.000 BTU dùng khoảng 1,1 kW, dây 2,5 mm² dư sức.'],
+  ['L6', `Máy giặt, ổ và quạt nhà tắm lầu (${pts('L6')})`, '2,5', 'RCBO 16 A', 'Toàn bộ là khu ướt.'],
+  ['L7', `Bình nước nóng nhà tắm lầu (${pts('L7')})`, '4', 'RCBO 25 A', ''],
+  ['L8', 'Máy bơm nước (trên mái, cạnh bồn)', '2,5', 'RCBO 16 A', 'Bơm đặt ngoài trời và có nước. Có thể gắn phao điện tự ngắt khi bồn đầy.'],
+];
+document.getElementById('tbl-mach').innerHTML = M.map(([a, b, c, d, e]) =>
+  `<tr><td><b>${a}</b></td><td>${b}</td><td class="n">${c} mm²</td><td class="n">${d}</td><td>${e}</td></tr>`).join('');
+
+const TAI = [['3 máy lạnh inverter (0,85 + 0,85 + 1,1)', 2.8], ['2 bình nước nóng gián tiếp × 2,5', 5.0], ['Bếp từ đôi', 3.5],
+  ['Ổ mặt bếp (nồi cơm, ấm, vi sóng…)', 2.5], ['Máy giặt', 1.0], ['Tủ lạnh', 0.15], ['Đèn LED cả nhà', 0.6],
+  ['Ổ sinh hoạt (TV, máy tính, quạt, sạc)', 1.5], ['Sạc xe máy điện', 1.0], ['Máy bơm nước', 0.75]];
+const tong = TAI.reduce((s, [, v]) => s + v, 0), tt = tong * 0.6;
+const fk = n => (Math.round(n * 100) % 10 ? n.toFixed(2) : n.toFixed(1)).replace('.', ',');
+document.getElementById('tbl-tai').innerHTML = TAI.map(([a, v]) => `<tr><td>${a}</td><td class="n">${fk(v)}</td></tr>`).join('');
+document.getElementById('tf-tai').innerHTML = `<tr><td>Tổng lắp đặt</td><td class="n">${fk(tong)}</td></tr>
+  <tr><td>Tính toán (× 0,6) → dòng ≈ ${Math.round(tt * 1000 / 220 / 0.9)} A ở 220 V</td><td class="n">${tt.toFixed(1).replace('.', ',')}</td></tr>`;
+
+const CAO = [
+  ['Ổ cắm thường', '0,4', 'Cúi xuống cắm vừa tầm, mặt ổ khuất sau đồ đạc, cao hơn nước lau nhà.'],
+  ['Ổ đầu giường', '0,6', 'Cao hơn mặt tab đầu giường 0,5 m nên vẫn với tới khi đã kê tab.'],
+  ['Ổ mặt bếp', '1,1', 'Cao hơn mặt đá 0,9 m khoảng 20 cm, vừa cho phích cắm, nước trên mặt bếp không chảy vào.'],
+  ['Ổ sau TV treo tường', '1,1–1,2', 'Giấu sau TV, không lộ dây xuống kệ.'],
+  ['Ổ bàn làm việc', '0,9', 'Trên mặt bàn 0,75 m, cắm sạc laptop không phải chui gầm bàn.'],
+  ['Ổ tủ lạnh', '0,5', 'Nằm sau tủ, ngang tầm tay khi kéo tủ ra.'],
+  ['Dây chờ bếp từ', '0,6', 'Nằm trong tủ dưới, sát đáy mặt đá.'],
+  ['Ổ máy hút mùi', '2,1', 'Khuất sau ống khói máy hút mùi.'],
+  ['Ổ máy giặt', '1,2–1,3', 'Cao hơn nắp máy, tránh nước đọng dưới sàn.'],
+  ['Bình nước nóng', '1,9–2,0', 'Ngang bình, nằm ngoài vùng vòi sen bắn nước.'],
+  ['Ổ lavabo trong nhà tắm', '1,3–1,4', 'Ngoài vùng nước bắn, có nắp IP44, cách vòi nước hơn 0,6 m.'],
+  ['Dây chờ máy lạnh', '2,3–2,5', 'Ngay cạnh dàn lạnh. Đáy dàn lạnh cao từ 2,2 m trở lên, cách trần ít nhất 10 cm để gió hồi.'],
+  ['Công tắc đèn', '1,2–1,3', 'Ngang tay nắm cửa, cách mép khung cửa 15–20 cm, đặt ở phía tay nắm (bước vào là chạm được ngay).'],
+  ['Tủ điện', '1,5 (đáy)', 'Người lớn thao tác được, trẻ nhỏ không với tới, xa nguồn nước.'],
+  ['Ổ ngoài trời (ban công, khu phơi)', '0,8 trở lên', 'Nắp kín IP55, tránh nước mưa hắt và nước đọng.'],
+];
+document.getElementById('tbl-cao').innerHTML = CAO.map(([a, b, c]) => `<tr><td>${a}</td><td class="n">${b}</td><td>${c}</td></tr>`).join('');
+
+const HOI = [
+  'TV phòng khách treo tường hay đặt trên kệ? TV đặt ở tường phía hành lang, hay tường phía thang? (Nếu đổi, ổ số 3, 4, 5 đổi chỗ cho nhau.)',
+  'Giường các phòng ngủ kê đầu vào tường hông như bản vẽ chưa? Giường đôi 1,6 m hay 1,8 m? (Quyết định vị trí ổ đầu giường và dàn lạnh.)',
+  'Có đặt TV trong phòng ngủ không? Phòng nào?',
+  'Bếp dùng gas, bếp từ hay cả hai? Bếp từ đôi hay bếp từ ba? (Bếp từ ba khoảng 5–6 kW thì cần dây 6 mm².)',
+  'Máy hút mùi loại có ống thải ra ngoài hay loại lọc than? Tủ lạnh loại thường hay side-by-side (rộng khoảng 0,9 m, cần dời ổ)?',
+  'Bình nước nóng loại trực tiếp (4,5 kW) hay gián tiếp (2,5 kW)? Có dùng năng lượng mặt trời không?',
+  'Máy giặt đặt ở khu phơi hay trong nhà tắm? Có máy sấy quần áo không?',
+  'Có xe máy điện hay ô tô điện không, hoặc dự định mua trong 5 năm tới? (Sạc ô tô điện cần mạch riêng 6 mm² trở lên.)',
+  'Có lắp camera không, mấy mắt, đặt ở đâu? Đầu ghi để ở gầm thang được không?',
+  'Có muốn ổ cắm có cổng USB, ổ có màn che an toàn cho trẻ em, công tắc cảm ứng hay nhà thông minh không?',
+  'Phòng khách và bếp có muốn chừa sẵn ống cho máy lạnh không (ML-K)?',
+  'Điện lực khu vực cấp công tơ 1 pha tối đa bao nhiêu A? Có xin được 3 pha không?',
+];
+document.getElementById('hoi-ds').innerHTML = HOI.map(q => `<li>${q}</li>`).join('');
+</script>
+</body>
+</html>
