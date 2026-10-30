@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phiếu Khảo Sát Chủ Đầu Tư</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Phiếu một cột: điền trên điện thoại (tự lưu trong trình duyệt) hoặc in A4 để điền tay */
+:root{
+  --bg:#edf0ee; --paper:#ffffff; --ink:#17212b; --ink2:#5b6873; --rule:#d2d9d5;
+  --dim:#285b8c; --star:#c2410c; --hi:#fff4e5;
+  --f-label:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1418; --paper:#172028; --ink:#e6ecf1; --ink2:#98a6b2; --rule:#2a3540;
+  --dim:#82b4e3; --star:#fb8a45; --hi:#2b2016; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1418; --paper:#172028; --ink:#e6ecf1; --ink2:#98a6b2; --rule:#2a3540;
+  --dim:#82b4e3; --star:#fb8a45; --hi:#2b2016; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+nav{max-width:860px;margin:0 auto;padding:14px 16px 0;display:flex;flex-wrap:wrap;gap:20px;font-weight:600}
+nav a{color:var(--dim)}
+main{max-width:860px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:24px}
+h1,h2{font-family:var(--f-label);margin:0;letter-spacing:.3px;text-wrap:balance}
+h1{font-size:30px;line-height:1.1}
+h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:4px}
+header{display:grid;gap:8px}
+.tag{font-family:var(--f-label);font-weight:700;letter-spacing:1px;background:var(--ink);color:var(--paper);
+  padding:1px 8px;border-radius:3px;justify-self:start}
+.lead{margin:0;color:var(--ink2);max-width:70ch}
+.star{color:var(--star);font-weight:700}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:600 14px var(--f-body);padding:7px 14px;border-radius:4px;border:1px solid var(--ink);
+  background:var(--ink);color:var(--paper);cursor:pointer}
+button.alt{background:transparent;color:var(--ink)}
+.saved{font-size:13px;color:var(--ink2)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:14px 16px}
+.info{display:grid;gap:10px 24px}
+@media (min-width:640px){.info{grid-template-columns:1fr 1fr}}
+.info label{display:flex;gap:8px;align-items:baseline}
+.info label span{flex:none;color:var(--ink2);font-size:14px}
+.info input{flex:1;min-width:0}
+section{display:grid;gap:12px}
+.q{display:grid;gap:8px;break-inside:avoid}
+.q.key{box-shadow:inset 4px 0 0 var(--star)}
+.qt{font-weight:600;display:flex;gap:8px}
+.qt .n{flex:none;font-family:var(--f-label);font-weight:700;font-size:17px;min-width:1.6em;color:var(--dim)}
+.why{font-size:13px;color:var(--ink2);margin-top:-4px;padding-left:calc(1.6em + 8px)}
+.part{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;padding-left:calc(1.6em + 8px)}
+.part .pl{color:var(--ink2);font-size:14px;flex-basis:100%}
+.opt{display:inline-flex;gap:6px;align-items:baseline;cursor:pointer}
+.opt input[type=radio],.opt input[type=checkbox]{margin:0;width:16px;height:16px;flex:none;transform:translateY(2px);accent-color:var(--dim)}
+input[type=text]{font:inherit;color:inherit;background:transparent;border:none;border-bottom:1px dotted var(--ink2);
+  padding:0 4px;min-width:3em;max-width:100%}
+input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);background:var(--hi)}
+.note{display:flex;gap:8px;align-items:baseline;padding-left:calc(1.6em + 8px);font-size:14px;color:var(--ink2)}
+.note input{flex:1}
+.sign{display:grid;gap:16px;grid-template-columns:1fr 1fr;text-align:center}
+.sign div{display:grid;gap:4px}
+.sign small{color:var(--ink2)}
+.sign .box{height:80px}
+.foot{color:var(--ink2);font-size:13px}
+@page{size:A4;margin:12mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  :root{--bg:#fff;--paper:#fff;--ink:#000;--ink2:#444;--rule:#bbb;--hi:#fff}
+  body{font-size:11.5px;line-height:1.4}
+  nav,.tools{display:none}
+  main{max-width:none;padding:0;gap:10px}
+  h1{font-size:22px} h2{font-size:16px}
+  .card{border:none;padding:4px 0}
+  section{gap:6px}
+  .q{gap:3px;padding:3px 0 3px 8px}
+  .why{display:none}
+  h2{break-after:avoid}
+  .part .pl,.note{font-size:11px}
+  input::placeholder{color:transparent}
+  input[type=text]{border-bottom:1px dotted #000}
+}
+</style>
+</head>
+<body>
+<nav><a href="index.html">Mặt bằng</a><a href="3d.html">Mô hình 3D</a><a href="Mat_Bang_KT-03.pdf">Tải PDF</a></nav>
+<main>
+  <header>
+    <span class="tag">KÈM KT-03 · NHÀ PHỐ 4,2 × 18 M</span>
+    <h1>Phiếu khảo sát chủ đầu tư</h1>
+    <p class="lead">Đánh dấu vào ô, điền vào chỗ trống. Câu có <span class="star">★</span> cần trả lời ở buổi gặp đầu vì ảnh hưởng tới kết cấu và hồ sơ xin phép. Câu nào chưa có ô phù hợp thì ghi vào dòng ghi chú.</p>
+    <div class="tools">
+      <button type="button" onclick="print()">In phiếu</button>
+      <button type="button" class="alt" id="clear">Xoá hết</button>
+      <span class="saved" id="saved">Câu trả lời tự lưu trong trình duyệt này.</span>
+    </div>
+  </header>
+
+  <div class="card info">
+    <label><span>Chủ đầu tư</span><input type="text" name="i_ten"></label>
+    <label><span>Điện thoại</span><input type="text" name="i_sdt"></label>
+    <label><span>Địa chỉ khu đất</span><input type="text" name="i_dc"></label>
+    <label><span>Ngày khảo sát</span><input type="text" name="i_ngay"></label>
+    <label><span>Người khảo sát</span><input type="text" name="i_nguoi"></label>
+    <label><span>Hình thức</span><input type="text" name="i_hinhthuc" placeholder="gặp trực tiếp / điện thoại"></label>
+  </div>
+
+  <div id="form"></div>
+
+  <section>
+    <h2>Xác nhận</h2>
+    <div class="card sign">
+      <div><b>Chủ đầu tư</b><small>(ký, ghi rõ họ tên)</small><div class="box"></div></div>
+      <div><b>Người khảo sát</b><small>(ký, ghi rõ họ tên)</small><div class="box"></div></div>
+    </div>
+    <p class="foot">Câu trả lời trong phiếu là cơ sở để hiệu chỉnh mặt bằng KT-03, tính kết cấu và lập hồ sơ xin phép. Thay đổi sau khi đã đổ móng thường tốn kém hơn nhiều.</p>
+  </section>
+</main>
+
+<script>
+// Cú pháp: r = chọn một, c = chọn nhiều, f = dòng điền; "___" trong chữ là ô điền (càng nhiều gạch càng dài)
+const S = [
+  ['1. Pháp lý và khu đất', [
+    {k:1, t:'Kích thước và diện tích theo sổ đỏ', p:[
+      {f:'Rộng ____ m × dài ____ m · Diện tích ____ m²'},
+      {l:'Hình dạng lô đất', r:['Vuông vắn','Nở hậu','Tóp hậu','Méo, xéo']}]},
+    {k:1, t:'Thông tin quy hoạch', p:[
+      {r:['Đã có','Chưa có, cần xin']},
+      {l:'Lộ giới', r:['Không bị','Bị, phải lùi ___ m']},
+      {f:'Số tầng tối đa ___ · Mật độ xây dựng ___ %'}]},
+    {k:1, t:'Ban công đua ra 1,2 m và tam cấp nằm trong ranh đất phía trước', p:[
+      {r:['Được phép','Không được phép','Chưa rõ, cần hỏi phường']}]},
+    {t:'Nhà hai bên', p:[
+      {f:'Nhà bên trái ___ tầng · Nhà bên phải ___ tầng'},
+      {l:'Tường giáp ranh', r:['Tường riêng hai bên','Chung tường một bên','Chung tường hai bên','Còn đất trống']}]},
+    {t:'Đường trước nhà', w:'Để biết xe bê tông, xe vật tư có vào được không.', p:[
+      {f:'Rộng ___ m'},
+      {r:['Xe tải vào được','Chỉ xe nhỏ','Xe không vào được']}]},
+    {t:'Ngập nước khi mưa', w:'Để quyết định giữ nền +0,32 m hay nâng thêm.', p:[
+      {r:['Không ngập','Ngập dưới 10 cm','Ngập 10–30 cm','Ngập trên 30 cm']},
+      {l:'Đường sắp được nâng cốt', r:['Có','Không','Không rõ']}]}]],
+  ['2. Nhu cầu sử dụng', [
+    {k:1, t:'Người ở trong nhà', p:[
+      {f:'Số người ở ___'},
+      {l:'Có', c:['Người già','Trẻ nhỏ','Người đi lại khó khăn']},
+      {l:'Phòng ngủ ở tầng trệt', r:['Cần','Không cần']}]},
+    {k:1, t:'Xây thêm tầng sau này', w:'Nếu có thì móng và cột phải tính dư tải ngay từ bây giờ.', p:[
+      {r:['Không','Có, thêm ___ tầng','Chưa biết']}]},
+    {t:'Xe để trong nhà', p:[{f:'Xe máy ___ chiếc · Ô tô ___ chiếc · Xe đạp ___ chiếc'}]},
+    {t:'Công năng tầng trệt', p:[{r:['Chỉ để ở','Kinh doanh nhỏ','Cho thuê mặt bằng']}]},
+    {t:'Phòng thờ', p:[{r:['Giữ ở trệt như bản vẽ','Chuyển lên lầu','Lên tầng thượng (tum)']}]},
+    {t:'Bếp', p:[
+      {l:'Nấu ăn', r:['Hằng ngày','Ít nấu']},
+      {l:'Kiểu bếp', r:['Bếp mở thông phòng khách','Bếp kín có cửa']},
+      {l:'Loại bếp', r:['Gas','Từ, điện','Cả hai']}]}]],
+  ['3. Kiến trúc', [
+    {k:1, t:'Lấy sáng phía trên cầu thang', w:'Cửa sổ PN2, PN3 lấy sáng qua lõi thang; không có giếng trời thì hai phòng này rất tối.', p:[
+      {r:['Giếng trời thông thoáng','Mái kính hoặc tấm lấy sáng','Không làm']}]},
+    {k:1, t:'Độ dốc cầu thang (hiện khoảng 39°)', p:[
+      {r:['Chấp nhận','Muốn thoải hơn, chịu mất diện tích','Cần đi xem thang thực tế']},
+      {l:'Lan can thang', r:['Kính','Sắt','Gỗ']}]},
+    {k:1, t:'Mái', p:[{r:['Mái bằng bê tông, có sân thượng','Mái bằng + tum thang','Mái tôn','Mái ngói']}]},
+    {t:'Phong cách mặt tiền', p:[
+      {r:['Hiện đại','Tối giản','Tân cổ điển','Khác: ________']},
+      {l:'Ảnh nhà mẫu', r:['Có, sẽ gửi','Chưa có']}]},
+    {t:'Cửa', p:[
+      {l:'Vật liệu (chọn nhiều)', c:['Nhôm kính','Sắt','Gỗ','Nhựa lõi thép']},
+      {l:'Cửa cuốn mặt tiền', r:['Có','Không']}]},
+    {t:'Trần và sàn', p:[
+      {l:'Trần', r:['Thạch cao toàn bộ','Thạch cao một phần','Bê tông sơn']},
+      {l:'Sàn phòng ngủ', r:['Gạch men','Gỗ công nghiệp','Đá']}]}]],
+  ['4. Điện nước và tiện nghi', [
+    {t:'Máy lạnh', p:[
+      {l:'Lắp ở (chọn nhiều)', c:['Phòng khách','Bếp','Phòng thờ','PN1','PN2','PN3']},
+      {l:'Cục nóng đặt ở', r:['Mặt tiền','Khu phơi, sau nhà','Trên mái']}]},
+    {t:'Nước nóng', p:[{r:['Năng lượng mặt trời','Máy nước nóng điện','Cả hai','Không dùng']}]},
+    {t:'Bồn nước và máy bơm', p:[
+      {f:'Bồn ____ lít'},
+      {l:'Vị trí', r:['Trên mái','Bể ngầm + bơm lên mái']},
+      {l:'Bơm tăng áp', r:['Có','Không']}]},
+    {t:'Máy giặt', p:[{r:['Khu phơi','Nhà tắm','Tầng trệt gần bếp']}]},
+    {t:'Tiện ích', p:[{c:['Camera','Wifi phủ toàn nhà','Chuông cửa có hình','Khoá vân tay','Nhà thông minh']}]},
+    {t:'Điện', p:[
+      {l:'Nguồn điện', r:['1 pha','3 pha']},
+      {l:'Điện mặt trời áp mái', r:['Có','Không','Chừa sẵn ống chờ']}]}]],
+  ['5. Ngân sách, tiến độ, cách làm', [
+    {k:1, t:'Ngân sách', p:[
+      {f:'Tổng khoảng ______ triệu đồng'},
+      {r:['Đã gồm nội thất','Chưa gồm nội thất']}]},
+    {k:1, t:'Hình thức thuê thầu', p:[{r:['Trọn gói cả vật tư','Khoán nhân công','Tự mua một phần vật tư']}]},
+    {t:'Mức vật tư hoàn thiện', p:[
+      {r:['Phổ thông','Khá','Cao cấp']},
+      {f:'Hãng chỉ định (gạch, sơn, thiết bị vệ sinh): ______________'}]},
+    {t:'Tiến độ', p:[
+      {f:'Khởi công dự kiến ________ · Phải xong trước ________'},
+      {l:'Xem ngày, xem tuổi', r:['Có','Không']}]},
+    {t:'Nhà thầu', p:[{r:['Đã có: ____________','Cần giới thiệu']}]},
+    {t:'Giám sát thi công', p:[{r:['Chủ nhà tự giám sát','Thuê đơn vị giám sát','Nhờ người quen']}]}]]
+];
+
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let qi = 0;
+// đổi "___" thành ô điền; name riêng cho từng ô
+const blanks = (s, base) => { let j = 0;
+  return esc(s).replace(/_{3,}/g, m => `<input type="text" name="${base}_t${j++}" style="width:${Math.max(3, m.length * 0.9)}em" aria-label="điền">`); };
+
+document.getElementById('form').innerHTML = S.map(([title, qs]) => `<section><h2>${title}</h2>${
+  qs.map(q => { const n = ++qi;
+    const parts = q.p.map((p, pi) => { const base = `q${n}_${pi}`;
+      if (p.f) return `<div class="part">${blanks(p.f, base)}</div>`;
+      const type = p.r ? 'radio' : 'checkbox';
+      return `<div class="part">${p.l ? `<span class="pl">${esc(p.l)}</span>` : ''}${
+        (p.r || p.c).map((o, oi) => `<label class="opt"><input type="${type}" name="${type === 'radio' ? base : base + '_' + oi}" value="${oi}">${blanks(o, base + '_' + oi)}</label>`).join('')}</div>`;
+    }).join('');
+    return `<div class="card q${q.k ? ' key' : ''}"><div class="qt"><span class="n">${n}</span><span>${q.k ? '<span class="star">★</span> ' : ''}${esc(q.t)}</span></div>${
+      q.w ? `<div class="why">${esc(q.w)}</div>` : ''}${parts}<label class="note"><span>Ghi chú</span><input type="text" name="q${n}_note"></label></div>`;
+  }).join('')}</section>`).join('');
+
+// tự lưu câu trả lời trong trình duyệt (không có cũng chạy bình thường)
+const KEY = 'nhapho-khaosat-v1';
+const inputs = () => [...document.querySelectorAll('input')];
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
+const save = () => { const d = {};
+  for (const el of inputs()) {
+    if (el.type === 'text') { if (el.value) d[el.name] = el.value; }
+    else if (el.checked) d[el.name] = el.value;
+  }
+  try { localStorage.setItem(KEY, JSON.stringify(d)); document.getElementById('saved').textContent = 'Đã lưu lúc ' + new Date().toLocaleTimeString('vi-VN'); } catch {}
+};
+const d = load();
+for (const el of inputs()) {
+  if (!(el.name in d)) continue;
+  if (el.type === 'text') el.value = d[el.name]; else el.checked = d[el.name] === el.value;
+}
+// bấm lại vào ô đã chọn thì bỏ chọn
+let downChecked = null;
+document.addEventListener('pointerdown', e => { const r = e.target.closest('label.opt')?.querySelector('input[type=radio]'); downChecked = r && r.checked ? r : null; });
+document.addEventListener('click', e => { const r = e.target.closest('label.opt')?.querySelector('input[type=radio]');
+  if (r && r === downChecked && e.target === r) { r.checked = false; downChecked = null; save(); } });
+document.addEventListener('input', save);
+document.addEventListener('change', save);
+document.getElementById('clear').onclick = () => {
+  if (!confirm('Xoá hết câu trả lời đã điền?')) return;
+  for (const el of inputs()) el.type === 'text' ? el.value = '' : el.checked = false;
+  try { localStorage.removeItem(KEY); } catch {}
+  document.getElementById('saved').textContent = 'Đã xoá.';
+};
+</script>
+</body>
+</html>
