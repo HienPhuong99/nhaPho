@@ -125,7 +125,7 @@ const GROUND = {
     rect(9.0, 3.55, 12.45, 4.15, 'counter'); rect(11.85, 2.0, 12.45, 3.55, 'counter');
     for (const x of [9.45, 9.9]) add(`<circle class="furn" cx="${k(my(3.85))}" cy="${k(x)}" r="13"/>`);
     rect(10.6, 3.65, 11.2, 4.05, 'furn');
-    bed(14.7, 2.15, 16.3, 4.15);
+    bed(14.5, 2.15, 16.3, 4.15);   // giường 1,8 m (khảo sát)
   },
 };
 
@@ -156,7 +156,7 @@ const UPPER = {
     for (const y of [-1.2, -1.14]) line(y, 0, y, 4.2, 'rail');    // lan can ban công
     line(-1.2, 0, 0, 0, 'rail'); line(-1.2, 4.2, 0, 4.2, 'rail');
     rect(1.55, 1.5, 1.95, 3.2, 'altar');
-    bed(4.2, 2.15, 5.8, 4.15); bed(12.5, 2.15, 14.1, 4.15);
+    bed(4.0, 2.15, 5.8, 4.15); bed(12.6, 2.15, 14.4, 4.15);   // giường 1,8 m; PN3 lùi 10 cm tránh cột
   },
 };
 
