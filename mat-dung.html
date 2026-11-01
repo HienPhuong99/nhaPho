@@ -94,7 +94,7 @@ ol{margin:0;padding-left:20px;display:grid;gap:8px;max-width:78ch}
     <ol>
       <li><b>Hướng Tây Nam, nắng chiều chiếu thẳng mặt tiền.</b> Dùng màu sáng cho mảng tường lớn; màu đậm chỉ dùng cho viền nhỏ. Phần đua 1,2 m che bớt nắng cho tường trệt. Kính cửa lầu nên dùng kính phản quang hoặc dán phim cách nhiệt, phòng thờ mới không bị nóng buổi chiều.</li>
       <li><b>Sơn ngoại thất loại chống bám bẩn.</b> Đường 8 m nhiều bụi nên chọn trắng ngà thay trắng tinh, đỡ lộ vết bẩn.</li>
-      <li><b>Cửa chính nhôm kính 4 cánh mở ra ngoài</b> (câu 23): mỗi cánh 0,6 m, tổng 2,4 m, cánh quét gọn trong 0,6 m tam cấp, không lấn ra vỉa hè. Hai cánh giữa mở thường ngày (1,2 m, đủ dắt xe máy), hai cánh bên chốt cố định khi cần. Khung sắt bảo vệ đặt phía trong, kiểu xếp hoặc kéo, nên cửa mở ra không vướng.</li>
+      <li><b>Cửa chính nhôm kính 4 cánh mở ra ngoài</b> (câu 23): mỗi cánh 0,6 m, tổng 2,4 m, cánh quét gọn trên 0,6 m tam cấp (tam cấp nằm ngoài ranh đất, tường cửa ở ranh). Hai cánh giữa mở thường ngày (1,2 m, đủ dắt xe máy), hai cánh bên chốt cố định khi cần. Khung sắt bảo vệ đặt phía trong, kiểu xếp hoặc kéo, nên cửa mở ra không vướng.</li>
       <li><b>Cửa sổ phòng thờ 2 cánh mở hất ra ngoài</b> (câu 7): cánh hất nhô ra trên ban công 0,6 m; khi mở hết, đứng ở ban công nên tránh phía trước cửa sổ. Khung sắt bảo vệ phải đặt phía trong (hoặc lưới an toàn), vì phía ngoài là cánh hất.</li>
       <li><b>Cửa đi ra ban công 1 cánh 0,8 m, nhôm kính trong, mở vào</b> (câu 6). Ban công chỉ còn 0,6 m nên cửa bắt buộc mở vào.</li>
       <li><b>Lan can kính cường lực cao 1,1 m</b> (câu 9), tay vịn cùng màu khung nhôm, đặt ở mép ban công (cách tường mặt tiền lầu 0,6 m).</li>
@@ -130,15 +130,13 @@ function svg(p) {
   const L = (y1, z1, y2, z2, cls = 'e-ln') => o.push(`<line x1="${k(y1)}" y1="${k(-z1)}" x2="${k(y2)}" y2="${k(-z2)}" class="${cls}"/>`);
   // nền đất, vỉa hè
   R(-0.6, -0.6, 4.8, -0.32, '', '#b9b6b0'); L(-0.6, -0.32, 4.8, -0.32);
-  // tầng trệt: tường lùi sau tam cấp (x = 0,6), cửa 4 cánh
+  // tầng trệt: tường mặt tiền ở ranh đất (x = 0), cửa 4 cánh
   R(0.2, 0, 4.0, H1 - BAL, 'e-ln', p.low);
   R(0.2, H1 - BAL - 0.5, 4.0, H1 - BAL, 'e-sh');                         // bóng đổ của ban công
   R(0.9, 0, 3.3, 2.6, 'e-gl'); R(0.9, 0, 3.3, 2.6, 'e-ln');
   for (const y of [0.9, 1.5, 2.1, 2.7, 3.3]) R(y - 0.03, 0, y + 0.03, 2.6, '', p.frame);
   R(0.9, 2.55, 3.3, 2.6, '', p.frame); R(0.9, 0, 3.3, 0.05, '', p.frame);
   for (const y of [1.2, 1.8, 2.4, 3.0]) L(y, 0.15, y, 2.45, 'e-th');
-  // tam cấp 2 bậc
-  R(0.2, -0.32, 4.0, -0.16, 'e-ln', '#cfcac2'); R(0.2, -0.16, 4.0, 0, 'e-ln', '#dcd7cf');
   // tầng lầu: tường mặt tiền x = 0, cửa đi trái, cửa sổ phải
   R(0.2, H1, 4.0, ZR, 'e-ln', p.wall);
   R(0.15, H1, 0.95, H1 + 2.2, 'e-gl'); R(0.15, H1, 0.95, H1 + 2.2, 'e-ln');
@@ -151,7 +149,9 @@ function svg(p) {
   // tường chắn mái
   R(0, ZR, 4.2, ZP, 'e-ln', p.accent);
   // cột hai bên (200 mm) chạy suốt chiều cao
-  R(0, -0.32, 0.2, ZR, 'e-ln', p.col); R(4.0, -0.32, 4.2, ZR, 'e-ln', p.col);
+  R(0, 0, 0.2, ZR, 'e-ln', p.col); R(4.0, 0, 4.2, ZR, 'e-ln', p.col);
+  // tam cấp 2 bậc ngoài ranh đất, chạy hết bề ngang trước chân cột
+  R(0, -0.32, 4.2, -0.16, 'e-ln', '#cfcac2'); R(0, -0.16, 4.2, 0, 'e-ln', '#dcd7cf');
   // ban công: viền đáy sàn và lan can kính 1,1 m
   R(-0.05, H1 - BAL, 4.25, H1, 'e-ln', p.accent);
   R(0, H1, 4.2, H1 + 1.1, 'e-rl');

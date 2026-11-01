@@ -144,7 +144,7 @@ const FLOORS = [GROUND, UPPER];
 function whereAmI() {
   const up = me.fz > H1 - 0.5, f = up ? UPPER : GROUND;
   const r = f.rooms.find(r => me.X >= r.x[0] && me.X < r.x[1] && me.Y >= r.y[0] && me.Y < r.y[1]);
-  if (me.X < (up ? -1.2 : 0) || me.Y < 0 || me.Y > 4.2 || me.X > 18) return ['Ngoài đường', 'Trước mặt tiền'];
+  if (me.X < f.front || me.Y < 0 || me.Y > 4.2 || me.X > 18) return ['Ngoài đường', 'Trước mặt tiền'];
   if (!r) return [f.name, ''];
   const L = r.x[1] - r.x[0], W = r.y[1] - r.y[0];
   return [r.n, `${f.name} · ${f1(L)} × ${f1(W)} m · ${f2(L * W)} m²`];
@@ -174,7 +174,8 @@ const SPOTS = [
   ['Phòng ngủ 2 (lầu)', 2.6, 1.6, H1, Math.PI],
   ['Phòng ngủ 3 (lầu)', 9.3, 1.6, H1, Math.PI],
   ['Khu phơi (lầu)', 15.3, 1.0, H1, Math.PI],
-  ['Nhà tắm (lầu)', 15.4, 2.7, H1, Math.PI],
+  ['Nhà tắm (lầu)', 16.4, 2.6, H1, Math.PI],
+  ['Kho (lầu)', 15.35, 2.6, H1, Math.PI],
 ];
 const go = document.getElementById('go');
 go.insertAdjacentHTML('beforeend', SPOTS.map((s, i) => `<option value="${i}">${s[0]}</option>`).join(''));

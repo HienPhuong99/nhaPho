@@ -99,10 +99,10 @@ function stair(upper) {
 }
 
 const GROUND = {
-  id: 'g', name: 'Tầng trệt', front: 0, band: [0, 0.6, 6, 8.8, 12.5, 16.5, 18],
+  id: 'g', name: 'Tầng trệt', front: -0.6, band: [-0.6, 0, 6, 8.8, 12.5, 16.5, 18],
   rooms: [
-    { n: 'Tam cấp', x: [0, 0.6], y: [0, 4.2], c: 'balc', l: [0.3, 3.75], one: 1, lab: 'TAM CẤP' },
-    { n: 'Phòng khách', x: [0.6, 6], y: [0, 4.2], l: [3.3, 2.1] },
+    { n: 'Tam cấp (ngoài ranh)', x: [-0.6, 0], y: [0, 4.2], c: 'balc', l: [-0.3, 3.6], one: 1, lab: 'TAM CẤP', step: 1 },
+    { n: 'Phòng khách', x: [0, 6], y: [0, 4.2], l: [3.0, 2.1] },
     { n: 'Lối đi', x: [6, 8.8], y: [0, 1], c: 'corr', rot: 1 },
     { n: 'Cầu thang U', x: [6, 8.8], y: [1, 4.2], l: [7.4, 2.3], stair: 1 },
     { n: 'Bếp', x: [8.8, 12.5], y: [0, 4.2], l: [10.3, 1.9] },
@@ -112,17 +112,17 @@ const GROUND = {
   ],
   draw() {
     wall(0, 0, 18, 0); wall(0, 4.2, 18, 4.2);
-    wall(0.6, 0, 0.6, 4.2, [[0.9, 3.3]]); wall(18, 0, 18, 4.2, [[2.2, 3.2]]);
-    // tam cấp: mặt đường −0,32 → bậc +0,16 → nền ±0,00
-    line(0, 0.05, 0, 4.15, 'riser'); line(0.3, 0.05, 0.3, 4.15, 'riser');
-    text(0.3, 0.45, ['2 bậc × 16'], { cls: 'h-balc sm' });
+    wall(0, 0, 0, 4.2, [[0.9, 3.3]]); wall(18, 0, 18, 4.2, [[2.2, 3.2]]);
+    // tam cấp nằm ngoài ranh đất (x = −0,6–0), tường mặt tiền trệt ở ranh: mặt đường −0,32 → bậc +0,16 → nền ±0,00
+    line(-0.6, 0, -0.6, 4.2, 'riser'); line(-0.3, 0, -0.3, 4.2, 'riser');
+    text(-0.3, 0.5, ['2 bậc × 16'], { cls: 'h-balc sm' }); text(-0.3, 2.1, ['ngoài ranh đất'], { cls: 'h-balc sm' });
     wall(6, 1, 6, 4.2); wall(8.8, 1, 8.8, 4.2); wall(12.5, 1, 12.5, 4.2); wall(16.5, 1, 16.5, 4.2);
     wall(12.5, 1, 18, 1, [[12.65, 13.55], [16.65, 17.35]]);
     win(18, 2.2, 18, 3.2);
-    // cửa chính nhôm kính 4 cánh × 0,6 m mở ra ngoài (khảo sát lần 2): cánh quét hết 0,6 m tam cấp, không lấn ra vỉa hè;
+    // cửa chính nhôm kính 4 cánh × 0,6 m mở ra ngoài (khảo sát lần 2): cánh quét gọn trên 0,6 m tam cấp;
     // hai cánh giữa bản lề vào cánh bên, mở thường ngày; khung sắt bảo vệ đặt phía trong
-    door(0.6, 0.9, 0.6, 1.5, -1, 0); door(0.6, 1.5, 0.6, 2.1, -1, 0); door(0.6, 2.7, 0.6, 2.1, -1, 0); door(0.6, 3.3, 0.6, 2.7, -1, 0);
-    line(0.72, 0.9, 0.72, 3.3, 'grille');
+    door(0, 0.9, 0, 1.5, -1, 0); door(0, 1.5, 0, 2.1, -1, 0); door(0, 2.7, 0, 2.1, -1, 0); door(0, 3.3, 0, 2.7, -1, 0);
+    line(0.12, 0.9, 0.12, 3.3, 'grille');
     door(12.65, 1, 13.55, 1, 0, 1); door(16.65, 1, 17.35, 1, 0, 1);
     // bệ bếp chữ L + bếp nấu + chậu rửa
     rect(9.0, 3.55, 12.45, 4.15, 'counter'); rect(11.85, 2.0, 12.45, 3.55, 'counter');
@@ -136,10 +136,11 @@ const GROUND = {
 
 // Final 1 (chủ đầu tư chốt lại sau phiếu lần 2): phòng thờ lấn ra ban công 0,6 m theo phương án nháp, tường mặt tiền lầu
 // ở x = −0,6 (phòng thờ 2,6 × 4,2 m), ban công còn 0,6 m. Mặt tiền lầu: cửa đi 1 cánh 0,8 m mở vào (phía hành lang) và
-// cửa sổ 2 cánh mở hất ra ngoài. Phía sau chia dọc: khu phơi y = 0–2,1 lợp tấm lấy sáng, nhà tắm y = 2,1–4,2.
+// cửa sổ 2 cánh mở hất ra ngoài. Phía sau chia dọc: khu phơi y = 0–2,1 lợp tấm lấy sáng; phía y = 2,1–4,2 là kho đồ
+// (x = 14,8–15,9, cửa từ khu phơi) và nhà tắm thu nhỏ 2,1 × 2,1 m (x = 15,9–18).
 const XF = -0.6;
 const UPPER = {
-  id: 'u', name: 'Tầng lầu', front: -1.2, band: [-1.2, XF, 2, 6, 8.8, 14.8, 18], back: [0, 2.1, 4.2],
+  id: 'u', name: 'Tầng lầu', front: -1.2, band: [-1.2, XF, 2, 6, 8.8, 14.8, 15.9, 18], back: [0, 2.1, 4.2],
   rooms: [
     { n: 'Ban công', x: [-1.2, XF], y: [0, 4.2], c: 'balc', l: [-0.9, 2.1], one: 1 },
     { n: 'Phòng thờ', x: [XF, 2], y: [0, 4.2], l: [0.55, 2.2] },
@@ -148,28 +149,30 @@ const UPPER = {
     { n: 'Phòng ngủ 3', x: [8.8, 14.8], y: [1, 4.2], l: [10.9, 2.7] },
     { n: 'Hành lang', x: [2, 14.8], y: [0, 1], c: 'corr', rot: 1 },
     { n: 'Khu phơi', x: [14.8, 18], y: [0, 2.1], c: 'dry', l: [16.75, 1.05] },
-    { n: 'Nhà tắm', x: [14.8, 18], y: [2.1, 4.2], c: 'wet', l: [16.15, 3.0] },
+    { n: 'Kho', x: [14.8, 15.9], y: [2.1, 4.2], l: [15.35, 2.95] },
+    { n: 'Nhà tắm', x: [15.9, 18], y: [2.1, 4.2], c: 'wet', l: [17.45, 3.15] },
   ],
   draw() {
     wall(XF, 0, 18, 0); wall(XF, 4.2, 18, 4.2);
     wall(XF, 0, XF, 4.2, [[0.15, 0.95], [2.3, 3.7]]); wall(18, 0, 18, 4.2, [[2.8, 3.7]]);
     wall(2, 0, 2, 4.2, [[0.1, 0.9]]);
-    wall(6, 1, 6, 4.2, [[2.0, 3.2]]); wall(8.8, 1, 8.8, 4.2, [[2.0, 3.2]]);
-    wall(14.8, 0, 14.8, 4.2, [[0.1, 0.9], [1.1, 1.95]]); wall(14.8, 2.1, 18, 2.1, [[15.0, 15.75]]);
+    wall(6, 1, 6, 4.2, [[1.2, 2.4]]); wall(8.8, 1, 8.8, 4.2, [[2.7, 3.9]]);   // 2 cửa sổ trông vào lõi thang so le, không nhìn thẳng nhau
+    wall(14.8, 0, 14.8, 4.2, [[0.1, 0.9], [1.1, 1.95]]); wall(14.8, 2.1, 18, 2.1, [[15.0, 15.75], [16.05, 16.75]]); wall(15.9, 2.1, 15.9, 4.2);
     wall(2, 1, 6, 1, [[2.15, 3.05]]); wall(8.8, 1, 14.8, 1, [[8.95, 9.85]]);
     win(XF, 2.3, XF, 3.7); line(XF - h, 3.0, XF + h, 3.0, 'win');                  // cửa sổ 2 cánh mặt tiền, mở hất ra ngoài
-    win(6, 2.0, 6, 3.2); win(8.8, 2.0, 8.8, 3.2); win(14.8, 1.1, 14.8, 1.95); win(18, 2.8, 18, 3.7);
+    win(6, 1.2, 6, 2.4); win(8.8, 2.7, 8.8, 3.9); win(14.8, 1.1, 14.8, 1.95); win(18, 2.8, 18, 3.7);
     door(XF, 0.15, XF, 0.95, 1, 0);                                                // cửa 1 cánh ra ban công, mở vào
     door(2, 0.1, 2, 0.9, -1, 0);                                                   // phòng thờ - hành lang
     door(2.15, 1, 3.05, 1, 0, 1); door(8.95, 1, 9.85, 1, 0, 1);
-    door(14.8, 0.1, 14.8, 0.9, 1, 0); door(15.0, 2.1, 15.75, 2.1, 0, 1);
+    door(14.8, 0.1, 14.8, 0.9, 1, 0); door(15.0, 2.1, 15.75, 2.1, 0, 1); door(16.05, 2.1, 16.75, 2.1, 0, 1);   // cửa kho, cửa nhà tắm
     for (const y of [-1.2, -1.14]) line(y, 0, y, 4.2, 'rail');    // lan can ban công
     line(-1.2, 0, XF, 0, 'rail'); line(-1.2, 4.2, XF, 4.2, 'rail');
     line(0, 0.05, 0, 4.15, 'lot'); text(-0.3, 1.6, ['ranh đất'], { cls: 'sm' });  // ranh đất / chỉ giới đường đỏ
     rect(1.55, 1.5, 1.95, 3.2, 'altar');
     rect(14.85, 0.05, 17.95, 2.05, 'roofc'); text(15.75, 1.55, ['mái tấm lấy sáng'], { cls: 'sm' });   // che hết khu phơi (khảo sát lần 2)
     rect(17.0, 2.15, 17.95, 4.15, 'arc');                         // chỗ tắm đứng
-    rect(16.25, 3.6, 16.75, 4.15, 'furn'); rect(15.85, 3.65, 16.15, 4.15, 'counter');   // bồn cầu, lavabo
+    rect(16.35, 3.6, 16.85, 4.15, 'furn'); rect(15.95, 2.95, 16.4, 3.45, 'counter');   // bồn cầu, lavabo
+    rect(14.85, 3.75, 15.85, 4.15, 'counter'); text(15.35, 3.95, ['kệ'], { cls: 'sm' });   // kệ kho
     rect(17.25, 0.05, 17.9, 0.7, 'furn'); text(17.57, 0.38, ['máy giặt'], { cls: 'sm' });
     bed(4.3, 2.15, 5.7, 4.15); bed(12.8, 1.95, 14.4, 4.15);   // giường cũ: PN2 1,4 × 2,0; PN3 1,6 × 2,2 (lùi 10 cm tránh cột)
   },
@@ -195,13 +198,13 @@ function section() {
   </defs>`);
   // đất, mặt đường, khối nền tôn cao 0,32 m, tam cấp
   sr(-2.6, ROAD - 0.28, 19.2, ROAD, '', hx);
-  sl(-2.6, ROAD, 0, ROAD, 'rail'); sl(18.05, ROAD, 19.2, ROAD, 'rail');
-  for (const [a, b, z] of [[0, 0.3, ROAD + 0.16], [0.3, 18.05, 0]]) { sr(a, ROAD, b, z, 'flight'); sr(a, ROAD, b, z, '', hx); }
-  st(-1.3, 0.25, ['← 2 bậc × 16 cm'], { cls: 'sm' });
+  sl(-2.6, ROAD, -0.6, ROAD, 'rail'); sl(18.05, ROAD, 19.2, ROAD, 'rail');
+  for (const [a, b, z] of [[-0.6, -0.3, ROAD + 0.16], [-0.3, 18.05, 0]]) { sr(a, ROAD, b, z, 'flight'); sr(a, ROAD, b, z, '', hx); }
+  st(-1.9, 0.25, ['← 2 bậc × 16 cm'], { cls: 'sm' });
   // thấy phía sau mặt cắt (nét mảnh)
   for (const x of [6, 8.8, 12.5, 16.5]) sr(x - h, 0, x + h, HG, 'bey');            // đầu tường tại y = 1
   for (const x of [6, 8.8]) sr(x - h, H1, x + h, HU, 'bey');
-  for (const [a, b, z] of [[12.65, 13.55, 0], [16.65, 17.35, 0], [2.15, 3.05, H1], [8.95, 9.85, H1], [15.0, 15.75, H1]]) sr(a, z, b, z + DOOR, 'bey');
+  for (const [a, b, z] of [[12.65, 13.55, 0], [16.65, 17.35, 0], [2.15, 3.05, H1], [8.95, 9.85, H1], [15.0, 15.75, H1], [16.05, 16.75, H1]]) sr(a, z, b, z + DOOR, 'bey');
   sr(14.8, H1, 18, ZR, 'bey');                                                      // vách nhà tắm lầu (y = 2,1) phía sau
   // tường hồi phía trên đỉnh tường hông (thấy phía sau), ô sàn và bồn nước trên nhà tắm
   add(`<polyline class="bey" points="${[[XF, ZR], [XF, roofZ(XF)], [RF_END, RF_LO], [RF_END, ZR]].map(([x, z]) => `${k(Q(x))},${k(-z)}`).join(' ')}"/>`);
@@ -214,11 +217,11 @@ function section() {
   for (let i = 1; i < N2; i++) sl(7.45, (N1 + i) * RISE, 8.75, (N1 + i) * RISE, 'riser');
   sl(6.05, H1 + 0.9, 7.45, H1 + 0.9, 'rail');                                     // lan can ô thang
   for (let i = 0; i <= 4; i++) sl(6.05 + i * 0.35, H1, 6.05 + i * 0.35, H1 + 0.9, 'thin');
-  sl(0.65, CEIL, 17.95, CEIL, 'arc');                                              // trần thạch cao trệt
+  sl(0.05, CEIL, 17.95, CEIL, 'arc');                                              // trần thạch cao trệt
   sl(XF + h, H1 + 3.2, 14.75, H1 + 3.2, 'arc');                                     // trần thạch cao lầu
   // phần bị cắt (tô đặc): tường, sàn, mái
-  sr(0.55, -0.1, 18.05, 0, 'wall');
-  sr(0.55, 0, 0.65, HG, 'wall'); sr(17.95, 0, 18.05, HG, 'wall');
+  sr(-0.05, -0.1, 18.05, 0, 'wall');
+  sr(-0.05, 0, 0.05, HG, 'wall'); sr(17.95, 0, 18.05, HG, 'wall');
   sr(-1.2, HG, 18.05, H1, 'wall');
   sr(17.95, H1, 18.05, ZR, 'wall');                                                  // tường sau khu phơi
   for (const x of [2, 14.8]) sr(x - h, H1 + DOOR, x + h, ZR, 'wall');               // cắt qua cửa đi: còn lanh tô
@@ -252,7 +255,7 @@ function section() {
   chainX([-CEIL, 0], Q(-2.3), Q(-1.3), ['≈ 3,30 tới trần']);
   chainX([-(H1 + 3.2), -H1], Q(-2.3), Q(-1.3), ['≈ 3,20 tới trần']);
   chainY(qs([-1.2, XF, 0, 2, 6, 8.8, 14.8, 18]), -8.75, -8.4);
-  chainY(qs([0, 0.6, 6, 8.8, 12.5, 16.5, 18]), 1.05, 0.62);
+  chainY(qs([-0.6, 0, 6, 8.8, 12.5, 16.5, 18]), 1.05, 0.62);
   // mặt tiền, thước tỷ lệ
   add(`<line class="arrow" x1="${k(Q(-0.35))}" y1="${k(-1.7)}" x2="${k(Q(-1.45))}" y2="${k(-1.7)}" marker-end="url(#am-s)"/>`);
   add(`<text class="mt" text-anchor="middle" x="${k(Q(-0.9))}" y="${k(-2.05)}">MẶT TIỀN</text>`);
@@ -276,7 +279,7 @@ function draw(f, overlay) {
     if (r.c === 'dry') { rect(r.x[0], r.y[0], r.x[1], r.y[1], 'dry-bg'); rect(r.x[0], r.y[0], r.x[1], r.y[1], '', `fill="url(#hx-${id})"`); }
     else if (r.c) rect(r.x[0], r.y[0], r.x[1], r.y[1], r.c);
   }
-  stair(Xf < 0);
+  stair(f.id === 'u');
   f.draw();
   for (const r of f.rooms) {
     const [L, W] = dims(r), N = r.n.toUpperCase(), cls = r.c && r.c !== 'dry' ? 'h-' + r.c : '';
@@ -286,7 +289,7 @@ function draw(f, overlay) {
   }
   // kích thước
   chainX(f.band, 4.75, 4.3);
-  chainX(Xf < 0 ? [Xf, 0, 18] : [0, 18], -0.55, -0.1, Xf < 0 ? ['1,2', 'THÂN NHÀ 18,0'] : ['TỔNG 18,0']);
+  chainX(Xf < 0 ? [Xf, 0, 18] : [0, 18], -0.55, -0.1, Xf < 0 ? [f1(-Xf), 'THÂN NHÀ 18,0'] : ['TỔNG 18,0']);
   chainY([0, 1, 4.2], Xf - 0.4, Xf - 0.05);
   chainY([0, 4.2], Xf - 0.85, Xf - 0.05);
   if (f.back) chainY(f.back, 18.45, 18.05);
@@ -307,9 +310,9 @@ function draw(f, overlay) {
   return `<svg viewBox="-100 ${k(top)} 600 ${k(bottom - top)}" role="img" aria-label="Mặt bằng ${f.name}, mặt tiền ở phía trên">${out.join('')}</svg>`;
 }
 
-// diện tích phần phòng nằm trong ranh đất (x ≥ 0) và phần nhô ra ngoài (x < 0)
+// diện tích phần phòng nằm trong ranh đất (x ≥ 0) và phần sàn nhô ra ngoài (x < 0); tam cấp không tính là sàn
 const inLot = r => Math.max(0, r.x[1] - Math.max(r.x[0], 0)) * (r.y[1] - r.y[0]);
-const outLot = r => dims(r)[0] * dims(r)[1] - inLot(r);
+const outLot = r => r.step ? 0 : dims(r)[0] * dims(r)[1] - inLot(r);
 function table(f) {
   const body = f.rooms.reduce((s, r) => s + inLot(r), 0);
   const extra = f.rooms.reduce((s, r) => s + outLot(r), 0);
