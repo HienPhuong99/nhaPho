@@ -1,6 +1,6 @@
 # Kết quả khảo sát chủ đầu tư, nhà phố 4,2 × 18 m
 
-Cập nhật ngày 01/11/2026, sau khi nhận phiếu lần 2. File này gộp mọi câu trả lời đã nhận và tóm tắt bản vẽ hiện tại.
+Cập nhật ngày 01/11/2026: Final 1, sau phiếu lần 2 và ý kiến chốt lại của chủ đầu tư. File này gộp mọi câu trả lời đã nhận và tóm tắt bản vẽ Final 1 (`Ban_Ve_Final_1.pdf`).
 
 - Phiếu lần 1 nhận ngày 30/10, điền lại ngày 01/11 (bản gốc: `Phieu_Lan1_Da_Dien_01-11-2026.pdf`).
 - Phiếu lần 2 điền lúc 19h38 ngày 01/11 (bản gốc: `Phieu_Lan2_Da_Dien_01-11-2026.pdf`).
@@ -15,7 +15,7 @@ Câu nào trả lời nhiều lần thì bảng ghi câu trả lời mới nhấ
 | Khu đất | 4,2 × 18 m (75,6 m²), vuông vắn, đất trống. Hai bên còn đất trống. Không ngập. Đã cắm mốc ranh rõ ràng. Ranh đất phía trước trùng mép tường mặt tiền. Mặt tiền hướng Tây Nam. |
 | Giấy tờ | Đã có sổ đỏ bản sao công chứng, căn cước, bản vẽ hiện trạng/trích lục. Chủ nhà tự nộp hồ sơ. |
 | Lộ giới | 15 m: vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m. Ban công được đua tối đa 1,2 m. |
-| Pháp lý ban công | Xin phép ban công 1,2 m và **xây đúng giấy phép**: ban công để hở, phòng thờ không lấn ra. |
+| Phòng thờ, ban công | Phiếu lần 2 chọn xin phép ban công 1,2 m. Sau đó chủ đầu tư chốt lại: **phòng thờ lấn ra 0,6 m theo phương án nháp**, ban công còn 0,6 m. |
 | Người ở | 5 người. Người ở PN1 hiện tự đi được, chỉ chậm. Không xây thêm tầng. 2 xe máy. |
 | Hỗ trợ người lớn tuổi | Tay vịn cạnh bồn cầu và chỗ tắm; gạch chống trơn nhà vệ sinh. PN1 thêm ô kính mờ cao ở vách hành lang và trên cửa. |
 | Kiến trúc | Mái tôn cách nhiệt 3 lớp có PU. Giếng trời trên thang lợp tấm lấy sáng cố định, kín. Thang khoảng 39°, lan can kính. Mặt tiền hiện đại, chưa có ảnh mẫu, nhờ gợi ý bảng màu. Điểm nhấn: đèn hắt mặt tiền. |
@@ -31,12 +31,11 @@ Câu nào trả lời nhiều lần thì bảng ghi câu trả lời mới nhấ
 | Tiến độ | 02/2027 là **hạn dọn vào ở**; muốn thi công chính **trước Tết**. Gửi bản vẽ cho nhà thầu sau khi có giấy phép. |
 | Xem tuổi | Người đứng tên sinh năm 1998 (Mậu Dần). Nhờ tính sẵn rồi đối chiếu với thầy. |
 
-## 2. Bản vẽ sau phiếu lần 2
+## 2. Bản vẽ Final 1
 
 **Tầng lầu, phía trước**
-- Tường mặt tiền lầu về lại x = 0 (bỏ phương án lấn 0,6 m).
-- Phòng thờ 2,0 × 4,2 m (8,40 m²).
-- Ban công 1,2 × 4,2 m (5,04 m²) để hở, lan can kính cao 1,1 m.
+- Phòng thờ lấn ra 0,6 m: tường mặt tiền lầu ở x = −0,6, phòng thờ 2,6 × 4,2 m (10,92 m²).
+- Ban công còn 0,6 × 4,2 m (2,52 m²), lan can kính cao 1,1 m.
 - Cửa đi 1 cánh 0,8 m mở vào, cửa sổ 2 cánh 1,4 m mở hất ra.
 
 **Tầng lầu, phía sau** (chia dọc như bản 01/11)
@@ -54,8 +53,8 @@ Câu nào trả lời nhiều lần thì bảng ghi câu trả lời mới nhấ
 - Wifi một bộ phát, vẫn kéo sẵn cáp mạng lên trần hành lang lầu.
 
 **Kết cấu**
-- Ban công không còn tường đè lên nên dầm công-xôn nhẹ tải hơn.
-- Bỏ dầm phụ tại x = −0,6.
+- Tường mặt tiền lầu đặt trên dầm ngang tại x = −0,6; dầm công-xôn tính thêm tải tường, cửa và mái.
+- Dầm phụ đỡ tường lầu ở x = 2,0, x = 14,8 và y = 2,1.
 
 **Mặt đứng** (trang mới `mat-dung.html`): 3 bảng màu.
 - A. Trắng ngà + vân gỗ (đề xuất).
@@ -102,7 +101,9 @@ Luật Xây dựng 2025 (số 135/2025/QH15) có hiệu lực từ 01/7/2026.
 
 Việc cần làm:
 - Mang sổ đỏ ra UBND phường/xã hỏi lô đất được miễn phép hay phải xin phép.
-- Dù miễn phép vẫn phải xây đúng quy hoạch, chỉ giới, độ đua ban công 1,2 m, và có bản vẽ để thi công.
+- Dù miễn phép vẫn phải xây đúng quy hoạch và chỉ giới, và có bản vẽ để thi công.
+
+**Lưu ý về phần lấn 0,6 m.** Ranh đất trùng mép tường mặt tiền, nên phòng thờ lấn ra nằm trên phần đua ngoài chỉ giới. QCVN 01:2021 chỉ cho phần này làm ban công để hở; hồ sơ xin phép (nếu phải xin) chỉ thể hiện được ban công 1,2 m. Xây lấn là khác giấy phép, có thể bị phạt và buộc tháo phần sai. Chủ đầu tư đã chọn phương án này.
 
 ### 3.3. Xem tuổi: người sinh 1998 (Mậu Dần)
 
@@ -129,7 +130,7 @@ Kết luận:
 5. **Hướng Tây Nam**:
    - Dùng màu sáng cho tường mặt tiền.
    - Kính cửa lầu dùng kính phản quang hoặc dán phim cách nhiệt.
-   - Ban công 1,2 m đã che bớt nắng cho tầng trệt.
+   - Phần đua 1,2 m đã che bớt nắng cho tầng trệt.
 6. **Tủ thờ cũ**: đo dài × sâu × cao gửi lại để kiểm tra. Tường đặt bàn thờ dài 4,2 m, phòng thờ sâu 2,0 m.
 7. **Điện lực**: vẫn "chưa hỏi". Hỏi luôn khi xin điện thi công, xin công tơ 10(40) A.
 8. **Điện, nước cho thi công**: phiếu bỏ trống. Xin sớm vì có thể mất 1–2 tuần.

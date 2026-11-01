@@ -134,9 +134,9 @@ function nha3D() {
   label(LG, 17.25, 2.6, 1.6, 'NVS', '1,5 × 3,2 · 4,80 m²');
   label(LG, 7.4, 0.5, 2.4, 'CẦU THANG', '22 bậc × 17,2 cm');
 
-  // ---------- tầng lầu (khảo sát lần 2): xây đúng giấy phép, mặt tiền lầu ở X = 0, ban công 1,2 m;
+  // ---------- tầng lầu (Final 1): phòng thờ lấn ra ban công 0,6 m, mặt tiền lầu ở X = −0,6, ban công còn 0,6 m;
   // phía sau chia dọc: khu phơi Y 0–2,1 lợp tấm lấy sáng, nhà tắm Y 2,1–4,2 ----------
-  const HU = H2 - SLAB, XF = 0;
+  const HU = H2 - SLAB, XF = -0.6;
   box(-1.2, 6.05, 0, 4.2, H1 - SLAB, H1, mat.slab, U);             // sàn lầu (chừa ô thang)
   box(8.75, 18, 0, 4.2, H1 - SLAB, H1, mat.slab, U);
   box(6.05, 8.75, 0, y1, H1 - SLAB, H1, mat.slab, U);
@@ -161,8 +161,8 @@ function nha3D() {
   box(1.55, 1.95, 1.5, 3.2, H1, H1 + .9, mat.altar, U);
   bed(U, H1, 4.3, 5.7, 2.15, 4.15); bed(U, H1, 12.8, 14.4, 1.95, 4.15);   // giường cũ PN2 1,4 × 2,0; PN3 1,6 × 2,2
 
-  label(LU, -0.6, 2.1, H1 + 1.4, 'BAN CÔNG', '1,2 × 4,2 · 5,04 m²');
-  label(LU, 1.0, 2.4, H1 + 1.6, 'PHÒNG THỜ', '2,0 × 4,2 · 8,40 m²');
+  label(LU, -0.9, 2.1, H1 + 1.4, 'BAN CÔNG', '0,6 × 4,2 · 2,52 m²');
+  label(LU, 0.6, 2.4, H1 + 1.6, 'PHÒNG THỜ', '2,6 × 4,2 · 10,92 m²');
   label(LU, 3.3, 2.6, H1 + 1.6, 'PHÒNG NGỦ 2', '4,0 × 3,2 · 12,80 m²');
   label(LU, 10.9, 2.6, H1 + 1.6, 'PHÒNG NGỦ 3', '6,0 × 3,2 · 19,20 m²');
   label(LU, 16.6, 1.05, H1 + 1.6, 'KHU PHƠI', '3,2 × 2,1 · mái lấy sáng');

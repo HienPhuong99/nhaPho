@@ -134,15 +134,15 @@ const GROUND = {
   },
 };
 
-// Khảo sát lần 2 (01/11/2026, 19h38): ranh đất trùng mép tường mặt tiền, xin phép ban công 1,2 m và xây đúng giấy phép,
-// nên tường mặt tiền lầu ở x = 0 (phòng thờ 2,0 × 4,2 m), ban công 1,2 m để hở. Mặt tiền lầu: cửa đi 1 cánh 0,8 m mở vào
-// (phía hành lang) và cửa sổ 2 cánh mở hất ra ngoài. Phía sau chia dọc: khu phơi y = 0–2,1 lợp tấm lấy sáng, nhà tắm y = 2,1–4,2.
-const XF = 0;
+// Final 1 (chủ đầu tư chốt lại sau phiếu lần 2): phòng thờ lấn ra ban công 0,6 m theo phương án nháp, tường mặt tiền lầu
+// ở x = −0,6 (phòng thờ 2,6 × 4,2 m), ban công còn 0,6 m. Mặt tiền lầu: cửa đi 1 cánh 0,8 m mở vào (phía hành lang) và
+// cửa sổ 2 cánh mở hất ra ngoài. Phía sau chia dọc: khu phơi y = 0–2,1 lợp tấm lấy sáng, nhà tắm y = 2,1–4,2.
+const XF = -0.6;
 const UPPER = {
   id: 'u', name: 'Tầng lầu', front: -1.2, band: [-1.2, XF, 2, 6, 8.8, 14.8, 18], back: [0, 2.1, 4.2],
   rooms: [
-    { n: 'Ban công', x: [-1.2, XF], y: [0, 4.2], c: 'balc', l: [-0.6, 2.1], one: 1 },
-    { n: 'Phòng thờ', x: [XF, 2], y: [0, 4.2], l: [0.75, 2.2] },
+    { n: 'Ban công', x: [-1.2, XF], y: [0, 4.2], c: 'balc', l: [-0.9, 2.1], one: 1 },
+    { n: 'Phòng thờ', x: [XF, 2], y: [0, 4.2], l: [0.55, 2.2] },
     { n: 'Phòng ngủ 2', x: [2, 6], y: [1, 4.2], l: [3.3, 2.9] },
     { n: 'Cầu thang U', x: [6, 8.8], y: [1, 4.2], l: [7.4, 2.3], stair: 1 },
     { n: 'Phòng ngủ 3', x: [8.8, 14.8], y: [1, 4.2], l: [10.9, 2.7] },
@@ -165,6 +165,7 @@ const UPPER = {
     door(14.8, 0.1, 14.8, 0.9, 1, 0); door(15.0, 2.1, 15.75, 2.1, 0, 1);
     for (const y of [-1.2, -1.14]) line(y, 0, y, 4.2, 'rail');    // lan can ban công
     line(-1.2, 0, XF, 0, 'rail'); line(-1.2, 4.2, XF, 4.2, 'rail');
+    line(0, 0.05, 0, 4.15, 'lot'); text(-0.3, 1.6, ['ranh đất'], { cls: 'sm' });  // ranh đất / chỉ giới đường đỏ
     rect(1.55, 1.5, 1.95, 3.2, 'altar');
     rect(14.85, 0.05, 17.95, 2.05, 'roofc'); text(15.75, 1.55, ['mái tấm lấy sáng'], { cls: 'sm' });   // che hết khu phơi (khảo sát lần 2)
     rect(17.0, 2.15, 17.95, 4.15, 'arc');                         // chỗ tắm đứng
@@ -233,7 +234,7 @@ function section() {
   st(8.1, 0.9, ['GẦM THANG'], { cls: 'sm' }); st(10.65, 1.9, ['BẾP']); st(15, 1.7, ['HÀNH LANG']);
   st(13.1, 1.1, ['PN1'], { cls: 'sm' }); st(17, 1.1, ['NVS'], { cls: 'sm' });
   st(3.3, 3.48, ['trần thạch cao ≈ +3,30'], { cls: 'sm' });
-  st(-0.6, 5.3, ['BAN CÔNG'], { rot: 1, cls: 'sm' }); st(1.0, 5.9, ['PHÒNG THỜ']);
+  st(-0.9, 5.3, ['BAN CÔNG'], { rot: 1, cls: 'sm' }); st(0.7, 5.9, ['PHÒNG THỜ']);
   st(5.5, 7.95, ['MÁI TÔN'], { cls: 'sm' }); st(15.6, ZR + 0.62, ['tấm lấy sáng'], { cls: 'sm' });
   st(17.35, ZR + 0.6, ['bồn', '1.000 L'], { cls: 'sm' });
   st(2.6, 4.9, ['PN2'], { cls: 'sm' }); st(9.4, 4.9, ['PN3'], { cls: 'sm' });
@@ -250,7 +251,7 @@ function section() {
   chainX([-ZR, -H1, 0, -ROAD], Q(20.45), Q(19.95), [f2(H_LAU), f2(H1), f2(-ROAD)]);
   chainX([-CEIL, 0], Q(-2.3), Q(-1.3), ['≈ 3,30 tới trần']);
   chainX([-(H1 + 3.2), -H1], Q(-2.3), Q(-1.3), ['≈ 3,20 tới trần']);
-  chainY(qs([-1.2, 0, 2, 6, 8.8, 14.8, 18]), -8.75, -8.4);
+  chainY(qs([-1.2, XF, 0, 2, 6, 8.8, 14.8, 18]), -8.75, -8.4);
   chainY(qs([0, 0.6, 6, 8.8, 12.5, 16.5, 18]), 1.05, 0.62);
   // mặt tiền, thước tỷ lệ
   add(`<line class="arrow" x1="${k(Q(-0.35))}" y1="${k(-1.7)}" x2="${k(Q(-1.45))}" y2="${k(-1.7)}" marker-end="url(#am-s)"/>`);
