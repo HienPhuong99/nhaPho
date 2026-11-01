@@ -59,6 +59,10 @@ input[type=text]{font:inherit;font-size:16px;color:inherit;background:transparen
   padding:0 4px;min-width:3em;max-width:100%}
 input::placeholder{color:var(--ink2);opacity:.55}
 input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);background:var(--hi)}
+.tip{margin-left:calc(1.6em + 8px);padding:8px 10px;border-radius:4px;background:var(--hi);font-size:14px;display:grid;gap:6px}
+.tip b{color:var(--star)}
+.tip button{justify-self:start;font-size:13px;padding:4px 10px;background:transparent;color:var(--dim);border-color:var(--dim)}
+.badge{font:600 11px var(--f-body);color:var(--star);border:1px solid var(--star);border-radius:3px;padding:0 4px;margin-left:2px;white-space:nowrap}
 .note{display:flex;gap:8px;align-items:baseline;padding-left:calc(1.6em + 8px);font-size:14px;color:var(--ink2)}
 .note input{flex:1}
 .sign{display:grid;gap:16px;grid-template-columns:1fr 1fr;text-align:center}
@@ -75,6 +79,8 @@ input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--dim);backgro
 @media (max-width:640px){
   body{padding-bottom:72px}
   .part,.note,.why{padding-left:0}
+  .tip{margin-left:0}
+  .tip button{min-height:40px}
   .part{gap:8px}
   .opt{border:1px solid var(--rule);border-radius:6px;padding:8px 12px;align-items:center;min-height:44px}
   .opt:has(input:checked){border-color:var(--dim);background:var(--hi)}
@@ -104,6 +110,9 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-w
   section{gap:6px}
   .q{gap:3px;padding:3px 0 3px 8px}
   .why{display:none}
+  .tip{background:none;padding:0 0 0 0;font-size:10.5px;margin-left:calc(1.6em + 8px)}
+  .tip button{display:none}
+  .badge{font-size:9px}
   .done ul{grid-template-columns:1fr 1fr;font-size:10.5px}
   h2{break-after:avoid}
   .part .pl,.note{font-size:11px}
@@ -118,7 +127,7 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-w
   <header>
     <span class="tag">LẦN 2 · KÈM KT-03 · NHÀ PHỐ 4,2 × 18 M</span>
     <h1>Phiếu khảo sát bổ sung</h1>
-    <p class="lead">Phiếu lần 1 đã nhận ngày 30/10/2026. Phiếu này hỏi những câu còn chưa rõ hoặc chọn khác nhau ở lần 1, và thông tin cần để vẽ mặt tiền, lập hồ sơ xin phép, dự toán. Câu có <span class="star">★</span> cần trả lời trước vì ảnh hưởng tới kết cấu hoặc hồ sơ xin phép.</p>
+    <p class="lead">Phiếu lần 1 đã nhận ngày 30/10/2026. Phiếu này hỏi những câu còn chưa rõ hoặc chọn khác nhau ở lần 1, và thông tin cần để vẽ mặt tiền, lập hồ sơ xin phép, dự toán. Câu có <span class="star">★</span> cần trả lời trước vì ảnh hưởng tới kết cấu hoặc hồ sơ xin phép. Mỗi câu có phần <b style="color:var(--star)">Gợi ý</b>; phương án có nhãn <span class="badge">nên chọn</span> là phương án đề xuất, bấm “Chọn theo gợi ý” để điền nhanh rồi sửa lại chỗ nào khác ý.</p>
     <div class="tools">
       <button type="button" onclick="print()">In phiếu</button>
       <button type="button" class="alt share">Chia sẻ câu trả lời</button>
@@ -181,69 +190,95 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-w
 
 <script>
 // Cú pháp: r = chọn một, c = chọn nhiều, f = dòng điền; "___" trong chữ là ô điền (càng nhiều gạch càng dài)
+// g = gợi ý; rec = phương án đề xuất, dạng 'phần.lựa chọn' (đếm từ 0)
 const S = [
   ['1. Xác nhận và pháp lý', [
-    {k:1, t:'Các nội dung đã chốt ở phiếu lần 1 (khung phía trên)', p:[
+    {k:1, t:'Các nội dung đã chốt ở phiếu lần 1 (khung phía trên)', rec:['0.0'],
+      g:'Đọc lại khung phía trên. Chỗ nào khác ý thì chọn “Có điểm cần sửa” và ghi vào ghi chú, ví dụ: “đổi tủ lạnh loại thường”.', p:[
       {r:['Đúng, giữ nguyên','Có điểm cần sửa (ghi vào ghi chú)']}]},
-    {k:1, t:'Lộ giới đường trước nhà', w:'Phiếu lần 1 ghi đường rộng 8 m. Theo QCVN 01:2021, lộ giới 7–12 m chỉ được đua ban công 0,9 m; trên 12 m mới được 1,2 m. Lộ giới là bề rộng cả mặt đường lẫn vỉa hè hai bên, ghi trong thông tin quy hoạch của phường.', p:[
+    {k:1, t:'Lộ giới đường trước nhà', w:'Phiếu lần 1 ghi đường rộng 8 m. Theo QCVN 01:2021, lộ giới 7–12 m chỉ được đua ban công 0,9 m; trên 12 m mới được 1,2 m. Lộ giới là bề rộng cả mặt đường lẫn vỉa hè hai bên, ghi trong thông tin quy hoạch của phường.',
+      g:'Cách biết nhanh: hỏi cán bộ địa chính phường, hoặc mượn giấy phép xây dựng của nhà mới xây gần đó (trong đó có ghi lộ giới). Nếu 8 m chỉ là mặt đường nhựa, cộng thêm vỉa hè hai bên thì lộ giới thường từ 12 m trở lên.', p:[
       {f:'Lộ giới ___ m · Vỉa hè trước nhà rộng ___ m'},
       {r:['Dưới 7 m','7–12 m','Trên 12 m đến 15 m','Trên 15 m','Chưa biết, sẽ hỏi phường']}]},
-    {k:1, t:'Nếu chỉ được đua 0,9 m', p:[
+    {k:1, t:'Nếu chỉ được đua 0,9 m', rec:['0.0'],
+      g:'Nên giữ ban công 0,9 m: vẫn đủ đặt chậu cây, che mưa nắng cho cửa tầng trệt và mặt tiền có khối đẹp hơn. Làm lô gia lùi vào trong thì mất diện tích phòng phía trước trên lầu.', p:[
       {r:['Đua 0,9 m, giữ ban công','Bỏ ban công đua, làm lô gia lùi vào trong','Hỏi phường xong rồi quyết']}]},
-    {t:'Hướng mặt tiền', w:'Mặt tiền hướng tây thì nên có lam che nắng và kính cách nhiệt.', p:[
+    {t:'Hướng mặt tiền', w:'Mặt tiền hướng tây thì nên có lam che nắng và kính cách nhiệt.',
+      g:'Đứng trong nhà nhìn ra đường, mở ứng dụng la bàn trên điện thoại. Hướng tây và tây nam nắng chiều gắt nhất.', p:[
       {r:['Đông','Tây','Nam','Bắc','Đông Nam','Đông Bắc','Tây Nam','Tây Bắc']}]},
-    {t:'Giấy tờ để xin phép xây dựng', p:[
+    {t:'Giấy tờ để xin phép xây dựng', rec:['2.1'],
+      g:'Chủ nhà chỉ cần sổ đỏ bản sao công chứng và căn cước. Nên nhờ nhà thầu hoặc dịch vụ nộp: họ quen thủ tục nên ít bị trả hồ sơ bổ sung. Nếu chưa cắm mốc thì nên thuê đo đạc lại trước khi đào móng để tránh lấn ranh.', p:[
       {l:'Đã có (chọn nhiều)', c:['Sổ đỏ (bản sao công chứng)','Căn cước của chủ nhà','Bản vẽ hiện trạng, trích lục thửa đất','Chưa có gì']},
       {l:'Mốc ranh đất', r:['Đã cắm mốc rõ ràng','Chưa cắm, cần đo lại']},
       {l:'Người đi nộp hồ sơ', r:['Chủ nhà tự nộp','Nhờ nhà thầu hoặc dịch vụ']}]}]],
   ['2. Người đi lại khó khăn', [
-    {k:1, t:'Người ở phòng ngủ trệt hiện đi lại thế nào', w:'Xe lăn cần cửa phòng và cửa nhà vệ sinh rộng 0,9 m, nhà vệ sinh không có bậc cửa, tam cấp có dốc. Chừa lúc xây rẻ hơn sửa sau.', p:[
+    {k:1, t:'Người ở phòng ngủ trệt hiện đi lại thế nào', w:'Xe lăn cần cửa phòng và cửa nhà vệ sinh rộng 0,9 m, nhà vệ sinh không có bậc cửa, tam cấp có dốc. Chừa lúc xây rẻ hơn sửa sau.',
+      g:'Chọn đúng tình trạng hiện tại. Nếu người đó đã lớn tuổi, nên ghi thêm “có thể phải dùng xe lăn sau này” vào ghi chú: làm cửa rộng 0,9 m lúc xây gần như không tốn thêm, sửa sau phải đục tường.', p:[
       {r:['Tự đi được, chỉ chậm','Dùng gậy','Dùng khung tập đi','Dùng xe lăn','Có thể phải dùng xe lăn sau này']}]},
-    {t:'Hỗ trợ thêm cho người đi lại khó khăn', p:[
+    {t:'Hỗ trợ thêm cho người đi lại khó khăn', rec:['0.0','0.1','0.3','0.5'],
+      g:'Nên làm ít nhất 4 thứ được đánh dấu. Cửa nhà vệ sinh mở ra ngoài để nếu người bên trong bị ngã chắn cửa thì vẫn mở vào được. Chỗ bắt tay vịn chỉ cần gia cố tường lúc xây, rất rẻ.', p:[
       {c:['Tay vịn cạnh bồn cầu và chỗ tắm','Tay vịn tam cấp','Dốc dắt thay một phần tam cấp','Gạch chống trơn nhà vệ sinh','Ghế tắm, vòi sen tay','Cửa nhà vệ sinh mở ra ngoài']}]}]],
   ['3. Bếp, giặt phơi', [
-    {k:1, t:'Máy giặt đặt ở đâu', w:'Phiếu lần 1 có hai câu chọn khác nhau (câu 22: khu phơi, câu 37: tầng trệt). Bản vẽ đang tạm để ở khu phơi.', p:[
+    {k:1, t:'Máy giặt đặt ở đâu', w:'Phiếu lần 1 có hai câu chọn khác nhau (câu 22: khu phơi, câu 37: tầng trệt). Bản vẽ đang tạm để ở khu phơi.', rec:['0.0'],
+      g:'Nên để ở khu phơi trên lầu: giặt xong phơi luôn, không phải xách đồ ướt lên cầu thang dốc. Chỉ chọn tầng trệt nếu người giặt chính là người lớn tuổi ngại lên lầu; khi đó cần thêm chỗ phơi ở tầng trệt.', p:[
       {r:['Khu phơi trên lầu (như bản vẽ)','Tầng trệt, sau bếp','Tầng trệt, trong nhà vệ sinh']}]},
-    {t:'Bếp và phòng khách', w:'Giữa bếp và phòng khách có lõi cầu thang; hai phòng thông nhau qua lối đi rộng khoảng 1 m, không mở hẳn như bếp liền phòng khách.', p:[
+    {t:'Bếp và phòng khách', w:'Giữa bếp và phòng khách có lõi cầu thang; hai phòng thông nhau qua lối đi rộng khoảng 1 m, không mở hẳn như bếp liền phòng khách.', rec:['0.0'],
+      g:'Nên chấp nhận: với nhà rộng 4,2 m, đặt thang ở giữa là cách bố trí hợp lý nhất, còn chặn bớt mùi và khói bếp sang phòng khách. Thang bậc hở nhìn thoáng hơn nhưng trẻ nhỏ dễ lọt chân.', p:[
       {r:['Chấp nhận như bản vẽ','Muốn thoáng hơn: thang bậc hở, lan can kính','Cần xem lại mặt bằng']}]}]],
   ['4. Mái tôn, bồn nước, giếng trời', [
-    {k:1, t:'Chỗ đặt bồn nước 1.000 L', w:'Mái tôn không đỡ được bồn đầy nước (hơn 1 tấn) và máy năng lượng mặt trời. Đề xuất đổ một ô sàn bê tông nhỏ phía trên nhà tắm lầu để đặt bồn.', p:[
+    {k:1, t:'Chỗ đặt bồn nước 1.000 L', w:'Mái tôn không đỡ được bồn đầy nước (hơn 1 tấn) và máy năng lượng mặt trời. Đề xuất đổ một ô sàn bê tông nhỏ phía trên nhà tắm lầu để đặt bồn.', rec:['0.0'],
+      g:'Nên đổ ô sàn bê tông: chắc chắn, dùng lâu dài, dễ chống thấm. Khung thép rẻ hơn một chút nhưng sau 5–10 năm bị gỉ, phải sơn lại hoặc thay.', p:[
       {r:['Đồng ý đổ ô sàn bê tông','Đặt trên khung thép riêng','Bàn với nhà thầu rồi quyết']}]},
-    {t:'Nước máy khu vực', p:[
+    {t:'Nước máy khu vực',
+      g:'Hỏi hàng xóm: bồn trên mái nhà họ có tự đầy mà không cần bơm không, và khu này có hay cúp nước không. Nếu hay cúp thì nên làm bể ngầm 1–2 m³ dưới nền nhà để trữ nước.', p:[
       {l:'Áp lực nước', r:['Tự lên được bồn trên mái','Yếu, cần bơm đẩy lên bồn','Chưa biết']},
       {l:'Cúp nước', r:['Ít khi','Hay cúp, cần thêm bể chứa ngầm']}]},
-    {t:'Che mưa giếng trời', w:'Giếng trời thông thoáng cần mái che nâng cao để chặn mưa hắt mà vẫn thoát khí nóng.', p:[
+    {t:'Che mưa giếng trời', w:'Giếng trời thông thoáng cần mái che nâng cao để chặn mưa hắt mà vẫn thoát khí nóng.', rec:['0.0'],
+      g:'Nên làm mái tôn nâng cao, hở hai bên như mô hình 3D: khí nóng thoát liên tục nên nhà mát hơn. Tấm lấy sáng kín thì sáng nhưng giữ nhiệt, nhà dễ hầm. Mái kính có cửa lật đắt nhất và phải bảo trì bản lề.', p:[
       {r:['Mái tôn nâng cao, hở hai bên (như mô hình 3D)','Tấm lấy sáng cố định, kín','Mái kính có cửa lật mở được']}]},
-    {t:'Chống nóng mái tôn', p:[
+    {t:'Chống nóng mái tôn', rec:['0.0'],
+      g:'Nên dùng tôn 3 lớp có PU: mát hơn rõ rệt và giảm tiếng ồn khi mưa, đáng tiền vì nhà mái tôn nóng nhất ở tầng lầu, đúng chỗ các phòng ngủ. Chọn màu sáng (trắng, xám nhạt) để hấp thụ ít nhiệt hơn màu đậm.', p:[
       {r:['Tôn cách nhiệt 3 lớp (có lớp PU)','Tôn thường + bông cách nhiệt trên trần','Tôn lạnh thường']},
       {f:'Màu tôn ________'}]}]],
   ['5. Mặt tiền (để vẽ mặt đứng)', [
-    {k:1, t:'Màu chủ đạo mặt tiền', p:[
+    {k:1, t:'Màu chủ đạo mặt tiền', rec:['0.1','1.0'],
+      g:'Phong cách tối giản hợp nhất với trắng và xám, hoặc trắng điểm vân gỗ cho ấm (đề xuất). Đường có nhiều bụi thì nên dùng sơn chống bám bẩn hoặc trắng ngà thay trắng tinh. Gửi vài ảnh nhà mẫu là cách nhanh nhất để thống nhất.', p:[
       {r:['Trắng và xám','Trắng và vân gỗ','Kem và nâu','Khác: ________']},
       {l:'Ảnh nhà mẫu đã thích', r:['Có, sẽ gửi qua Zalo','Chưa có']}]},
-    {t:'Lan can ban công', p:[{r:['Kính cường lực','Sắt sơn tĩnh điện','Tường xây thấp + kính']}]},
-    {t:'Cửa chính tầng trệt', p:[
+    {t:'Lan can ban công', rec:['0.0'],
+      g:'Nên dùng kính cường lực cho đồng bộ với lan can thang kính và hợp phong cách tối giản. Nếu chọn sắt: không làm thanh ngang để trẻ nhỏ không trèo được; lan can cao ít nhất 1,1 m.', p:[{r:['Kính cường lực','Sắt sơn tĩnh điện','Tường xây thấp + kính']}]},
+    {t:'Cửa chính tầng trệt', rec:['0.0','1.0'],
+      g:'Nên dùng cửa nhôm kính 4 cánh mở quay: kín gió, chắc, rẻ hơn cửa xếp trượt; hai cánh giữa mở đủ rộng dắt xe máy. Không có cửa cuốn thì nên có khung sắt bảo vệ phía trong, vì cửa nhôm kính dễ bị phá.', p:[
       {r:['Nhôm kính 4 cánh mở quay','Nhôm kính xếp trượt','Cửa thép vân gỗ']},
       {l:'Chống trộm (không có cửa cuốn)', r:['Khung sắt bảo vệ phía trong','Khoá điện tử, camera là đủ','Không cần thêm']}]},
-    {t:'Điểm nhấn mặt tiền', p:[{c:['Lam che nắng (nhôm hoặc gỗ nhựa)','Một mảng ốp đá','Bồn cây ban công','Đèn hắt mặt tiền','Bảng số nhà']}]}]],
+    {t:'Điểm nhấn mặt tiền', rec:['0.2','0.4'],
+      g:'Chỉ nên chọn 2–3 thứ để giữ tối giản. Đề xuất bồn cây ban công và bảng số nhà. Mặt tiền hướng tây hoặc tây nam thì nên thêm lam che nắng.', p:[{c:['Lam che nắng (nhôm hoặc gỗ nhựa)','Một mảng ốp đá','Bồn cây ban công','Đèn hắt mặt tiền','Bảng số nhà']}]}]],
   ['6. Nền đất và hiện trạng', [
-    {k:1, t:'Nền đất khu vực', w:'Quyết định làm móng băng hay ép cọc. Ép cọc tốn thêm đáng kể nên cần biết sớm để dự toán.', p:[
+    {k:1, t:'Nền đất khu vực', w:'Quyết định làm móng băng hay ép cọc. Ép cọc tốn thêm đáng kể nên cần biết sớm để dự toán.',
+      g:'Hỏi các nhà xây gần đây trong khoảng 5 năm: họ làm móng gì, có ép cọc không, nhà có bị lún nứt không. Nếu không ai biết, nên khoan khảo sát địa chất một hố trước khi thiết kế móng; chi phí nhỏ so với tiền móng.', p:[
       {r:['Đất chắc, nhà xung quanh làm móng băng','Đất yếu, nhà xung quanh ép cọc','Đất ruộng, ao mới san lấp','Không biết']},
       {f:'Nhà gần nhất ___ tầng, làm móng ________'}]},
-    {t:'Hiện trạng trên đất', p:[{r:['Đất trống','Có nhà cũ cần tháo dỡ','Còn móng cũ hoặc cây lớn']}]},
-    {t:'Điện, nước cho thi công', p:[{r:['Đã có đồng hồ điện và nước','Cần xin mới','Mượn nhà bên cạnh']}]}]],
+    {t:'Hiện trạng trên đất',
+      g:'Có nhà cũ hoặc móng cũ thì báo nhà thầu để tính chi phí tháo dỡ vào báo giá và cộng thêm thời gian vào tiến độ.', p:[{r:['Đất trống','Có nhà cũ cần tháo dỡ','Còn móng cũ hoặc cây lớn']}]},
+    {t:'Điện, nước cho thi công',
+      g:'Nếu chưa có thì nên xin sớm vì có thể mất 1–2 tuần. Xin luôn đồng hồ điện loại dùng lâu dài cho nhà để khỏi làm hai lần.', p:[{r:['Đã có đồng hồ điện và nước','Cần xin mới','Mượn nhà bên cạnh']}]}]],
   ['7. Ngân sách, tiến độ, điện lực', [
-    {k:1, t:'Xác nhận ngân sách', w:'Phiếu lần 1 ghi "1100000000 triệu đồng". Phần xây trọn gói vật tư phổ thông cho khoảng 150 m² sàn thường đã chiếm gần hết 1,1 tỷ.', p:[
+    {k:1, t:'Xác nhận ngân sách', w:'Phiếu lần 1 ghi "1100000000 triệu đồng". Phần xây trọn gói vật tư phổ thông cho khoảng 150 m² sàn thường đã chiếm gần hết 1,1 tỷ.',
+      g:'Ghi đúng con số thật để báo giá sát. Nên để riêng khoảng 10% làm dự phòng phát sinh, không tính vào số đưa nhà thầu.', p:[
       {r:['1,1 tỷ đồng, đã gồm nội thất','1,1 tỷ đồng cho phần xây, nội thất tính riêng','Khác: ________']}]},
-    {t:'Nếu báo giá vượt ngân sách thì ưu tiên', p:[
+    {t:'Nếu báo giá vượt ngân sách thì ưu tiên', rec:['0.0','0.3'],
+      g:'Không nên cắt kết cấu, chống thấm, điện nước âm tường vì sửa sau rất tốn. Những thứ dễ làm sau: nội thất rời, camera, đèn trang trí.', p:[
       {c:['Làm nội thất sau','Hạ mức vật tư một số hạng mục','Trần thạch cao một phần','Camera, tiện ích làm sau','Tăng ngân sách']}]},
-    {k:1, t:'Thời điểm khởi công', w:'Khởi công sau khoảng 3 tháng thì rơi vào sát Tết. Hồ sơ xin phép thường mất 15–30 ngày.', p:[
+    {k:1, t:'Thời điểm khởi công', w:'Khởi công sau khoảng 3 tháng thì rơi vào sát Tết. Hồ sơ xin phép thường mất 15–30 ngày.', rec:['0.1'],
+      g:'Nên khởi công sau Tết: trước Tết thợ nghỉ sớm, vật tư lên giá, công trình bỏ dở 2–3 tuần đúng lúc đang làm móng. Sau Tết (ở miền Nam là mùa khô) thuận lợi đổ bê tông. Có thể làm lễ động thổ trước Tết theo ngày đã xem, sau Tết mới thi công.', p:[
       {r:['Trước Tết Nguyên đán','Sau Tết Nguyên đán']},
       {f:'Ngày đã xem: ________'}]},
-    {k:1, t:'Điện lực', w:'Lúc cao điểm nhà dùng khoảng 9 kW (khoảng 45 A).', p:[
+    {k:1, t:'Điện lực', w:'Lúc cao điểm nhà dùng khoảng 9 kW (khoảng 45 A).',
+      g:'Nên xin công tơ 1 pha loại 40 A trở lên (trên công tơ thường ghi 10(40) A). Hỏi luôn khi đi xin điện thi công.', p:[
       {f:'Công tơ 1 pha được cấp tối đa ___ A'},
       {r:['Đã hỏi điện lực','Chưa hỏi, sẽ hỏi']}]},
-    {t:'Nhà thầu', p:[
+    {t:'Nhà thầu', rec:['1.0'],
+      g:'Nên gửi bản vẽ cho nhà thầu báo giá ngay để biết sớm có vượt ngân sách không, và lấy thêm 1–2 báo giá khác để so. Báo giá phải ghi rõ hãng và loại vật tư, không chỉ ghi đơn giá theo m².', p:[
       {f:'Tên ____________ · Điện thoại ________'},
       {r:['Gửi bản vẽ cho nhà thầu báo giá ngay','Chờ có giấy phép rồi gửi']}]}]]
 ];
@@ -260,10 +295,12 @@ document.getElementById('form').innerHTML = S.map(([title, qs, sid]) => `<sectio
       if (p.f) return `<div class="part">${blanks(p.f, base)}</div>`;
       const type = p.r ? 'radio' : 'checkbox';
       return `<div class="part">${p.l ? `<span class="pl">${esc(p.l)}</span>` : ''}${
-        (p.r || p.c).map((o, oi) => `<label class="opt"><input type="${type}" name="${type === 'radio' ? base : base + '_' + oi}" value="${oi}">${blanks(o, base + '_' + oi)}</label>`).join('')}</div>`;
+        (p.r || p.c).map((o, oi) => { const rec = (q.rec || []).includes(pi + '.' + oi);
+          return `<label class="opt"${rec ? ' data-rec' : ''}><input type="${type}" name="${type === 'radio' ? base : base + '_' + oi}" value="${oi}">${blanks(o, base + '_' + oi)}${rec ? '<span class="badge">nên chọn</span>' : ''}</label>`; }).join('')}</div>`;
     }).join('');
     return `<div class="card q${q.k ? ' key' : ''}"><div class="qt"><span class="n">${n}</span><span>${q.k ? '<span class="star">★</span> ' : ''}${esc(q.t)}</span></div>${
-      q.w ? `<div class="why">${esc(q.w)}</div>` : ''}${parts}<label class="note"><span>Ghi chú</span><input type="text" name="q${n}_note"></label></div>`;
+      q.w ? `<div class="why">${esc(q.w)}</div>` : ''}${parts}${
+      q.g ? `<div class="tip"><span><b>Gợi ý.</b> ${esc(q.g)}</span>${q.rec ? '<button type="button" class="pick">Chọn theo gợi ý</button>' : ''}</div>` : ''}<label class="note"><span>Ghi chú</span><input type="text" name="q${n}_note"></label></div>`;
   }).join('')}</section>`).join('');
 
 // tự lưu câu trả lời trong trình duyệt (không có cũng chạy bình thường)
@@ -287,6 +324,10 @@ let downChecked = null;
 document.addEventListener('pointerdown', e => { const r = e.target.closest('label.opt')?.querySelector('input[type=radio]'); downChecked = r && r.checked ? r : null; });
 document.addEventListener('click', e => { const r = e.target.closest('label.opt')?.querySelector('input[type=radio]');
   if (r && r === downChecked && e.target === r) { r.checked = false; downChecked = null; save(); } });
+// điền nhanh theo gợi ý
+document.addEventListener('click', e => { if (!e.target.classList.contains('pick')) return;
+  for (const lab of e.target.closest('.q').querySelectorAll('label[data-rec] > input:not([type=text])')) lab.checked = true;
+  save(); progress(); e.target.textContent = 'Đã chọn theo gợi ý'; });
 document.addEventListener('input', save);
 document.addEventListener('change', save);
 
