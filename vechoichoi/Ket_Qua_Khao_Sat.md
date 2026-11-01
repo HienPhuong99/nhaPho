@@ -79,6 +79,8 @@ Các thay đổi nằm ở trang `cot-dien.html` và file `Bo_Tri_Cot_Dien.pdf`.
 
 ## 3. Còn cần hỏi lại
 
+Các câu dưới đây đã đưa vào [phiếu khảo sát lần 2](https://hienphuong99.github.io/nhaPho/khaosat.html) (file `Phieu_Khao_Sat_Lan2.pdf`), cùng các câu về mặt tiền, nền đất, chống nóng mái tôn và giấy tờ xin phép.
+
 1. **Lộ giới.** Đường rộng 8 m là chỉ phần mặt đường hay tính cả vỉa hè? Nếu lộ giới từ 7 đến 12 m thì theo QCVN 01:2021 ban công chỉ được đua 0,9 m; muốn đua 1,2 m thì lộ giới phải trên 12 m.
 2. **Máy giặt.** Câu 22 chọn khu phơi, câu 37 chọn tầng trệt. Bản vẽ đang tạm để ở khu phơi.
 3. **Ô sàn bê tông đặt bồn** trên nhà tắm lầu: chủ đầu tư có đồng ý không?
