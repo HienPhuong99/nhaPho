@@ -96,3 +96,38 @@ Các câu dưới đây đã đưa vào [phiếu khảo sát lần 2](https://hi
 - **Ngân sách.** Phần xây trọn gói vật tư phổ thông cho khoảng 150 m² sàn, cộng móng và mái tôn, thường đã chiếm gần hết 1,1 tỷ đồng. Như vậy ngân sách cho nội thất còn khá ít. Nên lấy 2–3 báo giá trọn gói ghi rõ chủng loại vật tư trước khi chốt.
 - **Tiến độ.** Khởi công sau khoảng 3 tháng thì rơi vào sát Tết Nguyên đán 2027. Hồ sơ xin phép thường mất 15–30 ngày, nên cần làm hồ sơ ngay.
 - **Mặt cắt A–A và mô hình 3D** vẫn vẽ mái bằng. Hai phần này sẽ được vẽ lại khi chốt mái tôn.
+
+## 5. Cập nhật 01/11/2026: phiếu lần 1 điền lại lúc 18h33
+
+File gốc: `Phiếu Khảo Sát Chủ Đầu Tư 18h33ph 01-11-2026.pdf`. Câu bỏ trống thì giữ câu trả lời ngày 30/10.
+
+**Thay đổi so với 30/10**
+
+| # | Câu | 30/10 | 01/11 | Ảnh hưởng |
+|---|---|---|---|---|
+| 9 | Xe máy | 3 chiếc | 2 chiếc | Chỗ để xe trệt dư khoảng 0,8 m, có thể làm dốc dắt hoặc nới phòng khách |
+| 16 | Mặt tiền | Tối giản | Hiện đại, chưa có ảnh mẫu | Cần ảnh mẫu trước khi vẽ mặt đứng |
+| 23 | Tiện ích | Wifi phủ toàn nhà | Không chọn ô nào | Hỏi lại; tạm giữ wifi vì đi dây lúc xây rẻ |
+| 24 | Điện mặt trời áp mái | Chưa trả lời | Không | Không chừa ống chờ |
+| 25 | Ngân sách | 1,1 tỷ, đã gồm nội thất | 1,1 tỷ, **chưa gồm nội thất**; dùng lại nội thất nhà cũ | Ngân sách xây dễ thở hơn; cần kích thước đồ cũ |
+| 27 | Vật tư | Phổ thông | **Khá** | Giá xây tăng; xem đề xuất bên dưới |
+| 28 | Tiến độ | Khởi công khoảng 3 tháng nữa | Khởi công khoảng 3 tháng nữa, **xong trước 02/2027**, nhờ xem ngày | Không khả thi, xem bên dưới |
+| 30 | Giám sát | Chủ nhà tự giám sát | Nhờ người quen | Cần danh sách mốc nghiệm thu |
+| 31 | TV phòng khách | Đặt trên kệ | **Treo tường** | Đổi ổ TV lên cao 1,2 m, gia cố tường treo |
+| 35 | Tủ lạnh | Side-by-side 0,9 m | **Loại thường ≤ 0,7 m**, tủ có sẵn | Dư 0,2 m cho tủ bếp |
+| 37 | Máy giặt | Tầng trệt | **Khu phơi** | Hết mâu thuẫn với câu 22: chốt khu phơi |
+| 39 | Camera | 3 mắt, đầu ghi gầm thang | 3 mắt: trong nhà 2, ngoài sân 1 (chữ bị cắt); đầu ghi "gợi ý đi đường đ…" (chữ bị cắt) | Đề xuất đường dây bên dưới |
+| 42 | Điện lực | Chưa hỏi | Chỉ 1 pha, chưa ghi số A | Vẫn cần số A của công tơ |
+| 13 | Ghi chú giếng trời | | "gợi ý thêm thông gió" | Đề xuất bên dưới |
+
+**Đề xuất**
+
+1. **Tiến độ.** Khởi công sau 3 tháng (khoảng đầu tháng 2/2027) mà xong trước 02/2027 là không thể. Mùng 1 Tết Đinh Mùi là thứ bảy 6/2/2027. Nhà 2 tầng mái tôn thường mất 4–5 tháng thi công, cộng thêm thời gian xin phép. Phương án đề xuất: nộp hồ sơ xin phép trong tháng 11; động thổ theo ngày đã xem trước Tết; thi công liên tục sau rằm tháng Giêng; dự kiến xong khoảng tháng 6–7/2027. Cần hỏi lại: "02/2027" là hạn khởi công hay hạn dọn vào ở.
+2. **Xem ngày.** Cần năm sinh âm lịch của người đứng tên làm nhà. Lưu ý mốc 6/2/2027: động thổ trước ngày này tính theo năm Bính Ngọ, sau ngày này tính theo năm Đinh Mùi. Tuổi Hợi, Mão, Mùi phạm Tam Tai cả hai năm. Kim Lâu, Hoang Ốc tính theo tuổi mụ nên kết quả hai năm khác nhau.
+3. **Vật tư mức Khá với 1,1 tỷ.** Dùng mức Khá cho phần nhìn thấy và dùng hằng ngày: gạch lát, thiết bị vệ sinh, cửa nhôm kính, sơn ngoài. Giữ mức phổ thông cho phần khuất: gạch xây, ống nước âm, tủ điện. Lấy báo giá theo cách chia này.
+4. **Nội thất cũ.** Đo và gửi kích thước: giường (cả 3 phòng), tủ quần áo, sofa, kệ TV, bàn ăn, tủ lạnh. Bản vẽ đang tính giường 1,8 m và tủ lạnh 0,7 m.
+5. **TV treo tường.** Ổ đôi và ổ mạng ở cao 1,2 m sau TV; ống luồn âm tường từ đó xuống ổ ở cao 0,4 m (đầu thu, loa). Chôn gỗ hoặc gia cố tường chỗ bắt giá treo.
+6. **Thông gió.** Giếng trời mái nâng hở hai bên (khí nóng thoát lên theo lõi thang). Lam gió hoặc ô thoáng phía trên cửa sổ phòng ngủ trông ra lõi thang. Cửa sau khu phơi và cửa trước tạo luồng gió xuyên nhà. Quạt hút âm trần cho cả 2 nhà vệ sinh. Không trông vào cửa sổ ở tường hông vì sau này nhà bên xây sát.
+7. **Camera.** Đầu ghi và switch PoE đặt ở gầm thang cạnh modem: nằm giữa nhà nên dây ngắn, gần ổ điện, kín đáo. Dây mạng Cat6 luồn ống âm trần: camera ngoài sân trước (dưới ban công), camera phòng khách nhìn cửa chính, camera hành lang sau nhìn bếp và cửa sau.
+8. **Giám sát nhờ người quen.** Nghiệm thu trước khi lấp hoặc đổ: hố móng và thép móng; thép cột, dầm, sàn trước khi đổ bê tông; ống điện nước âm trước khi trát; chống thấm sàn nhà vệ sinh và ô sàn đặt bồn (ngâm nước 24–48 giờ).
+9. **Vẫn cần hỏi:** lộ giới; số A của công tơ; ô sàn bê tông đặt bồn; người đi lại khó khăn dùng gậy hay xe lăn.
