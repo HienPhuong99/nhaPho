@@ -1,4 +1,4 @@
-<!doctype html><html lang=vi><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'></head><body><nav style='max-width:1040px;margin:0 auto;padding:14px 16px 0;display:flex;gap:20px;font:600 16px system-ui,sans-serif'><a href='3d.html'>Xem mô hình 3D</a><a href='di-bo.html'>Đi bộ trong nhà</a><a href='cot-dien.html'>Cột và điện</a><a href='khaosat.html'>Phiếu khảo sát</a><a href='vechoichoi/Mat_Bang_KT-03.pdf'>Tải PDF</a></nav><title>Mặt Bằng Nhà 4,2×18</title>
+<!doctype html><html lang=vi><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'></head><body><nav style='max-width:1040px;margin:0 auto;padding:14px 16px 0;display:flex;gap:20px;font:600 16px system-ui,sans-serif'><a href='3d.html'>Xem mô hình 3D</a><a href='di-bo.html'>Đi bộ trong nhà</a><a href='mat-dung.html'>Mặt đứng, màu</a><a href='cot-dien.html'>Cột và điện</a><a href='khaosat.html'>Phiếu khảo sát</a><a href='vechoichoi/Mat_Bang_KT-03.pdf'>Tải PDF</a></nav><title>Mặt Bằng Nhà 4,2×18</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,7 +94,7 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
     <span><svg viewBox="0 0 40 20"><rect class="wall" x="0" y="16" width="8" height="3"/><rect class="wall" x="32" y="16" width="8" height="3"/><line class="leaf" x1="9" y1="17" x2="9" y2="1"/><path class="arc" d="M9,1 A16 16 0 0 1 25,17"/></svg>Cửa đi (cung mở)</span>
     <span><svg viewBox="0 0 40 20"><rect class="wall" x="0" y="6" width="6" height="8"/><rect class="wall" x="34" y="6" width="6" height="8"/><line class="win" x1="6" y1="6" x2="34" y2="6"/><line class="win" x1="6" y1="10" x2="34" y2="10"/><line class="win" x1="6" y1="14" x2="34" y2="14"/></svg>Cửa sổ (3 nét)</span>
     <span><svg viewBox="0 0 40 20"><rect class="corr" x="1" y="2" width="38" height="16"/></svg>Hành lang / lối đi 1,0 m</span>
-    <span><svg viewBox="0 0 40 20"><defs><pattern id="hx-lg" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line class="hatch" x1="0" y1="0" x2="0" y2="6"/></pattern></defs><rect class="dry-bg" x="1" y="2" width="38" height="16"/><rect fill="url(#hx-lg)" x="1" y="2" width="38" height="16"/></svg>Khu phơi (lộ thiên)</span>
+    <span><svg viewBox="0 0 40 20"><defs><pattern id="hx-lg" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line class="hatch" x1="0" y1="0" x2="0" y2="6"/></pattern></defs><rect class="dry-bg" x="1" y="2" width="38" height="16"/><rect fill="url(#hx-lg)" x="1" y="2" width="38" height="16"/></svg>Khu phơi (mái tấm lấy sáng)</span>
     <span><svg viewBox="0 0 40 20"><rect class="balc" x="1" y="2" width="38" height="16"/><line class="rail" x1="1" y1="15" x2="39" y2="15"/><line class="rail" x1="1" y1="18" x2="39" y2="18"/></svg>Ban công / lan can</span>
     <span><svg viewBox="0 0 40 20"><defs><marker id="ar-lg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="up-head" d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="dot" cx="4" cy="10" r="2.5"/><line class="up" x1="4" y1="10" x2="34" y2="10" marker-end="url(#ar-lg)"/></svg>Chiều lên thang</span>
     <span><svg viewBox="0 0 40 20"><line class="cut" x1="8" y1="2" x2="8" y2="18" style="stroke-width:4"/><line class="arrow" x1="8" y1="10" x2="30" y2="10" style="stroke-width:2" marker-end="url(#am-lg)"/><defs><marker id="am-lg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="ink-head" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg>Vị trí mặt cắt A–A</span>
@@ -114,7 +114,7 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
   </section>
 
   <section class="floor" id="lau">
-    <h2>Tầng lầu <small>(ban công 0,6) + 2,6 + 4,0 + 2,8 + 6,0 + 3,2; phòng thờ nhô 0,6 m ra ngoài ranh</small></h2>
+    <h2>Tầng lầu <small>(ban công 1,2) + 2,0 + 4,0 + 2,8 + 6,0 + 3,2 = 18,0 m</small></h2>
     <div class="grid">
       <div class="plan" id="plan-u"></div>
       <div class="side">
@@ -128,16 +128,24 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
   <section class="floor" id="matcat">
     <h2>Mặt cắt A–A <small>cắt dọc nhà qua hành lang, nhìn về phía cầu thang; mặt tiền bên phải</small></h2>
     <div class="plan sec" id="sec"></div>
-    <p class="foot">Tô đen: phần bị cắt (tường, sàn, mái). Nét mảnh: thấy phía sau mặt cắt. Giả định: sàn bê tông dày 12 cm, cửa đi cao 2,2 m, lan can ban công 1,0 m, lan can ô thang 0,9 m. Mái tôn dốc từ mặt tiền ra sau (cao hơn đỉnh tường 0,8 m ở mặt tiền, 0,25 m ở x = 14,8), mái che giếng trời nâng thêm 0,55 m; ô sàn bê tông trên nhà tắm lầu đặt bồn nước 1.000 L. <span class="hint">Trên điện thoại, vuốt ngang để xem hết.</span></p>
+    <p class="foot">Tô đen: phần bị cắt (tường, sàn, mái). Nét mảnh: thấy phía sau mặt cắt. Giả định: sàn bê tông dày 12 cm, cửa đi cao 2,2 m, lan can ban công kính 1,1 m, lan can ô thang 0,9 m. Mái tôn cách nhiệt 3 lớp dốc từ mặt tiền ra sau (cao hơn đỉnh tường 0,8 m ở mặt tiền, 0,25 m ở x = 14,8); giếng trời trên thang lợp tấm lấy sáng kín; khu phơi lợp tấm lấy sáng cao hơn đỉnh tường 0,3 m, hở quanh mép; ô sàn bê tông trên nhà tắm lầu đặt bồn nước 1.000 L. <span class="hint">Trên điện thoại, vuốt ngang để xem hết.</span></p>
   </section>
 
   <section class="notes" id="ghichu">
-    <h3>Hiệu chỉnh lần 3 (chốt 01/11/2026)</h3>
+    <h3>Hiệu chỉnh lần 4 (theo phiếu khảo sát lần 2, 01/11/2026 19h38)</h3>
     <ol>
-      <li><b>Phòng thờ lấn ra ban công 0,6 m:</b> tường mặt tiền lầu dời ra x = −0,6, phòng thờ 2,6 × 4,2 m (10,92 m²), ban công còn 0,6 × 4,2 m. Mặt tiền lầu: cửa đi 1 cánh 0,8 m mở vào trong (phía hành lang) và cửa sổ 2 cánh 1,4 m. Tường mặt tiền lầu đặt trên sàn đua nên dầm công-xôn ban công phải tính thêm tải tường.</li>
-      <li><b>Lưu ý xin phép:</b> phần 0,6 m này nằm ngoài ranh đất, trên vỉa hè. Theo QCVN 01:2021/BXD, phần nhô ra khỏi chỉ giới đường đỏ chỉ được làm ban công, không được che chắn thành phòng. Cần xác nhận ranh đất theo sổ đỏ trước khi lập hồ sơ xin phép (xem phiếu khảo sát lần 2).</li>
-      <li><b>Khu phơi và nhà tắm lầu chia dọc:</b> khu phơi 3,2 × 2,1 m phía hành lang, có mái che lối đi 1 m từ cửa hành lang tới cửa nhà tắm, phần còn lại lộ thiên; máy giặt ở góc sau. Nhà tắm 3,2 × 2,1 m có cửa sổ ra sau nhà, ô sàn bê tông phía trên đặt bồn nước. PN3 còn 1 cửa sổ 0,85 m ra khu phơi và cửa sổ trông vào lõi thang.</li>
-      <li><b>Lộ giới 15 m</b> (vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m): ban công được đua tối đa 1,2 m. Tổng độ đua (phòng thờ 0,6 + ban công 0,6) vẫn là 1,2 m.</li>
+      <li><b>Xây đúng giấy phép, bỏ phần phòng thờ lấn ra:</b> sổ đỏ cho thấy ranh đất trùng mép tường mặt tiền, chủ đầu tư chọn xin phép ban công 1,2 m và xây đúng giấy phép. Tường mặt tiền lầu về lại x = 0; phòng thờ 2,0 × 4,2 m (8,40 m²); ban công 1,2 × 4,2 m để hở, lan can kính cường lực 1,1 m. Mặt tiền lầu giữ cửa đi 1 cánh 0,8 m nhôm kính trong mở vào (phía hành lang) và cửa sổ 2 cánh 1,4 m mở hất ra ngoài, bệ 0,9 m, khung sắt bảo vệ phía trong.</li>
+      <li><b>Cửa chính 4 cánh × 0,6 m mở ra ngoài</b> (tổng 2,4 m, y = 0,9–3,3): cánh quét gọn trong tam cấp 0,6 m, không lấn ra vỉa hè. Khung sắt bảo vệ đặt phía trong (nét chấm sau cửa).</li>
+      <li><b>Khu phơi lợp tấm lấy sáng toàn bộ</b> thay cho mái che lối đi 1 m. Mái đặt cao hơn đỉnh tường khoảng 0,3 m, hở quanh mép để hơi nóng của 3 dàn nóng thoát ra. Máy giặt vẫn ở góc sau, không cần ô văng riêng.</li>
+      <li><b>Giếng trời trên thang lợp tấm lấy sáng kín</b> thay cho mái tôn nâng hở hai bên. Kín thì không dột, không bụi nhưng hơi nóng dồn lên ô thang và hành lang lầu. Nên gắn thêm 1 quạt hút trên mái tôn cạnh giếng trời (loại chụp chống mưa) để hút hơi nóng ra; đi sẵn dây điện lên đó lúc xây.</li>
+      <li><b>PN1 thêm ô kính mờ cao từ 1,8 m</b> ở vách hành lang và phía trên cửa đi (nét đứt xanh), lấy sáng gián tiếp từ hành lang.</li>
+      <li><b>Giường cũ mang qua:</b> PN1 1,8 × 2,2 m; PN2 1,4 × 2,0 m; PN3 1,6 × 2,2 m. Cả 3 phòng đều kê vừa, còn lối đi trên 0,6 m.</li>
+      <li><b>Giữ nguyên theo phiếu:</b> cửa sổ PN3 0,85 m; nhà tắm lầu tắm đứng vách kính, không bồn; ô sàn bê tông đặt bồn nước; dàn nóng như bản vẽ; mái tôn 3 lớp có PU.</li>
+    </ol>
+    <h3>Hiệu chỉnh lần 3 (01/11/2026, đã thay bằng lần 4 ở mục 1)</h3>
+    <ol>
+      <li><b>Khu phơi và nhà tắm lầu chia dọc:</b> khu phơi 3,2 × 2,1 m phía hành lang, nhà tắm 3,2 × 2,1 m có cửa sổ ra sau nhà, ô sàn bê tông phía trên đặt bồn nước. PN3 còn 1 cửa sổ 0,85 m ra khu phơi và cửa sổ trông vào lõi thang.</li>
+      <li><b>Lộ giới 15 m</b> (vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m): ban công được đua tối đa 1,2 m.</li>
     </ol>
     <h3>Hiệu chỉnh lần 2</h3>
     <ol>
@@ -159,7 +167,7 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
       <li><b>Độ dốc thang.</b> Bậc cao 17,2 cm, mặt bậc 21 cm cho 2h + b ≈ 55 cm, dốc khoảng 39°, dốc hơn mức thoải mái 60–64 cm. Lòng thang 3,1 m chỉ cho mặt bậc tối đa 22 cm (10 × 0,22 + 0,9 = 3,10 m).</li>
     </ol>
   </section>
-  <p class="foot">Lộ giới 15 m nên ban công được đua 1,2 m (điều kiện theo QCVN 01:2021 xem trang <a href="cot-dien.html#bancong">Cột và điện</a>); phòng thờ lấn 0,6 m trong phần đua này cần xác nhận ranh đất trước khi xin phép. Tường ngoài 100 mm cần kiểm tra lại theo quy chuẩn. Hồ sơ xin phép phải do kiến trúc sư có chứng chỉ lập.</p>
+  <p class="foot">Lộ giới 15 m nên ban công được đua 1,2 m (điều kiện theo QCVN 01:2021 xem trang <a href="cot-dien.html#bancong">Cột và điện</a>). Tường ngoài 100 mm cần kiểm tra lại theo quy chuẩn. Từ 01/7/2026, Luật Xây dựng 2025 miễn giấy phép cho nhà ở riêng lẻ dưới 7 tầng, dưới 500 m² sàn, trừ khu vực có quy chế quản lý kiến trúc; cần hỏi UBND phường/xã xem lô đất có thuộc diện miễn không. Bản vẽ xin phép hoặc bản vẽ thi công nên do đơn vị thiết kế có chứng chỉ lập.</p>
 </main>
 
 <script src="mat-bang.js"></script>

@@ -53,3 +53,5 @@ svg text{font-family:var(--f-label)}
 .lot{stroke:var(--bad);stroke-width:2.2;stroke-dasharray:16 5 3 5}
 .roofc{fill:none;stroke:var(--dim);stroke-width:2.5;stroke-dasharray:10 6}
 .roof{fill:var(--ink)}
+.hiwin{stroke:var(--dim);stroke-width:2.2;stroke-dasharray:8 5}
+.grille{stroke:var(--ink2);stroke-width:2;stroke-dasharray:2 4}

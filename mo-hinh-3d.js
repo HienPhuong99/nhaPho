@@ -16,6 +16,8 @@ function nha3D() {
     wood: M(0x8d6240), bed: M(0xfbfbfb), pillow: M(0xd7e1ea), counter: M(0xaebfcd), altar: M(0xd6ae4f),
     road: M(0x55595e), walk: M(0xb9b6b0), ground: M(0x9db097), rail: M(0x34404a),
     glass: M(0x9fd3ff, { transparent: true, opacity: .35, depthWrite: false, roughness: .1 }), ceil: M(0xfafafa),
+    frost: M(0xe8f1f6, { transparent: true, opacity: .8, roughness: .4 }),
+    poly: M(0xdcefff, { transparent: true, opacity: .45, depthWrite: false, roughness: .2, side: THREE.DoubleSide }),
   };
   const base = new THREE.Group(), G = new THREE.Group(), U = new THREE.Group(), RF = new THREE.Group(), CEIL = new THREE.Group();
   scene.add(base, G, U, RF, CEIL);
@@ -26,7 +28,7 @@ function nha3D() {
     if (b - a < 1e-4 || d - c < 1e-4 || z2 - z1 < 1e-4) return null;
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(d - c, z2 - z1, b - a), m);
     mesh.position.set(WX((c + d) / 2), (z1 + z2) / 2, (a + b) / 2);
-    mesh.castShadow = mesh.receiveShadow = m !== mat.glass;
+    mesh.castShadow = mesh.receiveShadow = m !== mat.glass && m !== mat.poly;
     g.add(mesh);
     boxes.push({ X1: a, X2: b, Y1: c, Y2: d, z1, z2, g });
     return mesh;
@@ -108,13 +110,16 @@ function nha3D() {
     [8.8, 12.5, 0, 4.2, mat.tile], [12.5, 16.5, 1, 4.2, mat.room], [16.5, 18, 1, 4.2, mat.wet], [12.5, 18, 0, 1, mat.corr],
   ]);
   wall(G, 0, HG, 0, 0, 18, 0, [], true); wall(G, 0, HG, 0, 4.2, 18, 4.2, [], true);
-  wall(G, 0, HG, 0.6, 0, 0.6, 4.2, [[1.3, 2.9, 'D']]); wall(G, 0, HG, 18, 0, 18, 4.2, [[2.2, 3.2, 'w']]);
+  wall(G, 0, HG, 0.6, 0, 0.6, 4.2, [[0.9, 3.3, 'D']]); wall(G, 0, HG, 18, 0, 18, 4.2, [[2.2, 3.2, 'w']]);
   wall(G, 0, HG, 6, 1, 6, 4.2); wall(G, 0, HG, 8.8, 1, 8.8, 4.2); wall(G, 0, HG, 12.5, 1, 12.5, 4.2); wall(G, 0, HG, 16.5, 1, 16.5, 4.2);
   wall(G, 0, HG, 12.5, 1, 18, 1, [[12.65, 13.55, 'd'], [16.65, 17.35, 'd']]);
-  leaf(G, 0, 0.6, 1.3, 0.6, 2.1, 1, 0, 'D'); leaf(G, 0, 0.6, 2.9, 0.6, 2.1, 1, 0, 'D');
+  // cửa chính 4 cánh × 0,6 m mở ra ngoài (khảo sát lần 2), cánh nằm gọn trên tam cấp
+  leaf(G, 0, 0.6, 0.9, 0.6, 1.5, -1, 0, 'D'); leaf(G, 0, 0.6, 1.5, 0.6, 2.1, -1, 0, 'D');
+  leaf(G, 0, 0.6, 2.7, 0.6, 2.1, -1, 0, 'D'); leaf(G, 0, 0.6, 3.3, 0.6, 2.7, -1, 0, 'D');
   leaf(G, 0, 12.65, 1, 13.55, 1, 0, 1); leaf(G, 0, 16.65, 1, 17.35, 1, 0, 1);
   box(9.0, 12.45, 3.55, 4.15, 0, .85, mat.counter, G); box(11.85, 12.45, 2.0, 3.55, 0, .85, mat.counter, G);   // bệ bếp chữ L
-  bed(G, 0, 14.5, 16.3, 2.15, 4.15);   // giường 1,8 m (khảo sát)
+  bed(G, 0, 14.5, 16.3, 1.95, 4.15);   // giường cũ 1,8 × 2,2 m
+  box(13.65, 16.45, 1 - h - .01, 1 + h + .01, 1.85, 2.45, mat.frost, G); box(12.65, 13.55, 1 - h - .01, 1 + h + .01, 2.25, 2.65, mat.frost, G);   // ô kính mờ cao PN1
 
   // Cầu thang U: vế 1 (x 6,05–7,35) đi lên theo +Y, chiếu nghỉ phía y = 4,2, vế 2 (x 7,45–8,75) quay về
   const yL = 4.15 - LAND, y1 = yL - (N1 - 1) * TR;
@@ -129,9 +134,9 @@ function nha3D() {
   label(LG, 17.25, 2.6, 1.6, 'NVS', '1,5 × 3,2 · 4,80 m²');
   label(LG, 7.4, 0.5, 2.4, 'CẦU THANG', '22 bậc × 17,2 cm');
 
-  // ---------- tầng lầu (chốt 01/11/2026): phòng thờ lấn ra ban công 0,6 m, mặt tiền lầu ở X = −0,6;
-  // phía sau chia dọc: khu phơi Y 0–2,1 (mái che lối đi 1 m), nhà tắm Y 2,1–4,2 ----------
-  const HU = H2 - SLAB, XF = -0.6;
+  // ---------- tầng lầu (khảo sát lần 2): xây đúng giấy phép, mặt tiền lầu ở X = 0, ban công 1,2 m;
+  // phía sau chia dọc: khu phơi Y 0–2,1 lợp tấm lấy sáng, nhà tắm Y 2,1–4,2 ----------
+  const HU = H2 - SLAB, XF = 0;
   box(-1.2, 6.05, 0, 4.2, H1 - SLAB, H1, mat.slab, U);             // sàn lầu (chừa ô thang)
   box(8.75, 18, 0, 4.2, H1 - SLAB, H1, mat.slab, U);
   box(6.05, 8.75, 0, y1, H1 - SLAB, H1, mat.slab, U);
@@ -149,22 +154,22 @@ function nha3D() {
   leaf(U, H1, XF, 0.15, XF, 0.95, 1, 0);                             // cửa ra ban công 1 cánh, mở vào
   leaf(U, H1, 2, 0.1, 2, 0.9, -1, 0); leaf(U, H1, 2.15, 1, 3.05, 1, 0, 1); leaf(U, H1, 8.95, 1, 9.85, 1, 0, 1);
   leaf(U, H1, 14.8, 0.1, 14.8, 0.9, 1, 0); leaf(U, H1, 15.0, 2.1, 15.75, 2.1, 0, 1);
-  rail(U, -1.2, -1.16, 0, 4.2, H1); rail(U, -1.2, XF, 0, .04, H1); rail(U, -1.2, XF, 4.16, 4.2, H1);   // lan can ban công
+  rail(U, -1.2, -1.16, 0, 4.2, H1, 1.1); rail(U, -1.2, XF, 0, .04, H1, 1.1); rail(U, -1.2, XF, 4.16, 4.2, H1, 1.1);   // lan can ban công
   box(16.25, 16.75, 3.6, 4.15, H1, H1 + .42, mat.bed, U); box(15.85, 16.15, 3.65, 4.15, H1 + .75, H1 + .85, mat.bed, U);   // bồn cầu, lavabo
   box(17.25, 17.9, 0.05, 0.7, H1, H1 + .85, mat.bed, U);                                  // máy giặt
   rail(U, 6.05, 7.45, y1 - .04, y1, H1, .9);                        // lan can ô thang
   box(1.55, 1.95, 1.5, 3.2, H1, H1 + .9, mat.altar, U);
-  bed(U, H1, 4.0, 5.8, 2.15, 4.15); bed(U, H1, 12.6, 14.4, 2.15, 4.15);
+  bed(U, H1, 4.3, 5.7, 2.15, 4.15); bed(U, H1, 12.8, 14.4, 1.95, 4.15);   // giường cũ PN2 1,4 × 2,0; PN3 1,6 × 2,2
 
-  label(LU, -0.9, 2.1, H1 + 1.4, 'BAN CÔNG', '0,6 × 4,2 · 2,52 m²');
-  label(LU, 0.6, 2.4, H1 + 1.6, 'PHÒNG THỜ', '2,6 × 4,2 · 10,92 m²');
+  label(LU, -0.6, 2.1, H1 + 1.4, 'BAN CÔNG', '1,2 × 4,2 · 5,04 m²');
+  label(LU, 1.0, 2.4, H1 + 1.6, 'PHÒNG THỜ', '2,0 × 4,2 · 8,40 m²');
   label(LU, 3.3, 2.6, H1 + 1.6, 'PHÒNG NGỦ 2', '4,0 × 3,2 · 12,80 m²');
   label(LU, 10.9, 2.6, H1 + 1.6, 'PHÒNG NGỦ 3', '6,0 × 3,2 · 19,20 m²');
-  label(LU, 16.6, 1.05, H1 + 1.6, 'KHU PHƠI', '3,2 × 2,1 · lộ thiên');
+  label(LU, 16.6, 1.05, H1 + 1.6, 'KHU PHƠI', '3,2 × 2,1 · mái lấy sáng');
   label(LU, 16.4, 3.15, H1 + 2.2, 'NHÀ TẮM', '3,2 × 2,1 · 6,72 m²');
 
-  // ---------- mái tôn (khảo sát): dốc từ mặt tiền ra sau, giếng trời trên thang có mái che nâng cao,
-  // khu phơi lộ thiên, ô sàn bê tông trên nhà tắm đặt bồn nước và máy nước nóng năng lượng mặt trời ----------
+  // ---------- mái tôn cách nhiệt (khảo sát): dốc từ mặt tiền ra sau, giếng trời trên thang lợp tấm lấy sáng kín,
+  // khu phơi lợp tấm lấy sáng hở 0,3 m trên đỉnh tường, ô sàn bê tông trên nhà tắm đặt bồn nước và máy nước nóng NLMT ----------
   const ZR = H1 + H2, RF_HI = ZR + 0.8, RF_LO = ZR + 0.25, RF_END = 14.8;
   const roofZ = X => RF_HI + (RF_LO - RF_HI) * X / RF_END;
   // tấm tôn nghiêng: hộp mỏng xoay quanh trục ngang; không đưa vào danh sách vật cản
@@ -182,11 +187,11 @@ function nha3D() {
   }
   mat.roof = M(0x7f8f9a, { roughness: .6, metalness: .2 }); mat.wallDS = M(0xf2efe9, { side: THREE.DoubleSide });
   mat.tank = M(0xd9dde0, { metalness: .3, roughness: .5 }); mat.solar = M(0x1f3550, { roughness: .3 });
-  sheet(XF, 6, 0, mat.roof); sheet(8.8, RF_END, 0, mat.roof); sheet(6, 8.8, 0.55, mat.roof);
+  sheet(XF, 6, 0, mat.roof); sheet(8.8, RF_END, 0, mat.roof); sheet(6, 8.8, 0, mat.poly);
   gable(0); gable(4.2);
   box(XF - 0.05, XF + 0.05, 0, 4.2, ZR - SLAB, roofZ(XF) + 0.15, mat.wall, RF);   // tường chắn mái mặt tiền
   box(14.8, 18, 2.1, 4.2, ZR - SLAB, ZR, mat.slab, RF);                            // ô sàn đặt bồn trên nhà tắm
-  box(14.8, 15.8, -0.05, 2.1, ZR + .1, ZR + .14, mat.roof, RF);                     // mái che lối đi khu phơi
+  box(14.8, 18.05, -0.05, 2.1, ZR + .3, ZR + .34, mat.poly, RF);                     // mái tấm lấy sáng che hết khu phơi
   const tank = new THREE.Mesh(new THREE.CylinderGeometry(.55, .55, 1.25, 24), mat.tank);
   tank.position.set(WX(3.4), ZR + .65, 17.35); RF.add(tank);
   box(15.0, 16.4, 2.3, 4.0, ZR + .5, ZR + .56, mat.solar, RF).rotation.x = -.35; boxes.pop();
