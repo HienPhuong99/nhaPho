@@ -13,4 +13,4 @@ Nhà phố 4,2 × 18 m, 2 tầng, mái tôn. Bản vẽ **Final 1** (01/11/2026)
 
 Bộ bản vẽ PDF `Ban_Ve_Final_1.pdf`, video, kết quả khảo sát và 2 phiếu đã điền: thư mục [`vechoichoi`](vechoichoi).
 
-Mã nguồn: `mat-bang.js` (dữ liệu và hàm vẽ mặt bằng, mặt cắt), `mat-bang.css` (màu, ký hiệu), `mo-hinh-3d.js` (mô hình 3D dùng chung cho `3d.html` và `di-bo.html`).
+Mã nguồn: `mat-bang.js` (dữ liệu và hàm vẽ mặt bằng, mặt cắt), `mat-bang.css` (màu, ký hiệu), `mo-hinh-3d.js` (mô hình 3D dùng chung cho `3d.html` và `di-bo.html`), `bia.html` (trang bìa của bộ PDF). PDF in từ `bia.html`, `index.html`, `mat-dung.html`, `cot-dien.html` (khổ A4, theo `@media print` của từng trang) rồi gộp theo thứ tự đó.

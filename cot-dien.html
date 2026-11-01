@@ -85,17 +85,28 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
 .tdien{fill:var(--ink)}
 .tdt{fill:var(--ink);font-size:15px;font-weight:700;dominant-baseline:central;paint-order:stroke;stroke:var(--paper);stroke-width:5px}
 @page{size:A4;margin:10mm}
+/* in A4: mỗi mục lớn sang trang mới; tiêu đề không đứng cuối trang; điểm điện, dòng bảng không bị cắt ngang */
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{background:var(--paper);font-size:11px} nav{display:none}
-  main{max-width:none;padding:0;gap:6mm}
+  body{background:var(--paper);font-size:13px;line-height:1.45} nav{display:none}
+  main{max-width:none;padding:0;gap:7mm} section{display:block} section > * + *{margin-top:4mm}
+  header{gap:2mm} h1{font-size:28px} .meta{font-size:12.5px;gap:1mm 5mm} p{max-width:none}
+  h2{font-size:24px} h2 small{font-size:13px} h3{font-size:15px}
+  h2,h3{break-after:avoid}
+  .card{border:none;padding:0}
   .plans{grid-template-columns:1fr 1fr;break-inside:avoid} .plan{border:none;padding:0;break-inside:avoid}
+  .plan h3{padding-left:0;font-size:13px}
   .plan svg{height:222mm;width:auto;max-width:100%;margin:0 auto}
-  .legend{font-size:10px;padding:2mm 3mm;gap:3px 10px}
-  #cot,#ml,#diem,#mach{break-before:page}
-  .room,.pt,tr,.tblwrap{break-inside:avoid}
-  tfoot{display:table-row-group}
-  table{font-size:10.5px} th,td{padding:3px 6px}
+  .legend{font-size:12px;padding:2.5mm 3mm;gap:2mm 5mm}
+  #cot,#ml,#diem,#mach,#cao{break-before:page}
+  .room,.pt,tr,.checks li,.tblwrap:not(.wide){break-inside:avoid}
+  tfoot{display:table-row-group} .tblwrap{overflow:visible}
+  table{font-size:12.5px} thead th{font-size:12.5px} th,td{padding:4px 7px}
+  .checks{gap:2.5mm} .checks b{font-size:12.5px;min-width:66px}
+  .notes{gap:2.5mm;max-width:none;padding-left:6mm} .notes li{break-inside:avoid}
+  .pts{gap:5mm} .room > h3{padding:2mm 3mm} .pt{padding:2mm 3mm;gap:1mm 3mm}
+  .pt .h span{font-size:12px} .pt .h .ht{font-size:14px} .pt .w{font-size:12.5px}
+  .foot{font-size:12px}
 }
 </style>
 </head>

@@ -51,21 +51,31 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
 .notes ol{margin:0;padding-left:20px;display:grid;gap:8px;max-width:75ch}
 .foot{color:var(--ink2);font-size:13px}
 
-/* in A4: mỗi tầng một trang, bản vẽ bên trái, bảng bên phải */
+/* in A4: mỗi tầng một trang, bản vẽ bên trái; bảng, kiểm tra (và chú thích ở trang trệt) bên phải.
+   Hai tầng cùng tỉ lệ: chiều cao SVG tỉ lệ với viewBox (trệt 2160, lầu 2280) */
 @page{size:A4;margin:10mm}
 @media print{
   body > nav{display:none!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{background:var(--paper);font-size:11px}
+  body{background:var(--paper);font-size:13px;line-height:1.45}
   main{max-width:none;padding:0;display:block}
-  header{margin-bottom:3mm} .legend{padding:2mm 3mm;font-size:11px;gap:4px 12px;margin-bottom:4mm}
+  header{gap:1.5mm;margin-bottom:4mm} h1{font-size:28px} .meta{font-size:12.5px;gap:1mm 4mm}
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:2mm 4mm;font-size:12px;padding:3mm;margin-top:2mm}
   .floor{gap:3mm} #lau,.notes{break-before:page}
-  .grid{grid-template-columns:auto 1fr;gap:8mm;align-items:start}
-  .side{align-content:start}
+  .grid{grid-template-columns:auto minmax(0,1fr);gap:7mm;align-items:start}
+  .side{align-content:start;gap:4mm}
   .plan{border:none;padding:0}
   .plan svg{width:auto}
-  #plan-g svg{height:186mm} #plan-u svg{height:262mm}
-  table{font-size:11px} th,td{padding:3px 6px}
+  #plan-g svg{height:226mm} #plan-u svg{height:238mm}
+  #plan-g .rn,#plan-u .rn{font-size:27px} #plan-g .rs,#plan-u .rs{font-size:21px}
+  #plan-g .lbl.sm .rn,#plan-g .lbl.sm .rs,#plan-u .lbl.sm .rn,#plan-u .lbl.sm .rs{font-size:18px}
+  #plan-g .dt,#plan-u .dt{font-size:22px}
+  h2{font-size:24px} h2 small{font-size:13px} h3{font-size:15px}
+  table{font-size:13px} th,td{padding:4px 7px} thead th{font-size:13px}
+  .checks{font-size:13px;gap:2mm} .checks b{font-size:12.5px}
+  .notes{border:none;padding:0;gap:3mm} .notes h3{margin-top:2mm} .notes ol{max-width:none;gap:2mm;padding-left:6mm}
+  .notes h3,h2{break-after:avoid} .notes li{break-inside:avoid}
+  .foot{font-size:12px}
 }
 
 #sec .rn{font-size:27px} #sec .rs{font-size:21px} #sec .dt{font-size:22px}
@@ -73,7 +83,9 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
 .sec{overflow-x:auto}
 @media (max-width:819px){.sec svg{min-width:1100px}}
 @page land{size:A4 landscape}
-@media print{#matcat{page:land;break-before:page} #sec svg{min-width:0;width:100%;height:auto} .hint{display:none}}
+@media print{#matcat{page:land;break-before:page} #sec svg{min-width:0;width:100%;height:auto} .hint{display:none}
+  #matcat .foot{font-size:13px;line-height:1.5}
+  #sec .rn{font-size:31px} #sec .rs{font-size:24px} #sec .dt{font-size:25px} #sec .lbl.sm .rn,#sec .lbl.sm .rs{font-size:22px}}
 </style>
 
 <main>
@@ -90,18 +102,6 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
     </div>
   </header>
 
-  <section class="legend" aria-label="Chú thích ký hiệu">
-    <span><svg viewBox="0 0 40 20"><rect class="wall" x="2" y="7" width="36" height="6"/></svg>Tường 100 mm</span>
-    <span><svg viewBox="0 0 40 20"><rect class="wall" x="0" y="16" width="8" height="3"/><rect class="wall" x="32" y="16" width="8" height="3"/><line class="leaf" x1="9" y1="17" x2="9" y2="1"/><path class="arc" d="M9,1 A16 16 0 0 1 25,17"/></svg>Cửa đi (cung mở)</span>
-    <span><svg viewBox="0 0 40 20"><rect class="wall" x="0" y="6" width="6" height="8"/><rect class="wall" x="34" y="6" width="6" height="8"/><line class="win" x1="6" y1="6" x2="34" y2="6"/><line class="win" x1="6" y1="10" x2="34" y2="10"/><line class="win" x1="6" y1="14" x2="34" y2="14"/></svg>Cửa sổ (3 nét)</span>
-    <span><svg viewBox="0 0 40 20"><rect class="corr" x="1" y="2" width="38" height="16"/></svg>Hành lang / lối đi 1,0 m</span>
-    <span><svg viewBox="0 0 40 20"><defs><pattern id="hx-lg" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line class="hatch" x1="0" y1="0" x2="0" y2="6"/></pattern></defs><rect class="dry-bg" x="1" y="2" width="38" height="16"/><rect fill="url(#hx-lg)" x="1" y="2" width="38" height="16"/></svg>Khu phơi (mái tấm lấy sáng)</span>
-    <span><svg viewBox="0 0 40 20"><rect class="balc" x="1" y="2" width="38" height="16"/><line class="rail" x1="1" y1="15" x2="39" y2="15"/><line class="rail" x1="1" y1="18" x2="39" y2="18"/></svg>Ban công / lan can</span>
-    <span><svg viewBox="0 0 40 20"><defs><marker id="ar-lg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="up-head" d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="dot" cx="4" cy="10" r="2.5"/><line class="up" x1="4" y1="10" x2="34" y2="10" marker-end="url(#ar-lg)"/></svg>Chiều lên thang</span>
-    <span><svg viewBox="0 0 40 20"><line class="cut" x1="8" y1="2" x2="8" y2="18" style="stroke-width:4"/><line class="arrow" x1="8" y1="10" x2="30" y2="10" style="stroke-width:2" marker-end="url(#am-lg)"/><defs><marker id="am-lg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="ink-head" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg>Vị trí mặt cắt A–A</span>
-    <span><svg viewBox="0 0 40 20"><line class="dim" x1="4" y1="12" x2="36" y2="12"/><line class="dim" x1="1" y1="15" x2="7" y2="9" style="stroke-width:2"/><line class="dim" x1="33" y1="15" x2="39" y2="9" style="stroke-width:2"/></svg>Kích thước (m)</span>
-  </section>
-
   <section class="floor" id="tret">
     <h2>Tầng trệt <small>0,6 + 5,4 + 2,8 + 3,7 + 4,0 + 1,5 = 18,0 m</small></h2>
     <div class="grid">
@@ -110,6 +110,17 @@ tr.corr td:first-child{box-shadow:inset 4px 0 0 var(--corr)}
         <h3>Bảng thống kê tầng trệt</h3>
         <div class="tblwrap"><table id="tbl-g"></table></div>
         <ul class="checks" id="chk-g"></ul>
+        <section class="legend" aria-label="Chú thích ký hiệu">
+          <span><svg viewBox="0 0 40 20"><rect class="wall" x="2" y="7" width="36" height="6"/></svg>Tường 100 mm</span>
+          <span><svg viewBox="0 0 40 20"><rect class="wall" x="0" y="16" width="8" height="3"/><rect class="wall" x="32" y="16" width="8" height="3"/><line class="leaf" x1="9" y1="17" x2="9" y2="1"/><path class="arc" d="M9,1 A16 16 0 0 1 25,17"/></svg>Cửa đi (cung mở)</span>
+          <span><svg viewBox="0 0 40 20"><rect class="wall" x="0" y="6" width="6" height="8"/><rect class="wall" x="34" y="6" width="6" height="8"/><line class="win" x1="6" y1="6" x2="34" y2="6"/><line class="win" x1="6" y1="10" x2="34" y2="10"/><line class="win" x1="6" y1="14" x2="34" y2="14"/></svg>Cửa sổ (3 nét)</span>
+          <span><svg viewBox="0 0 40 20"><rect class="corr" x="1" y="2" width="38" height="16"/></svg>Hành lang / lối đi 1,0 m</span>
+          <span><svg viewBox="0 0 40 20"><defs><pattern id="hx-lg" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line class="hatch" x1="0" y1="0" x2="0" y2="6"/></pattern></defs><rect class="dry-bg" x="1" y="2" width="38" height="16"/><rect fill="url(#hx-lg)" x="1" y="2" width="38" height="16"/></svg>Khu phơi (mái tấm lấy sáng)</span>
+          <span><svg viewBox="0 0 40 20"><rect class="balc" x="1" y="2" width="38" height="16"/><line class="rail" x1="1" y1="15" x2="39" y2="15"/><line class="rail" x1="1" y1="18" x2="39" y2="18"/></svg>Ban công / lan can</span>
+          <span><svg viewBox="0 0 40 20"><defs><marker id="ar-lg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="up-head" d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="dot" cx="4" cy="10" r="2.5"/><line class="up" x1="4" y1="10" x2="34" y2="10" marker-end="url(#ar-lg)"/></svg>Chiều lên thang</span>
+          <span><svg viewBox="0 0 40 20"><line class="cut" x1="8" y1="2" x2="8" y2="18" style="stroke-width:4"/><line class="arrow" x1="8" y1="10" x2="30" y2="10" style="stroke-width:2" marker-end="url(#am-lg)"/><defs><marker id="am-lg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="ink-head" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg>Vị trí mặt cắt A–A</span>
+          <span><svg viewBox="0 0 40 20"><line class="dim" x1="4" y1="12" x2="36" y2="12"/><line class="dim" x1="1" y1="15" x2="7" y2="9" style="stroke-width:2"/><line class="dim" x1="33" y1="15" x2="39" y2="9" style="stroke-width:2"/></svg>Kích thước (m)</span>
+        </section>
       </div>
     </div>
   </section>

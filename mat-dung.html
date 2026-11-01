@@ -55,8 +55,15 @@ ol{margin:0;padding-left:20px;display:grid;gap:8px;max-width:78ch}
 .e-tx{fill:var(--ink);font-size:14px;font-family:var(--f-label);font-weight:600}
 .e-dim{stroke:var(--dim);stroke-width:1}
 @page{size:A4;margin:10mm}
-@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact} nav,.noprint{display:none} body{background:#fff;font-size:12px} main{padding:0;gap:12px}
-  .grid{grid-template-columns:85mm 1fr;align-items:start} .card{border:none;padding:0} ol{gap:4px}}
+/* in A4: trang 1 mặt đứng + bảng màu, trang 2 ghi chú mặt tiền */
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact} nav,.noprint{display:none}
+  body{background:#fff;font-size:13.5px;line-height:1.5} main{padding:0;gap:6mm}
+  header{gap:2mm} h1{font-size:30px} .meta{font-size:13px;gap:1mm 5mm} header p{margin:1mm 0 0}
+  .grid{grid-template-columns:118mm 1fr;gap:6mm;align-items:start} .card{border:none;padding:0}
+  .e-tx{font-size:17px} .e-dt{font-size:18px}
+  table{font-size:13.5px} th{font-size:13.5px} td,th{padding:5px 8px} td.c i{width:16px;height:16px}
+  section.card{break-before:page;display:grid;gap:4mm} h2{font-size:24px} h2 small{font-size:13.5px}
+  ol{gap:3mm;max-width:none;padding-left:6mm} li{break-inside:avoid} .foot{font-size:12.5px}}
 </style>
 </head>
 <body>
