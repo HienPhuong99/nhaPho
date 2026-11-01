@@ -1,141 +1,97 @@
 # Kết quả khảo sát chủ đầu tư, nhà phố 4,2 × 18 m
 
-Nhận ngày 30/10/2026. Phần 1 chép nguyên câu trả lời. Phần 2 ghi những gì đã sửa theo câu trả lời. Phần 3 là các câu còn cần hỏi lại.
+Cập nhật ngày 01/11/2026. File này gộp mọi câu trả lời đã nhận và tóm tắt bản vẽ đã chốt:
 
-## 1. Câu trả lời
+- Phiếu lần 1 nhận ngày 30/10.
+- Phiếu lần 1 điền lại ngày 01/11 (bản gốc: `Phieu_Lan1_Da_Dien_01-11-2026.pdf`).
+- Các trao đổi thêm qua tin nhắn.
 
-| # | Câu hỏi | Trả lời |
-|---|---|---|
-| 1 ★ | Kích thước theo sổ đỏ | 4,2 × 18 m, 75,6 m², vuông vắn |
-| 2 ★ | Thông tin quy hoạch | Không bị lộ giới (chưa ghi số lộ giới) |
-| 3 ★ | Ban công đua 1,2 m, tam cấp | Được phép |
-| 4 | Nhà hai bên | Còn đất trống |
-| 5 | Đường trước nhà | Rộng 8 m, xe tải vào được |
-| 6 | Ngập nước | Không ngập |
-| 7 ★ | Người ở | 5 người, có người đi lại khó khăn, cần phòng ngủ ở trệt |
-| 8 ★ | Xây thêm tầng | Không |
-| 9 | Xe trong nhà | 3 xe máy |
-| 10 | Tầng trệt | Chỉ để ở |
-| 11 | Phòng thờ | Giữ trên lầu như bản vẽ (phiếu ghi "chuyển lên lầu") |
-| 12 | Bếp | Nấu hằng ngày, bếp mở thông phòng khách, bếp từ |
-| 13 ★ | Lấy sáng trên cầu thang | Giếng trời thông thoáng |
-| 14 ★ | Thang dốc khoảng 39° | Chấp nhận, lan can kính |
-| 15 ★ | Mái | **Mái tôn** |
-| 16 | Phong cách mặt tiền | Tối giản |
-| 17 | Cửa | Nhôm kính, không cửa cuốn |
-| 18 | Trần, sàn | Trần thạch cao toàn bộ, sàn gạch men |
-| 19 | Máy lạnh | PN1, PN2, PN3; dàn nóng ở khu phơi, sau nhà |
-| 20 | Nước nóng | Năng lượng mặt trời |
-| 21 | Bồn nước | 1.000 L trên mái, có bơm tăng áp |
-| 22 | Máy giặt | Khu phơi |
-| 23 | Tiện ích | Wifi phủ toàn nhà |
-| 24 | Nguồn điện | 1 pha |
-| 25 ★ | Ngân sách | Phiếu ghi "1100000000 triệu đồng", hiểu là **1,1 tỷ đồng**, đã gồm nội thất |
-| 26 ★ | Thuê thầu | Trọn gói cả vật tư |
-| 27 | Vật tư hoàn thiện | Phổ thông |
-| 28 | Tiến độ | Khởi công khoảng 3 tháng nữa, có xem ngày |
-| 29 | Nhà thầu | Đã có (chưa ghi tên) |
-| 30 | Giám sát | Chủ nhà tự giám sát |
-| 31 ★ | TV phòng khách | Đặt trên kệ, tường phía hành lang |
-| 32 ★ | Giường | 1,8 m, đầu giường vào tường hông |
-| 33 | TV phòng ngủ | Không phòng nào |
-| 34 ★ | Bếp điện | Bếp từ đôi |
-| 35 | Hút mùi, tủ lạnh | Hút mùi lọc than; tủ lạnh side-by-side (khoảng 0,9 m) |
-| 36 ★ | Bình nước nóng | Năng lượng mặt trời + điện phụ |
-| 37 | Máy giặt, máy sấy | Máy giặt ở **tầng trệt**, không máy sấy |
-| 38 ★ | Xe điện | Không |
-| 39 | Camera | 3 mắt, đầu ghi ở gầm thang |
-| 40 | Ổ cắm, công tắc | Ổ có màn che an toàn trẻ em |
-| 41 | Máy lạnh phòng khách | Không cần |
-| 42 ★ | Điện lực | Chưa hỏi |
+Những câu còn chưa rõ nằm trong [phiếu khảo sát lần 2](https://hienphuong99.github.io/nhaPho/khaosat.html) (file `Phieu_Khao_Sat_Lan2.pdf`).
 
-## 2. Đã sửa theo khảo sát
+## 1. Thông tin đã chốt
 
-Các thay đổi nằm ở trang `cot-dien.html` và file `Bo_Tri_Cot_Dien.pdf`.
+Câu nào hai lần trả lời khác nhau thì bảng ghi câu trả lời mới nhất.
+
+| Nhóm | Đã chốt |
+|---|---|
+| Khu đất | 4,2 × 18 m (75,6 m²), vuông vắn. Hai bên còn đất trống. Không ngập. Đường không sắp nâng cốt. |
+| Lộ giới | 15 m: vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m. Theo QCVN 01:2021 được đua tối đa 1,2 m, và độ đua phải nhỏ hơn vỉa hè trừ 1 m (2,5 m). Xe tải vào được. |
+| Người ở | 5 người, có người đi lại khó khăn nên cần phòng ngủ ở trệt. Không xây thêm tầng. 2 xe máy. Tầng trệt chỉ để ở. |
+| Kiến trúc | Mái tôn. Giếng trời thông thoáng trên thang, có ý thêm thông gió. Thang khoảng 39°, lan can kính. Phòng thờ trên lầu. Mặt tiền hiện đại, chưa có ảnh mẫu. Cửa nhôm kính, không cửa cuốn. Trần thạch cao toàn bộ. Sàn gạch men. |
+| Bếp | Nấu hằng ngày, bếp mở, bếp từ đôi. Hút mùi lọc than. Dùng lại tủ lạnh loại thường của nhà cũ (rộng ≤ 0,7 m). |
+| Phòng ngủ | Giường 1,8 m, đầu giường vào tường hông. Không đặt TV trong phòng ngủ. |
+| Điện nước | Máy lạnh ở PN1, PN2, PN3, dàn nóng ở khu phơi. Nước nóng năng lượng mặt trời + điện phụ. Bồn 1.000 L trên mái, có bơm tăng áp. Máy giặt ở khu phơi, không máy sấy. Điện 1 pha, không làm điện mặt trời áp mái, không sạc xe điện. |
+| Tiện ích | TV phòng khách treo tường phía hành lang. 3 camera: trong nhà 2, ngoài sân 1, đầu ghi ở gầm thang. Ổ cắm có màn che an toàn trẻ em. Không máy lạnh phòng khách. Wifi: phiếu 30/10 chọn phủ toàn nhà, phiếu 01/11 bỏ trống, đã hỏi lại ở phiếu lần 2. |
+| Ngân sách, cách làm | 1,1 tỷ đồng, chưa gồm nội thất (dùng lại nội thất nhà cũ). Thuê trọn gói cả vật tư, mức vật tư khá. Đã có nhà thầu. Nhờ người quen giám sát. |
+| Tiến độ | Khởi công khoảng 3 tháng nữa. Phiếu ghi "xong trước 02/2027" (xem mục 4). Có xem ngày. |
+
+## 2. Bản vẽ đã chốt (01/11/2026)
+
+**Tầng lầu**
+- Phía trước:
+  - Phòng thờ lấn ra 0,6 m thành 2,6 × 4,2 m (10,92 m²). Ban công còn 0,6 × 4,2 m.
+  - Mặt tiền lầu: cửa sổ 2 cánh 1,4 m bên trái, cửa đi 1 cánh 0,8 m mở vào bên phải.
+- Phía sau chia dọc:
+  - Nhà tắm 3,2 × 2,1 m ở phía tường hông, có cửa sổ ra sau nhà. Phía trên đổ ô sàn bê tông đặt bồn nước và máy năng lượng mặt trời.
+  - Khu phơi 3,2 × 2,1 m ở phía hành lang. Có mái che lối đi 1 m từ cửa hành lang tới cửa nhà tắm, phần còn lại lộ thiên. Máy giặt đặt ở góc sau.
+- PN3 còn 1 cửa sổ 0,85 m trông ra khu phơi, cộng cửa sổ trông vào lõi thang.
 
 **Kết cấu**
-- Mái bằng đổi thành mái tôn. Dầm mái đổi thành giằng đỉnh tường; xà gồ gác lên tường thu hồi.
-- Đề xuất đổ một ô sàn bê tông nhỏ phía trên nhà tắm lầu để đặt bồn 1.000 L, máy năng lượng mặt trời và bơm, vì mái tôn không đỡ được bồn đầy nước.
-- Không xây thêm tầng nên giữ cột 200 × 200. Cáp lên tầng lầu giảm còn 2 × 6 mm².
-- Hai bên còn đất trống nên thi công dễ hơn. Móng cột hông vẫn làm lệch tâm, không lấn sang đất người khác.
+- 10 cột 200 × 200 ở 5 trục: x = 0 · 6,0 · 8,8 · 12,5 · 18,0.
+- Tường mặt tiền lầu đặt trên dầm công-xôn tại x = −0,6.
+- Dầm phụ đỡ tường lầu đặt ở x = 2,0, x = 14,8 và y = 2,1.
+- Mái tôn gác trên giằng đỉnh tường.
 
 **Máy lạnh**
-- Cả 3 dàn nóng đặt ở khu phơi. DN2 trước đây ở ban công, nay chuyển ra khu phơi.
-- Dàn lạnh PN2 dời sang vách thang. Ống đồng của PN2 dài khoảng 12 m, đi trong trần hành lang; thợ phải nạp thêm gas.
-- Bỏ phần chừa ống cho máy lạnh phòng khách.
+- ML1 và ML2 loại 9.000 BTU, ML3 loại 12.000 BTU.
+- DN1 và DN3 treo giá 2 tầng ở tường sau khu phơi. DN2 treo trên tường hông khu phơi.
+- Ống ML2 dài khoảng 13 m, phải nạp thêm gas.
 
 **Điện**
-- Bỏ ổ sạc xe điện. Bỏ 2 bình nóng lạnh điện, thay bằng mạch điện phụ cho máy năng lượng mặt trời. NVS trệt vẫn chừa sẵn một dây dự phòng.
-- TV phòng khách đặt trên kệ nên chỉ còn ổ ở độ cao 0,4 m. Ổ TV trong 3 phòng ngủ đổi thành ổ thường.
-- Bếp từ đôi đi dây 4 mm². Máy hút mùi lọc than nên không cần ống thải. Chỗ đặt tủ lạnh side-by-side đã kiểm tra vừa (rộng 0,9 m).
-- Thêm 3 camera dùng nguồn qua cáp mạng (PoE): trước nhà, phòng khách hoặc chỗ để xe, bếp và hành lang sau.
-- Cho người đi lại khó khăn ở PN1: nút chuông gọi khẩn cấp ở đầu giường và cạnh bồn cầu, đèn cảm biến hành lang, ổ cắm nâng lên 0,6 m, công tắc hạ xuống 1,0–1,1 m.
-- Toàn bộ ổ cắm dùng loại có màn che an toàn trẻ em.
-- Thêm mạch cho bơm đẩy nước lên bồn và bơm tăng áp.
-- Công suất cao điểm khoảng 9 kW (khoảng 45 A). CB tổng giảm còn 2P 50 A.
+- 42 điểm điện. Tổng tải khoảng 9 kW (khoảng 45 A), CB tổng 2P 50 A.
+- Camera dùng nguồn qua cáp mạng (PoE), cáp đi ống riêng từ tủ mạng ở gầm thang.
+- PN1 có chuông gọi khẩn cấp ở đầu giường và cạnh bồn cầu, hành lang có đèn cảm biến.
 
-**Bản vẽ**
-- Giường đổi sang 1,8 m. Giường PN3 lùi 10 cm để tránh cột.
+**Lưu ý xin phép.** Phần 0,6 m phòng thờ lấn ra nằm ngoài ranh đất, trên vỉa hè. Theo QCVN 01:2021/BXD, phần nhô ra khỏi chỉ giới đường đỏ chỉ được làm ban công, không được che chắn thành phòng. Chủ đầu tư đã chọn phương án này. Phiếu lần 2 hỏi ranh đất theo sổ đỏ và cách lập hồ sơ. Phương án thay thế: lùi tường phía sau phòng thờ 0,6 m, PN2 còn 3,4 m. Cách này vẫn được phòng thờ 2,6 m mà xin phép được.
 
-## 3. Còn cần hỏi lại
+## 3. Còn cần hỏi (phiếu lần 2)
 
-Các câu dưới đây đã đưa vào [phiếu khảo sát lần 2](https://hienphuong99.github.io/nhaPho/khaosat.html) (file `Phieu_Khao_Sat_Lan2.pdf`), cùng các câu về mặt tiền, nền đất, chống nóng mái tôn và giấy tờ xin phép.
+1. Ranh đất phía trước theo sổ đỏ, và cách lập hồ sơ cho phần phòng thờ lấn ra.
+2. Cửa ra ban công, cửa sổ mặt tiền, vị trí và kích thước bàn thờ.
+3. Ô sàn bê tông đặt bồn; áp lực nước máy; che mưa giếng trời; loại tôn chống nóng.
+4. Người đi lại khó khăn dùng gậy, khung tập đi hay xe lăn. Ánh sáng cho PN1, phòng này không có cửa sổ.
+5. Màu mặt tiền, ảnh nhà mẫu; nền đất (móng băng hay ép cọc).
+6. Hạn 02/2027 là hạn khởi công hay hạn dọn vào ở. Năm sinh âm lịch để xem ngày.
+7. Kích thước nội thất cũ; công tơ điện được cấp bao nhiêu A; wifi.
 
-1. **Lộ giới.** Đường rộng 8 m là chỉ phần mặt đường hay tính cả vỉa hè? Nếu lộ giới từ 7 đến 12 m thì theo QCVN 01:2021 ban công chỉ được đua 0,9 m; muốn đua 1,2 m thì lộ giới phải trên 12 m.
-2. **Máy giặt.** Câu 22 chọn khu phơi, câu 37 chọn tầng trệt. Bản vẽ đang tạm để ở khu phơi.
-3. **Ô sàn bê tông đặt bồn** trên nhà tắm lầu: chủ đầu tư có đồng ý không?
-4. **Người đi lại khó khăn** dùng gậy, khung tập đi hay xe lăn? Nếu dùng xe lăn thì cửa PN1 và cửa NVS trệt phải rộng 0,9 m, NVS bỏ bậc cửa, tam cấp cần tay vịn hoặc cầu dắt.
-5. **Áp lực nước máy.** Nếu nước tự lên được bồn thì bỏ được bơm đẩy.
-6. **Điện lực** cấp công tơ 1 pha tối đa bao nhiêu A?
-7. **Ngân sách.** Xác nhận con số là 1,1 tỷ đồng.
-8. **Mâu thuẫn giữa bếp và mặt bằng.** Phiếu chọn "bếp mở thông phòng khách", nhưng theo mặt bằng hiện tại, giữa bếp và phòng khách có lõi thang. Hai phòng chỉ thông nhau qua lối đi rộng 1 m. Chủ đầu tư có chấp nhận như vậy không?
-9. **Giếng trời thông thoáng** trên cầu thang: cần mái che nâng cao để chặn mưa hắt mà vẫn thoát khí nóng.
+## 4. Đề xuất
 
-## 4. Lưu ý thêm
+1. **Tiến độ.** Khởi công khoảng đầu tháng 2/2027 mà xong trước 02/2027 là không thể.
+   - Mùng 1 Tết Đinh Mùi là 6/2/2027. Nhà 2 tầng mái tôn thường thi công 4–5 tháng.
+   - Đề xuất: nộp hồ sơ xin phép trong tháng 11; động thổ theo ngày đã xem trước Tết; thi công liên tục sau rằm tháng Giêng; xong khoảng tháng 6–7/2027.
+   - Luật Xây dựng 2014 quy định cấp phép nhà ở riêng lẻ trong 15 ngày làm việc; có tin đã rút còn 10 ngày, nên hỏi lại UBND xã, phường.
+2. **Xem ngày.** Động thổ trước 6/2/2027 thì tính theo năm Bính Ngọ, sau ngày đó tính theo năm Đinh Mùi.
+   - Kim Lâu: tuổi mụ chia 9, dư 1, 3, 6 hoặc 8 là phạm.
+   - Hoang Ốc: tính theo chu kỳ 6 cung.
+   - Tam Tai: theo nhóm con giáp. Tuổi Hợi, Mão, Mùi phạm Tam Tai cả hai năm.
+   - Cần năm sinh âm lịch của người đứng tên làm nhà.
+3. **Vật tư mức khá trong 1,1 tỷ.** Dùng mức khá cho phần nhìn thấy (gạch lát, thiết bị vệ sinh, cửa, sơn ngoài), phổ thông cho phần khuất (gạch xây, ống âm, tủ điện). Lấy 2–3 báo giá ghi rõ hãng vật tư.
+4. **Thông gió.**
+   - Giếng trời mái nâng hở hai bên.
+   - Ô thoáng phía trên cửa sổ phòng ngủ trông vào lõi thang.
+   - Cửa trước và cửa sau khu phơi tạo gió xuyên nhà.
+   - Quạt hút cho cả 2 nhà vệ sinh.
+   - Không dựa vào cửa sổ tường hông, vì sau này nhà bên xây sát.
+5. **Giám sát nhờ người quen.** Nghiệm thu trước khi lấp hoặc đổ ở 4 mốc:
+   - Hố móng và thép móng.
+   - Thép cột, dầm, sàn.
+   - Ống điện nước âm tường, trước khi trát.
+   - Chống thấm sàn nhà vệ sinh và ô sàn đặt bồn: ngâm nước 24–48 giờ.
+6. **PN1 không có cửa sổ** (gộp từ đề xuất KT-04 ngày 29/10). Cách rẻ nhất là ô kính mờ cao ở vách hành lang kèm quạt hút. Cách tốt nhất là mở giếng trời phía sau, nhưng bếp và PN1 sẽ nhỏ lại. Các đề xuất khác của KT-04 (mái lấy sáng trên thang, mái che lối đi, mái chống nóng, kiểm tra lộ giới, thông gió bếp) đã làm hoặc đã có câu trả lời. Riêng đề xuất giảm độ dốc thang, chủ đầu tư đã chấp nhận dốc 39°.
 
-- **Ngân sách.** Phần xây trọn gói vật tư phổ thông cho khoảng 150 m² sàn, cộng móng và mái tôn, thường đã chiếm gần hết 1,1 tỷ đồng. Như vậy ngân sách cho nội thất còn khá ít. Nên lấy 2–3 báo giá trọn gói ghi rõ chủng loại vật tư trước khi chốt.
-- **Tiến độ.** Khởi công sau khoảng 3 tháng thì rơi vào sát Tết Nguyên đán 2027. Hồ sơ xin phép thường mất 15–30 ngày, nên cần làm hồ sơ ngay.
-- **Mặt cắt A–A và mô hình 3D** vẫn vẽ mái bằng. Hai phần này sẽ được vẽ lại khi chốt mái tôn.
+## Nguồn
 
-## 5. Cập nhật 01/11/2026: phiếu lần 1 điền lại lúc 18h33
-
-File gốc: `Phiếu Khảo Sát Chủ Đầu Tư 18h33ph 01-11-2026.pdf`. Câu bỏ trống thì giữ câu trả lời ngày 30/10.
-
-**Thay đổi so với 30/10**
-
-| # | Câu | 30/10 | 01/11 | Ảnh hưởng |
-|---|---|---|---|---|
-| 9 | Xe máy | 3 chiếc | 2 chiếc | Chỗ để xe trệt dư khoảng 0,8 m, có thể làm dốc dắt hoặc nới phòng khách |
-| 16 | Mặt tiền | Tối giản | Hiện đại, chưa có ảnh mẫu | Cần ảnh mẫu trước khi vẽ mặt đứng |
-| 23 | Tiện ích | Wifi phủ toàn nhà | Không chọn ô nào | Hỏi lại; tạm giữ wifi vì đi dây lúc xây rẻ |
-| 24 | Điện mặt trời áp mái | Chưa trả lời | Không | Không chừa ống chờ |
-| 25 | Ngân sách | 1,1 tỷ, đã gồm nội thất | 1,1 tỷ, **chưa gồm nội thất**; dùng lại nội thất nhà cũ | Ngân sách xây dễ thở hơn; cần kích thước đồ cũ |
-| 27 | Vật tư | Phổ thông | **Khá** | Giá xây tăng; xem đề xuất bên dưới |
-| 28 | Tiến độ | Khởi công khoảng 3 tháng nữa | Khởi công khoảng 3 tháng nữa, **xong trước 02/2027**, nhờ xem ngày | Không khả thi, xem bên dưới |
-| 30 | Giám sát | Chủ nhà tự giám sát | Nhờ người quen | Cần danh sách mốc nghiệm thu |
-| 31 | TV phòng khách | Đặt trên kệ | **Treo tường** | Đổi ổ TV lên cao 1,2 m, gia cố tường treo |
-| 35 | Tủ lạnh | Side-by-side 0,9 m | **Loại thường ≤ 0,7 m**, tủ có sẵn | Dư 0,2 m cho tủ bếp |
-| 37 | Máy giặt | Tầng trệt | **Khu phơi** | Hết mâu thuẫn với câu 22: chốt khu phơi |
-| 39 | Camera | 3 mắt, đầu ghi gầm thang | 3 mắt: trong nhà 2, ngoài sân 1; "gợi ý đi đường điện và vị trí đặt theo bản vẽ" | Đã vẽ đường cáp trên bản bố trí điện tầng trệt |
-| 42 | Điện lực | Chưa hỏi | Chỉ 1 pha, chưa ghi số A | Vẫn cần số A của công tơ |
-| 13 | Ghi chú giếng trời | | "gợi ý thêm thông gió" | Đề xuất bên dưới |
-
-**Đề xuất**
-
-1. **Tiến độ.** Khởi công sau 3 tháng (khoảng đầu tháng 2/2027) mà xong trước 02/2027 là không thể. Mùng 1 Tết Đinh Mùi là thứ bảy 6/2/2027. Nhà 2 tầng mái tôn thường mất 4–5 tháng thi công, cộng thêm thời gian xin phép. Phương án đề xuất: nộp hồ sơ xin phép trong tháng 11; động thổ theo ngày đã xem trước Tết; thi công liên tục sau rằm tháng Giêng; dự kiến xong khoảng tháng 6–7/2027. Cần hỏi lại: "02/2027" là hạn khởi công hay hạn dọn vào ở.
-2. **Xem ngày.** Cần năm sinh âm lịch của người đứng tên làm nhà. Lưu ý mốc 6/2/2027: động thổ trước ngày này tính theo năm Bính Ngọ, sau ngày này tính theo năm Đinh Mùi. Tuổi Hợi, Mão, Mùi phạm Tam Tai cả hai năm. Kim Lâu, Hoang Ốc tính theo tuổi mụ nên kết quả hai năm khác nhau.
-3. **Vật tư mức Khá với 1,1 tỷ.** Dùng mức Khá cho phần nhìn thấy và dùng hằng ngày: gạch lát, thiết bị vệ sinh, cửa nhôm kính, sơn ngoài. Giữ mức phổ thông cho phần khuất: gạch xây, ống nước âm, tủ điện. Lấy báo giá theo cách chia này.
-4. **Nội thất cũ.** Đo và gửi kích thước: giường (cả 3 phòng), tủ quần áo, sofa, kệ TV, bàn ăn, tủ lạnh. Bản vẽ đang tính giường 1,8 m và tủ lạnh 0,7 m.
-5. **TV treo tường.** Ổ đôi và ổ mạng ở cao 1,2 m sau TV; ống luồn âm tường từ đó xuống ổ ở cao 0,4 m (đầu thu, loa). Chôn gỗ hoặc gia cố tường chỗ bắt giá treo.
-6. **Thông gió.** Giếng trời mái nâng hở hai bên (khí nóng thoát lên theo lõi thang). Lam gió hoặc ô thoáng phía trên cửa sổ phòng ngủ trông ra lõi thang. Cửa sau khu phơi và cửa trước tạo luồng gió xuyên nhà. Quạt hút âm trần cho cả 2 nhà vệ sinh. Không trông vào cửa sổ ở tường hông vì sau này nhà bên xây sát.
-7. **Camera.** Đầu ghi và switch PoE đặt ở gầm thang cạnh modem: nằm giữa nhà nên dây ngắn, gần ổ điện, kín đáo. Dây mạng Cat6 luồn ống âm trần: camera ngoài sân trước (dưới ban công), camera phòng khách nhìn cửa chính, camera hành lang sau nhìn bếp và cửa sau.
-8. **Giám sát nhờ người quen.** Nghiệm thu trước khi lấp hoặc đổ: hố móng và thép móng; thép cột, dầm, sàn trước khi đổ bê tông; ống điện nước âm trước khi trát; chống thấm sàn nhà vệ sinh và ô sàn đặt bồn (ngâm nước 24–48 giờ).
-9. **Vẫn cần hỏi:** số A của công tơ; ô sàn bê tông đặt bồn; người đi lại khó khăn dùng gậy hay xe lăn.
-
-**Bổ sung trong ngày 01/11**
-
-- **Lộ giới 15 m** (vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m). Theo QCVN 01:2021, lộ giới trên 12 m đến 15 m được đua ban công tối đa 1,2 m, và độ đua phải nhỏ hơn vỉa hè trừ 1 m (2,5 m). Ban công 1,2 m đạt.
-- **Camera:** trong nhà 2 (phòng khách, bếp nhìn hành lang sau), ngoài sân 1 (dưới sàn ban công). Đầu ghi và switch PoE ở tủ mạng gầm thang; 3 sợi Cat6 đi ống riêng trên trần phía hành lang. Đã vẽ trên `Bo_Tri_Cot_Dien.pdf`, trang tầng trệt.
-- **Yêu cầu sửa tầng lầu:** nới phòng thờ 0,6 m ra ban công, mặt tiền làm cửa sổ 2 cánh bên trái và cửa 1 cánh mở vào bên phải; chia lại khu phơi và nhà tắm theo chiều dọc, nhà tắm bên trái. Bản nháp so sánh 3 phương án ở `Phuong_An_Tang_Lau_Nhap.pdf`. Phần lấn ra ban công nằm trên vỉa hè nên theo QCVN 01:2021 không được quây thành phòng; phương án 2 lấy 0,6 m từ PN2 thay vì từ ban công. Chưa áp vào bản vẽ chính, chờ chủ đầu tư chọn.
-
-**Chốt bản vẽ 01/11/2026:** phía trước theo phương án 1 (phòng thờ lấn ra 0,6 m, ban công còn 0,6 m; cửa sổ 2 cánh bên trái, cửa đi 1 cánh mở vào bên phải), phía sau theo phương án 2 (nhà tắm bên trái, khu phơi bên phải có mái che lối đi 1 m). Đã áp vào mặt bằng, mặt cắt A–A (vẽ lại mái tôn), mô hình 3D, đi bộ 3D, bố trí cột và điện (dàn nóng DN1 + DN3 dời ra tường sau, ống ML1, ML3 đi lại, ổ máy giặt, lavabo, quạt hút). Cũng đã áp các câu trả lời 01/11: TV treo tường, tủ lạnh loại thường. Các câu còn mở chuyển vào phiếu khảo sát lần 2 (34 câu, có gợi ý), trong đó câu 2–3 hỏi ranh đất theo sổ đỏ và cách lập hồ sơ xin phép cho phần phòng thờ lấn ra.
+- QCVN 01:2021/BXD: [Thông tư 01/2021/TT-BXD](https://thuvienphapluat.vn/van-ban/Xay-dung-Do-thi/Thong-tu-01-2021-TT-BXD-QCVN-01-2021-BXD-Quy-chuan-ky-thuat-quoc-gia-ve-Quy-hoach-xay-dung-474747.aspx); tóm tắt về phần nhô ra quá chỉ giới: [luatduonggia.vn](https://luatduonggia.vn/phap-luat/truong-hop-nao-duoc-xay-dung-vuot-qua-chi-gioi-duong-do/).
+- Tết Đinh Mùi 6/2/2027: [FPT Shop](https://fptshop.com.vn/tin-tuc/for-gamers/con-bao-nhieu-ngay-nua-den-tet-2027-207168).
+- Thời hạn cấp phép: [luatminhkhue.vn](https://luatminhkhue.vn/giay-phep-xay-dung-co-thoi-han-bao-lau.aspx).
+- Kim Lâu, Hoang Ốc, Tam Tai: [dienmayxanh – Kim Lâu](https://www.dienmayxanh.com/kinh-nghiem-hay/kim-lau-la-gi-huong-dan-tinh-va-hoa-giai-han-kim-lau-1586579), [dienmayxanh – Hoang Ốc](https://www.dienmayxanh.com/kinh-nghiem-hay/hoang-oc-la-gi-cach-tinh-tuoi-hoang-oc-1586912), [Luật Minh Khuê](https://luatminhkhue.vn/cach-tinh-han-tam-tai-kim-lau-hoang-oc.aspx).
