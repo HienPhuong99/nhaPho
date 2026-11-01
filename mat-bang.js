@@ -101,7 +101,7 @@ function stair(upper) {
 const GROUND = {
   id: 'g', name: 'Tầng trệt', front: 0, band: [0, 0.6, 6, 8.8, 12.5, 16.5, 18],
   rooms: [
-    { n: 'Tam cấp', x: [0, 0.6], y: [0, 4.2], c: 'balc', l: [0.15, 2.1], one: 1 },
+    { n: 'Tam cấp', x: [0, 0.6], y: [0, 4.2], c: 'balc', l: [0.3, 3.75], one: 1, lab: 'TAM CẤP' },
     { n: 'Phòng khách', x: [0.6, 6], y: [0, 4.2], l: [3.3, 2.1] },
     { n: 'Lối đi', x: [6, 8.8], y: [0, 1], c: 'corr', rot: 1 },
     { n: 'Cầu thang U', x: [6, 8.8], y: [1, 4.2], l: [7.4, 2.3], stair: 1 },
@@ -112,25 +112,31 @@ const GROUND = {
   ],
   draw() {
     wall(0, 0, 18, 0); wall(0, 4.2, 18, 4.2);
-    wall(0.6, 0, 0.6, 4.2, [[1.3, 2.9]]); wall(18, 0, 18, 4.2, [[2.2, 3.2]]);
+    wall(0.6, 0, 0.6, 4.2, [[0.9, 3.3]]); wall(18, 0, 18, 4.2, [[2.2, 3.2]]);
     // tam cấp: mặt đường −0,32 → bậc +0,16 → nền ±0,00
     line(0, 0.05, 0, 4.15, 'riser'); line(0.3, 0.05, 0.3, 4.15, 'riser');
-    text(0.45, 2.1, ['2 bậc × 16 cm · đường −0,32 → nền ±0,00'], { cls: 'h-balc sm' });
+    text(0.3, 0.45, ['2 bậc × 16'], { cls: 'h-balc sm' });
     wall(6, 1, 6, 4.2); wall(8.8, 1, 8.8, 4.2); wall(12.5, 1, 12.5, 4.2); wall(16.5, 1, 16.5, 4.2);
     wall(12.5, 1, 18, 1, [[12.65, 13.55], [16.65, 17.35]]);
     win(18, 2.2, 18, 3.2);
-    door(0.6, 1.3, 0.6, 2.1, 1, 0); door(0.6, 2.9, 0.6, 2.1, 1, 0); // cửa chính 2 cánh, lùi sau tam cấp
+    // cửa chính nhôm kính 4 cánh × 0,6 m mở ra ngoài (khảo sát lần 2): cánh quét hết 0,6 m tam cấp, không lấn ra vỉa hè;
+    // hai cánh giữa bản lề vào cánh bên, mở thường ngày; khung sắt bảo vệ đặt phía trong
+    door(0.6, 0.9, 0.6, 1.5, -1, 0); door(0.6, 1.5, 0.6, 2.1, -1, 0); door(0.6, 2.7, 0.6, 2.1, -1, 0); door(0.6, 3.3, 0.6, 2.7, -1, 0);
+    line(0.72, 0.9, 0.72, 3.3, 'grille');
     door(12.65, 1, 13.55, 1, 0, 1); door(16.65, 1, 17.35, 1, 0, 1);
     // bệ bếp chữ L + bếp nấu + chậu rửa
     rect(9.0, 3.55, 12.45, 4.15, 'counter'); rect(11.85, 2.0, 12.45, 3.55, 'counter');
     for (const x of [9.45, 9.9]) add(`<circle class="furn" cx="${k(my(3.85))}" cy="${k(x)}" r="13"/>`);
     rect(10.6, 3.65, 11.2, 4.05, 'furn');
-    bed(14.5, 2.15, 16.3, 4.15);   // giường 1,8 m (khảo sát)
+    bed(14.5, 1.95, 16.3, 4.15);   // giường cũ 1,8 × 2,2 m (khảo sát lần 2)
+    line(12.65, 1.13, 16.45, 1.13, 'hiwin');   // ô kính mờ cao ≥ 1,8 m: vách hành lang và trên cửa PN1
+    text(14.3, 1.36, ['ô kính mờ cao ≥ 1,8 m'], { cls: 'sm' });
   },
 };
 
-// Chốt 01/11/2026: phòng thờ lấn ra ban công 0,6 m (ban công còn 0,6 m), mặt tiền lầu ở x = −0,6 gồm cửa đi 1 cánh mở vào
-// (phía hành lang) và cửa sổ 2 cánh; phía sau chia dọc: khu phơi y = 0–2,1 (có mái che lối đi 1 m), nhà tắm y = 2,1–4,2.
+// Final 1 (chủ đầu tư chốt lại sau phiếu lần 2): phòng thờ lấn ra ban công 0,6 m theo phương án nháp, tường mặt tiền lầu
+// ở x = −0,6 (phòng thờ 2,6 × 4,2 m), ban công còn 0,6 m. Mặt tiền lầu: cửa đi 1 cánh 0,8 m mở vào (phía hành lang) và
+// cửa sổ 2 cánh mở hất ra ngoài. Phía sau chia dọc: khu phơi y = 0–2,1 lợp tấm lấy sáng, nhà tắm y = 2,1–4,2.
 const XF = -0.6;
 const UPPER = {
   id: 'u', name: 'Tầng lầu', front: -1.2, band: [-1.2, XF, 2, 6, 8.8, 14.8, 18], back: [0, 2.1, 4.2],
@@ -151,7 +157,7 @@ const UPPER = {
     wall(6, 1, 6, 4.2, [[2.0, 3.2]]); wall(8.8, 1, 8.8, 4.2, [[2.0, 3.2]]);
     wall(14.8, 0, 14.8, 4.2, [[0.1, 0.9], [1.1, 1.95]]); wall(14.8, 2.1, 18, 2.1, [[15.0, 15.75]]);
     wall(2, 1, 6, 1, [[2.15, 3.05]]); wall(8.8, 1, 14.8, 1, [[8.95, 9.85]]);
-    win(XF, 2.3, XF, 3.7); line(XF - h, 3.0, XF + h, 3.0, 'win');                  // cửa sổ 2 cánh mặt tiền
+    win(XF, 2.3, XF, 3.7); line(XF - h, 3.0, XF + h, 3.0, 'win');                  // cửa sổ 2 cánh mặt tiền, mở hất ra ngoài
     win(6, 2.0, 6, 3.2); win(8.8, 2.0, 8.8, 3.2); win(14.8, 1.1, 14.8, 1.95); win(18, 2.8, 18, 3.7);
     door(XF, 0.15, XF, 0.95, 1, 0);                                                // cửa 1 cánh ra ban công, mở vào
     door(2, 0.1, 2, 0.9, -1, 0);                                                   // phòng thờ - hành lang
@@ -161,11 +167,11 @@ const UPPER = {
     line(-1.2, 0, XF, 0, 'rail'); line(-1.2, 4.2, XF, 4.2, 'rail');
     line(0, 0.05, 0, 4.15, 'lot'); text(-0.3, 1.6, ['ranh đất'], { cls: 'sm' });  // ranh đất / chỉ giới đường đỏ
     rect(1.55, 1.5, 1.95, 3.2, 'altar');
-    rect(14.85, 0.05, 15.8, 2.05, 'roofc'); text(15.5, 1.2, ['mái che'], { cls: 'sm' });
+    rect(14.85, 0.05, 17.95, 2.05, 'roofc'); text(15.75, 1.55, ['mái tấm lấy sáng'], { cls: 'sm' });   // che hết khu phơi (khảo sát lần 2)
     rect(17.0, 2.15, 17.95, 4.15, 'arc');                         // chỗ tắm đứng
     rect(16.25, 3.6, 16.75, 4.15, 'furn'); rect(15.85, 3.65, 16.15, 4.15, 'counter');   // bồn cầu, lavabo
     rect(17.25, 0.05, 17.9, 0.7, 'furn'); text(17.57, 0.38, ['máy giặt'], { cls: 'sm' });
-    bed(4.0, 2.15, 5.8, 4.15); bed(12.6, 2.15, 14.4, 4.15);   // giường 1,8 m; PN3 lùi 10 cm tránh cột
+    bed(4.3, 2.15, 5.7, 4.15); bed(12.8, 1.95, 14.4, 4.15);   // giường cũ: PN2 1,4 × 2,0; PN3 1,6 × 2,2 (lùi 10 cm tránh cột)
   },
 };
 
@@ -219,20 +225,21 @@ function section() {
   sr(XF - h, H1 + DOOR, XF + h, roofZ(XF) + 0.15, 'wall');                           // mặt tiền lầu (cắt qua cửa ra ban công) + tường chắn mái
   // mái tôn (nét đậm mỏng), mái nâng trên giếng trời thang, mái che lối đi khu phơi
   const tole = (x1, x2, up = 0) => add(`<polygon class="roof" points="${[[x1, roofZ(x1) + up], [x2, roofZ(x2) + up], [x2, roofZ(x2) + up - 0.05], [x1, roofZ(x1) + up - 0.05]].map(([x, z]) => `${k(Q(x))},${k(-z)}`).join(' ')}"/>`);
-  tole(XF, 6); tole(8.8, RF_END); tole(6, 8.8, 0.55);
-  sr(14.8, ZR + 0.1, 15.8, ZR + 0.15, 'wall');
-  sr(-1.2, H1, -1.16, H1 + 1, 'glass');                                            // lan can kính ban công
+  tole(XF, 6); tole(8.8, RF_END);
+  add(`<polygon class="glass" points="${[[6, roofZ(6) + .03], [8.8, roofZ(8.8) + .03], [8.8, roofZ(8.8) - .03], [6, roofZ(6) - .03]].map(([x, z]) => `${k(Q(x))},${k(-z)}`).join(' ')}"/>`);   // giếng trời: tấm lấy sáng kín
+  sr(14.8, ZR + 0.3, 18.05, ZR + 0.34, 'glass');                                  // mái tấm lấy sáng khu phơi, hở 0,3 m trên đỉnh tường
+  sr(-1.2, H1, -1.16, H1 + 1.1, 'glass');                                            // lan can kính ban công
   // tên không gian
   st(3.3, 1.8, ['PHÒNG KHÁCH']); st(6.7, 2.75, ['CẦU THANG', '22 × 17,2 cm'], { cls: 'sm' });
   st(8.1, 0.9, ['GẦM THANG'], { cls: 'sm' }); st(10.65, 1.9, ['BẾP']); st(15, 1.7, ['HÀNH LANG']);
   st(13.1, 1.1, ['PN1'], { cls: 'sm' }); st(17, 1.1, ['NVS'], { cls: 'sm' });
   st(3.3, 3.48, ['trần thạch cao ≈ +3,30'], { cls: 'sm' });
   st(-0.9, 5.3, ['BAN CÔNG'], { rot: 1, cls: 'sm' }); st(0.7, 5.9, ['PHÒNG THỜ']);
-  st(5.5, 7.95, ['MÁI TÔN'], { cls: 'sm' }); st(15.3, ZR + 0.4, ['mái che'], { cls: 'sm' });
+  st(5.5, 7.95, ['MÁI TÔN'], { cls: 'sm' }); st(15.6, ZR + 0.62, ['tấm lấy sáng'], { cls: 'sm' });
   st(17.35, ZR + 0.6, ['bồn', '1.000 L'], { cls: 'sm' });
   st(2.6, 4.9, ['PN2'], { cls: 'sm' }); st(9.4, 4.9, ['PN3'], { cls: 'sm' });
-  st(7.4, 5.6, ['Ô THANG', 'giếng trời, mái tôn nâng'], { cls: 'sm' }); st(11.9, 5.6, ['HÀNH LANG LẦU']);
-  st(16.6, 5.3, ['KHU PHƠI', 'lộ thiên']); st(16.6, 6.75, ['vách nhà tắm phía sau'], { cls: 'sm' });
+  st(7.4, 5.6, ['Ô THANG', 'giếng trời, tấm lấy sáng'], { cls: 'sm' }); st(11.9, 5.6, ['HÀNH LANG LẦU']);
+  st(16.6, 5.3, ['KHU PHƠI', 'có mái lấy sáng']); st(16.6, 6.75, ['vách nhà tắm phía sau'], { cls: 'sm' });
   // cao độ
   for (const [z, s] of [[ZR, 'ĐỈNH TƯỜNG'], [H1, 'SÀN LẦU'], [0, 'NỀN TRỆT'], [ROAD, 'MẶT ĐƯỜNG']]) {
     add(`<path class="ink-head" d="M${k(Q(18.5))},${k(-z)} l-9,-15 h18 z"/>`);
@@ -274,7 +281,7 @@ function draw(f, overlay) {
   for (const r of f.rooms) {
     const [L, W] = dims(r), N = r.n.toUpperCase(), cls = r.c && r.c !== 'dry' ? 'h-' + r.c : '';
     if (r.rot) text((r.x[0] + r.x[1]) / 2, 0.5, [`${N} · ${f2(L * W)} m²`, `${f1(L)} × ${f1(W)} m`], { rot: 1, cls });
-    else if (r.one) text(r.l[0], r.l[1], [`${N} · ${f1(L)} × ${f1(W)} m · ${f2(L * W)} m²`], { cls: cls + ' sm' });
+    else if (r.one) text(r.l[0], r.l[1], [r.lab ?? `${N} · ${f1(L)} × ${f1(W)} m · ${f2(L * W)} m²`], { cls: cls + ' sm' });
     else text(r.l[0], r.l[1], [N, `${f1(L)} × ${f1(W)} m`, `${f2(L * W)} m²`], { cls });
   }
   // kích thước
