@@ -48,7 +48,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
 .checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .checks li{display:flex;gap:8px;align-items:flex-start}
 .checks b{flex:none;font-family:var(--f-label);font-size:13px;padding:0 6px;border-radius:3px;color:var(--paper);min-width:52px;text-align:center}
-.checks .ok b{background:var(--ok)} .checks .ask b{background:var(--pw)}
+.checks .ok b{background:var(--ok)} .checks .ask b{background:var(--pw)} .checks .bad b{background:var(--bad)}
 .notes{margin:0;padding-left:20px;display:grid;gap:8px;max-width:80ch}
 /* danh sách điểm điện: mỗi điểm một dòng, lý do ở dưới; điện thoại đọc dọc không cần vuốt ngang */
 .pts{display:grid;gap:18px}
@@ -103,10 +103,10 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
 <nav><a href="index.html">Mặt bằng</a><a href="3d.html">Mô hình 3D</a><a href="khaosat.html">Phiếu khảo sát</a><a href="Mat_Bang_KT-03.pdf">Tải PDF</a></nav>
 <main>
   <header>
-    <span class="tag">KÈM KT-03 · SƠ BỘ · CẬP NHẬT THEO KHẢO SÁT 30/10/2026</span>
+    <span class="tag">KÈM KT-03 · SƠ BỘ · CẬP NHẬT THEO BẢN CHỐT 01/11/2026</span>
     <h1>Bố trí cột và ổ điện, nhà phố 4,2 × 18 m</h1>
     <div class="meta">
-      <span><b>Ban công</b> đua ra vỉa hè 1,2 m (đã được phép)</span>
+      <span><b>Phần đua</b> 1,2 m: phòng thờ 0,6 m + ban công 0,6 m (lộ giới 15 m)</span>
       <span><b>Cột</b> 10 cột 200 × 200, 5 trục</span>
       <span><b>Mái</b> tôn, trần thạch cao toàn bộ</span>
       <span><b>Máy lạnh</b> 3 phòng ngủ, dàn nóng gom ra khu phơi</span>
@@ -116,13 +116,14 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
   </header>
 
   <section id="bancong">
-    <h2>1. Ban công đua 1,2 m <small>đối chiếu QCVN 01:2021/BXD</small></h2>
+    <h2>1. Phần đua 1,2 m <small>đối chiếu QCVN 01:2021/BXD</small></h2>
     <ul class="checks card">
-      <li class="ok"><b>ĐÃ CHỐT</b><span>Chủ đầu tư cho biết được phép đua ban công ra vỉa hè 1,2 m. Mặt bằng lầu giữ nguyên ban công 1,2 × 4,2 m.</span></li>
+      <li class="ok"><b>ĐÃ CHỐT</b><span>Bản chốt 01/11: tầng lầu đua ra 1,2 m, trong đó phòng thờ lấn ra 0,6 m (tường mặt tiền lầu ở x = −0,6) và ban công còn 0,6 × 4,2 m.</span></li>
       <li class="ok"><b>ĐẠT</b><span>Đáy sàn ban công cao +3,66 m so với nền trệt, tức khoảng +3,98 m so với mặt đường (nền cao hơn đường 0,32 m). Quy chuẩn yêu cầu phần đua ra phải cao từ 3,5 m trở lên so với mặt vỉa hè.</span></li>
-      <li class="ask"><b>CẦN XEM</b><span>Mức đua tối đa theo lộ giới: đường rộng 7–12 m được đua 0,9 m, trên 12–15 m được 1,2 m, trên 15 m được 1,4 m, dưới 7 m không được đua. <b>Phiếu khảo sát ghi đường trước nhà rộng 8 m.</b> Nếu lộ giới (tính cả vỉa hè hai bên) chỉ khoảng 8 m thì ban công tối đa 0,9 m, không phải 1,2 m. Cần xem con số lộ giới ghi trong thông tin quy hoạch hoặc giấy phép, rồi mới chốt 1,2 m.</span></li>
-      <li class="ask"><b>CẦN XEM</b><span>Phần đua không được vượt quá bề rộng vỉa hè trừ 1,0 m, nên vỉa hè phải rộng từ 2,2 m trở lên. Nhờ người đo bề rộng vỉa hè trước nhà.</span></li>
-      <li class="ask"><b>LƯU Ý</b><span>Ban công phải để thoáng: không được xây tường hay lắp kính bao kín biến thành phòng. Theo khảo sát, dàn nóng máy lạnh đều đặt ở khu phơi phía sau nên ban công không có dàn nóng.</span></li>
+      <li class="ok"><b>ĐẠT</b><span>Mức đua tối đa theo lộ giới: đường rộng 7–12 m được đua 0,9 m, trên 12–15 m được 1,2 m, trên 15 m được 1,4 m. Chủ đầu tư cho biết vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m, tức lộ giới 15 m, nên được đua 1,2 m.</span></li>
+      <li class="ok"><b>ĐẠT</b><span>Phần đua không được vượt quá bề rộng vỉa hè trừ 1,0 m: vỉa hè 3,5 m nên được đua tới 2,5 m, đua 1,2 m là đạt.</span></li>
+      <li class="bad"><b>CHƯA ĐẠT</b><span>Theo QCVN 01:2021/BXD, phần nhô ra khỏi chỉ giới đường đỏ chỉ được làm ban công, không được che chắn thành lô-gia hay buồng. Phòng thờ lấn 0,6 m ra phần đua nên không đưa được vào hồ sơ xin phép, trừ khi sổ đỏ cho thấy ranh đất nằm phía trước tường mặt tiền (nhà có khoảng lùi). Chủ đầu tư đã chọn phương án này ngày 01/11; cần xác nhận ranh đất trước khi lập hồ sơ (phiếu khảo sát lần 2).</span></li>
+      <li class="ok"><b>ĐẠT</b><span>Dàn nóng máy lạnh đều đặt ở khu phơi phía sau nên ban công không có dàn nóng.</span></li>
     </ul>
     <p class="foot">Một số tỉnh, thành có quy định riêng chặt hơn quy chuẩn. Khi làm hồ sơ xin phép, kiến trúc sư cần đối chiếu thêm với thông tin quy hoạch của lô đất.</p>
   </section>
@@ -149,7 +150,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
       <li><b>Trục 2, 3 trùng vách lõi thang (x = 6,0 và 8,8).</b> Lõi thang trùng ở cả 2 tầng, vách cứng, giữ thang và chiếu nghỉ chắc. Dầm quanh lỗ thang tầng lầu tựa thẳng lên cột.</li>
       <li><b>Trục 1 ở x = 0 (mép tam cấp), không ở x = 0,6 (cửa chính).</b> Tường mặt tiền tầng lầu và ban công nằm ở x = 0. Nếu đặt cột ở x = 0,6, ban công phải đua 1,8 m tính từ dầm, quá dài cho dầm công-xôn. Cột ở x = 0 thì ban công đua đúng 1,2 m, còn sàn lầu che mưa cho tam cấp.</li>
       <li><b>Trục 4 ở x = 12,5 (vách bếp – PN1).</b> Trục này nằm trên tường ở tầng trệt. Nhịp trước nó 3,7 m, nhịp sau 5,5 m. Nếu dời trục 4 sang x = 14,8, cột sẽ đụng đầu giường PN1 và cửa khu phơi trên lầu.</li>
-      <li><b>Tường tầng lầu không nằm trên trục</b> (x = 2,0; 14,8; 16,4 và hai đoạn tường y = 1,0) được đỡ bằng dầm phụ, không xây thẳng lên sàn. Nếu xây tường gạch trực tiếp lên sàn 12 cm, sàn dễ võng và nứt.</li>
+      <li><b>Tường tầng lầu không nằm trên trục</b> (x = −0,6; 2,0; 14,8; hai đoạn tường y = 1,0 và tường nhà tắm y = 2,1) được đỡ bằng dầm phụ, không xây thẳng lên sàn. Nếu xây tường gạch trực tiếp lên sàn 12 cm, sàn dễ võng và nứt.</li>
       <li><b>Cột sát ranh đất.</b> Mặt ngoài cột thẳng với mặt ngoài tường hông. Móng cột hông sẽ bị lệch tâm vì không được đào sang đất nhà bên. Kỹ sư phải bố trí dầm móng (giằng) để cân lại. Hiện hai bên còn là đất trống nên thi công dễ, không phải chống đỡ nhà bên; nhưng vẫn không được đào hay đổ móng lấn sang đất người khác, và sau này nhà bên xây sát thì tường hông vẫn bị che, nên không mở cửa sổ ra hai bên.</li>
       <li><b>Chỗ cột lấn 10 cm vào phòng</b> vì cột dày 200 mm, tường 100 mm: đầu giường PN3 dịch 10 cm về phía trong (giường 1,8 m: x = 12,6–14,4); góc chiếu nghỉ thang; mép cuối tủ bếp. Hành lang trệt tại cột còn 0,9 m.</li>
     </ol>
@@ -160,10 +161,10 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
         <tr><td>Dầm dọc nhịp 6,0 m và 5,5 m</td><td class="n">200 × 450</td><td>Dầm dài nhất nằm ở nhịp phòng khách và nhịp bếp – PN1.</td></tr>
         <tr><td>Dầm dọc nhịp 2,8 m và 3,7 m, dầm ngang 4,2 m</td><td class="n">200 × 300</td><td>Dầm ngang nằm trong tường, được trần thạch cao che.</td></tr>
         <tr><td>Dầm phụ dưới tường</td><td class="n">200 × 300</td><td>Dầm ở x = 2,0 và x = 14,8 nằm trên trần phòng khách và PN1, được trần thạch cao che.</td></tr>
-        <tr><td>Dầm công-xôn ban công</td><td class="n">200 × 300 → 200</td><td>Hai dầm nối dài từ dầm dọc, vuốt mỏng dần ra mép, kèm dầm bo mép ban công.</td></tr>
+        <tr><td>Dầm công-xôn ban công</td><td class="n">200 × 350 → 200</td><td>Hai dầm nối dài từ dầm dọc, vuốt mỏng dần ra mép, kèm dầm bo mép ban công. Tường mặt tiền lầu dời ra x = −0,6 nên có thêm dầm ngang đỡ tường tại đó; dầm công-xôn phải tính thêm tải tường, cửa và mái phía trên.</td></tr>
         <tr><td>Sàn lầu</td><td class="n">120</td><td>Khớp với mặt cắt A–A.</td></tr>
-        <tr><td>Mái tôn</td><td class="n">xà gồ thép</td><td>Chủ đầu tư chọn mái tôn thay mái bằng. Dầm mái đổi thành giằng đỉnh tường 200 × 200 chạy quanh, xà gồ gác lên tường thu hồi. Nên dùng tôn cách nhiệt (lớp PU) và trần thạch cao có bông cách nhiệt để tầng lầu đỡ nóng. Mặt cắt A–A và mô hình 3D vẫn vẽ mái bằng, sẽ cập nhật sau.</td></tr>
-        <tr><td>Ô sàn đặt bồn nước</td><td class="n">120, khoảng 1,6 × 4,2 m</td><td>Bồn 1.000 L khi đầy nặng hơn 1 tấn, máy nước nóng năng lượng mặt trời cũng nặng; mái tôn không đỡ được. Đề xuất đổ một ô sàn bê tông nhỏ phía trên nhà tắm lầu (x = 16,4–18,0) để đặt bồn, máy năng lượng mặt trời và bơm; lên bằng thang sắt từ khu phơi. Chờ chủ đầu tư đồng ý.</td></tr>
+        <tr><td>Mái tôn</td><td class="n">xà gồ thép</td><td>Chủ đầu tư chọn mái tôn thay mái bằng. Dầm mái đổi thành giằng đỉnh tường 200 × 200 chạy quanh, xà gồ gác lên tường thu hồi. Nên dùng tôn cách nhiệt (lớp PU) và trần thạch cao có bông cách nhiệt để tầng lầu đỡ nóng. Mặt cắt A–A và mô hình 3D đã vẽ mái tôn.</td></tr>
+        <tr><td>Ô sàn đặt bồn nước</td><td class="n">120, khoảng 3,2 × 2,1 m</td><td>Bồn 1.000 L khi đầy nặng hơn 1 tấn, máy nước nóng năng lượng mặt trời cũng nặng; mái tôn không đỡ được. Đề xuất đổ một ô sàn bê tông phía trên nhà tắm lầu (x = 14,8–18,0, y = 2,1–4,2) để đặt bồn, máy năng lượng mặt trời và bơm; lên bằng thang sắt từ khu phơi. Chờ chủ đầu tư đồng ý.</td></tr>
         <tr><td>Móng</td><td class="n">tuỳ địa chất</td><td>Đất tốt: móng băng giao thoa. Đất yếu (ruộng cũ, gần sông): cọc ép hoặc cọc khoan nhồi. Cần khoan khảo sát hoặc hỏi móng các nhà bên cạnh.</td></tr>
       </tbody>
     </table></div>
@@ -178,9 +179,9 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
     <ol class="notes">
       <li><b>Cách chọn công suất.</b> Với nhà ở miền Nam, ước tính khoảng 600–700 BTU cho mỗi m²: phòng dưới 15 m² dùng 9.000 BTU (1 HP), phòng 15–20 m² dùng 12.000 BTU (1,5 HP). PN3 rộng 19,2 m² và nằm ngay dưới mái tôn nên dùng 12.000. Nên chọn máy inverter vì phòng ngủ chạy lâu suốt đêm, tiết kiệm điện hơn.</li>
       <li><b>Dàn lạnh không thổi thẳng vào người nằm.</b> PN1 và PN3 gắn dàn lạnh trên đầu giường, gió thổi về phía chân giường. PN2 gắn ở vách thang (x = 6,0), sát vách hành lang, gió thổi dọc phòng và đi qua phía cuối giường.</li>
-      <li><b>Cả 3 dàn nóng gom ra khu phơi lộ thiên</b> (theo khảo sát). Khu phơi thoáng, hơi nóng thoát thẳng lên trời và mặt tiền không có dàn nóng. DN1 và DN3 treo trên một giá 2 tầng ở tường hông y = 4,2. DN2 treo cao (đáy từ 2,6 m) trên tường hông y = 0, phía trên lối đi vào nhà tắm, lệch độ cao với hai máy kia để hơi nóng không thổi thẳng vào nhau. Lót đệm cao su dưới chân dàn nóng để không truyền rung sang tường.</li>
+      <li><b>Cả 3 dàn nóng gom ra khu phơi lộ thiên</b> (theo khảo sát). Khu phơi thoáng, hơi nóng thoát thẳng lên trời và mặt tiền không có dàn nóng. Bản chốt 01/11 chuyển nhà tắm sang phía y = 2,1–4,2, nên DN1 và DN3 dời ra giá 2 tầng ở tường sau x = 18 (đoạn y = 1,05–1,85). DN2 treo cao (đáy từ 2,6 m) trên tường hông y = 0, đoạn x = 16,0–16,75, ngoài mái che, lệch độ cao với hai máy kia để hơi nóng không thổi thẳng vào nhau. Lót đệm cao su dưới chân dàn nóng để không truyền rung sang tường.</li>
       <li><b>Ống đồng.</b> ML1 và ML3 chỉ khoảng 2,5–3 m. ML2 phải đi trong trần hành lang lầu ra khu phơi, dài khoảng 12 m: vẫn trong giới hạn của máy 9.000 BTU (thường cho tới 15 m) nhưng vượt chiều dài đã nạp gas sẵn của hãng (thường 5–7,5 m), nên thợ phải nạp thêm gas. Ống nước ngưng ML2 đi cùng, dốc đều về khu phơi. Nếu hãng máy yêu cầu ống dài tối thiểu 3 m thì quấn thêm một vòng ống ở dàn nóng.</li>
-      <li><b>Việc phải làm trước khi đổ sàn lầu.</b> Chôn ống lồng PVC Ø60 xuyên sàn tại vị trí ống ML1 lên khu phơi. Miệng ống cao hơn mặt sàn khu phơi 10 cm và phải chống thấm quanh ống, vì khu phơi là sàn ướt. Chừa lỗ xuyên tường cho ống ML2 và ML3.</li>
+      <li><b>Việc phải làm trước khi đổ sàn lầu.</b> Chôn ống lồng PVC Ø60 xuyên sàn tại vị trí ống ML1 lên khu phơi (x = 15,4, y = 1,6, dưới mái che). Miệng ống cao hơn mặt sàn khu phơi 10 cm và phải chống thấm quanh ống, vì khu phơi là sàn ướt. Chừa lỗ xuyên tường cho ống ML2 và ML3.</li>
       <li><b>Chống nóng mái.</b> Tầng lầu nằm ngay dưới mái tôn. Dùng tôn cách nhiệt (lớp PU), trần thạch cao có bông thủy tinh và chừa khe thoát nhiệt ở đầu hồi. Như vậy máy lạnh đỡ phải chạy hết công suất.</li>
     </ol>
   </section>
@@ -269,16 +270,17 @@ function columns(f, withBeams) {
   if (withBeams) {
     const up = f.id === 'u';
     // dầm chính: 2 dầm dọc theo tường hông + dầm ngang tại mỗi trục
-    for (const y of [0.05, 4.15]) beamX(up ? 0 : -1.2, 18.05, y);
+    for (const y of [0.05, 4.15]) beamX(up ? XF : -1.2, 18.05, y);
     for (const a of AX) { const [p, q] = cx(a); band(p, -0.05, q, 4.25, 'bm'); }
     if (up) {
-      // mái: viền lỗ mái kính trên thang, viền khu phơi lộ thiên
-      beamX(6, 8.8, 1, 'bm2');
-      for (const x of [14.8, 16.4]) beamY(x, 0.05, 4.15, 'bm2');
+      // mái: viền giếng trời trên thang, giằng đỉnh tường mặt tiền, viền khu phơi lộ thiên và ô sàn đặt bồn
+      beamX(6, 8.8, 1, 'bm2'); beamY(XF, 0.05, 4.15, 'bm2');
+      beamY(14.8, 0.05, 4.15, 'bm2'); beamX(14.8, 18, 2.1, 'bm2');
     } else {
       // sàn lầu: dầm bo mép ban công, dầm phụ dưới tường lầu, viền lỗ thang
       beamY(-1.15, 0.05, 4.15, 'bm2');
-      for (const x of [2, 14.8, 16.45]) beamY(x, 0.05, 4.15, 'bm2');
+      for (const x of [XF, 2, 14.8]) beamY(x, 0.05, 4.15, 'bm2');
+      beamX(14.8, 18, 2.1, 'bm2');                                     // dầm phụ dưới tường nhà tắm lầu
       beamX(2, 6, 1, 'bm2'); beamX(8.8, 14.8, 1, 'bm2');
     }
   }
@@ -297,12 +299,12 @@ const P = [
   // tầng trệt
   {f:'g', r:'Phòng khách', x:0.82, y:3.5, t:'o', h:'0,4', c:'C2', n:'Ổ đôi cạnh cửa chính', w:'Cắm máy hút bụi, quạt đứng, đèn trang trí ngày Tết mà không phải kéo dây từ trong nhà ra.'},
   {f:'g', r:'Phòng khách', x:0.42, y:0.4, t:'d', h:'2,6', c:'C2', n:'Camera 1: trước nhà', w:'Gắn dưới sàn ban công, nhìn ra tam cấp và cửa chính. Sàn ban công che mưa cho camera. Nguồn qua cáp mạng (PoE) từ tủ mạng.'},
-  {f:'g', r:'Phòng khách', x:3.3, y:0.22, t:'d', h:'0,4', c:'C2', n:'Tường TV: ổ đôi + ổ TV + LAN', w:'TV đặt trên kệ ở tường hông phía hành lang (theo khảo sát). Kệ nên sâu không quá 35 cm vì lối đi vào nhà chạy dọc phía này. Cắm LAN cho TV xem phim không bị giật như dùng wifi.'},
+  {f:'g', r:'Phòng khách', x:3.3, y:0.22, t:'d', h:'1,2 + 0,4', c:'C2', n:'Tường TV treo: ổ đôi + ổ TV + LAN', w:'Khảo sát 01/11: TV treo tường ở tường hông phía hành lang. Ổ đôi, ổ TV và LAN đặt cao 1,2 m, khuất sau TV; ống luồn âm tường xuống hộp ổ ở cao 0,4 m cho đầu thu, loa. Gia cố tường chỗ bắt giá treo. Cắm LAN cho TV xem phim không bị giật như dùng wifi.'},
   {f:'g', r:'Phòng khách', x:1.7, y:3.98, t:'o', h:'0,4', c:'C2', n:'Ổ đôi đầu sofa (phía cửa)', w:'Sạc điện thoại, đèn đọc sách cạnh sofa. Ổ đặt ở hai đầu sofa vì lưng sofa che mất đoạn tường giữa.'},
   {f:'g', r:'Phòng khách', x:4.7, y:3.98, t:'o', h:'0,4', c:'C2', n:'Ổ đôi đầu sofa (phía thang)', w:'Như ổ trên: cắm quạt, cây nước nóng lạnh, máy lọc không khí.'},
   {f:'g', r:'Phòng khách', x:5.75, y:0.3, t:'d', h:'trần', c:'C2', n:'Camera 2: phòng khách, chỗ để xe', w:'Gắn ở góc trong, nhìn ngược ra cửa chính: thấy cả người ra vào và 3 xe máy đậu ở phòng khách.'},
   {f:'g', r:'Gầm thang', x:8.55, y:1.45, t:'d', h:'0,4', c:'C2', n:'Tủ mạng: modem, router wifi, đầu ghi camera', w:'Gầm thang nằm giữa chiều dài nhà nên wifi lan được cả trước lẫn sau. Chỗ này khuất, mở từ lối đi, đủ cao (khoảng 2,5 m) để đặt kệ. Cáp quang đi ống chờ âm nền từ ngoài đường vào. Đầu ghi 3 camera đặt ở đây (theo khảo sát).'},
-  {f:'g', r:'Bếp', x:12.28, y:1.5, t:'o', h:'0,5', c:'C3', n:'Ổ đơn tủ lạnh side-by-side', w:'Tủ lạnh side-by-side rộng khoảng 0,9 m: đặt sát vách PN1 ở đoạn y = 1,05–1,95, vừa khít trước bệ bếp chữ L, hai cánh mở ra phía lối đi. Ổ đơn chỉ cho tủ lạnh, để không ai rút nhầm làm hỏng đồ.'},
+  {f:'g', r:'Bếp', x:12.28, y:1.4, t:'o', h:'0,5', c:'C3', n:'Ổ đơn tủ lạnh', w:'Khảo sát 01/11: dùng lại tủ lạnh loại thường của nhà cũ (rộng ≤ 0,7 m). Đặt sát vách PN1 ở đoạn y = 1,05–1,75, phần dư 0,2 m làm tủ khô hoặc kệ gia vị. Ổ đơn chỉ cho tủ lạnh, để không ai rút nhầm làm hỏng đồ.'},
   {f:'g', r:'Bếp', x:12.28, y:2.75, t:'o', h:'1,1', c:'C3', n:'Ổ đôi mặt bếp (cạnh chữ L)', w:'Mặt đá cao 0,9 m, ổ cao hơn khoảng 20 cm. Dùng cho nồi cơm, ấm siêu tốc, máy xay. Đặt ở cánh ngắn của bệ bếp chữ L, xa chậu rửa và bếp nấu.'},
   {f:'g', r:'Bếp', x:11.85, y:3.98, t:'o', h:'1,1', c:'C3', n:'Ổ đôi mặt bếp (cạnh chậu)', w:'Cho lò vi sóng, nồi chiên không dầu. Cách mép chậu rửa hơn 0,6 m để nước không bắn vào. Nhà nấu ăn hằng ngày nên hai ổ mặt bếp đi chung mạch 20 A.'},
   {f:'g', r:'Bếp', x:9.2, y:3.98, t:'p', h:'0,6', c:'C4', n:'Ổ bếp từ đôi (4 mm²)', w:'Chủ đầu tư chọn bếp từ đôi, khoảng 3,5–4 kW, dòng gần 18 A, nên đi dây 4 mm² trên mạch riêng. Ổ đặt trong tủ dưới mặt bếp.'},
@@ -321,7 +323,7 @@ const P = [
   {f:'g', r:'NVS trệt', x:17.78, y:1.6, t:'w', h:'2,4', c:'C5', n:'Quạt hút', w:'Hút ẩm ra phía sau nhà, đi chung công tắc với đèn để tự chạy khi có người dùng.'},
   {f:'g', r:'Hành lang trệt', x:14.6, y:0.22, t:'o', h:'0,4', c:'C5', n:'Ổ đôi hành lang + đèn cảm biến chân tường', w:'Cắm máy hút bụi. Thêm đèn cảm biến chuyển động ở chân tường dọc hành lang từ PN1 tới NVS cho người lớn tuổi đi vệ sinh ban đêm.'},
   // tầng lầu
-  {f:'u', r:'Ban công', x:-0.2, y:0.6, t:'w', h:'0,8', c:'L2', n:'Ổ ngoài trời IP55', w:'Đèn trang trí, máy bơm tưới cây. Ở ngoài trời nên phải có nắp đậy kín và chống giật.'},
+  {f:'u', r:'Ban công', x:-0.9, y:0.6, t:'w', h:'0,8', c:'L2', n:'Ổ ngoài trời IP55', w:'Đèn trang trí, máy bơm tưới cây. Ở ngoài trời nên phải có nắp đậy kín và chống giật. Ban công còn 0,6 m nên đặt ổ trên tường mặt tiền cạnh cửa đi.'},
   {f:'u', r:'Phòng thờ', x:1.8, y:3.45, t:'o', h:'1,3', c:'L2', n:'Ổ đèn thờ (cạnh bàn thờ)', w:'Phòng thờ giữ trên lầu như bản vẽ (theo khảo sát). Ổ cắm đèn thờ, nhang điện, đặt sát cạnh bàn thờ, ngang mặt bàn và khuất sau đồ thờ; không khoan sau lưng bàn thờ. Nên có công tắc riêng gần cửa.'},
   {f:'u', r:'Phòng thờ', x:1.0, y:3.98, t:'o', h:'0,4', c:'L2', n:'Ổ đôi thường', w:'Quạt và máy hút bụi khi dọn dẹp. Ngày giỗ, Tết đông người cần quạt.'},
   {f:'u', r:'Phòng ngủ 2', x:3.75, y:3.98, t:'o', h:'0,6', c:'L2', n:'Ổ đôi đầu giường', w:'Giường 1,8 m (x = 4,0–5,8). Như PN1: cao hơn mặt tab đầu giường.'},
@@ -335,9 +337,9 @@ const P = [
   {f:'u', r:'Phòng ngủ 3', x:9.02, y:3.7, t:'o', h:'0,4', c:'L3', n:'Ổ đôi gần cửa', w:'Không đặt sau cánh cửa mở; ổ nằm qua khỏi cửa sổ thông ra thang.'},
   {f:'u', r:'Hành lang lầu', x:12.0, y:0.22, t:'o', h:'0,4', c:'L3', n:'Ổ đôi hành lang', w:'Máy hút bụi, đèn ngủ cảm biến.'},
   {f:'u', r:'Hành lang lầu', x:6.6, y:0.5, t:'d', h:'trần', c:'L3', n:'Bộ phát wifi thứ 2 + chuông báo (gắn trần)', w:'Chủ đầu tư muốn wifi phủ toàn nhà. Nhà dài 18 m, tường gạch, lại có sàn bê tông chặn sóng, một router dưới gầm thang không phủ hết được PN3 và nhà tắm lầu. Đi cáp LAN từ tủ mạng lên đây (hệ mesh hoặc AP gắn trần). Chuông báo của nút khẩn cấp dưới trệt cũng gắn ở đây để người trên lầu nghe thấy.'},
-  {f:'u', r:'Khu phơi', x:16.18, y:1.45, t:'w', h:'1,3', c:'L6', n:'Ổ máy giặt IP55 (chờ chốt vị trí)', w:'Phiếu khảo sát có 2 câu trả lời khác nhau: câu 22 chọn khu phơi, câu 37 chọn tầng trệt. Bản vẽ tạm giữ ở khu phơi (gần chỗ phơi, có sẵn thoát nước sàn, cần mái che nhỏ). Nếu chốt tầng trệt thì dời ổ này xuống và cần chọn chỗ có cấp, thoát nước.'},
-  {f:'u', r:'Nhà tắm lầu', x:16.62, y:1.6, t:'w', h:'1,4', c:'L6', n:'Ổ lavabo IP44', w:'Như NVS trệt. Nước nóng lấy từ máy năng lượng mặt trời trên mái nên nhà tắm lầu không cần bình nóng điện.'},
-  {f:'u', r:'Nhà tắm lầu', x:17.78, y:2.2, t:'w', h:'2,4', c:'L6', n:'Quạt hút', w:'Như NVS trệt.'},
+  {f:'u', r:'Khu phơi', x:17.05, y:0.22, t:'w', h:'1,3', c:'L6', n:'Ổ máy giặt IP55', w:'Khảo sát 01/11 chốt máy giặt ở khu phơi. Đặt ở góc sau (x = 17,25–17,9) sát tường hông, gần thoát sàn. Chỗ này lộ thiên nên làm thêm ô văng nhỏ che máy giặt và ổ.'},
+  {f:'u', r:'Nhà tắm lầu', x:15.3, y:3.98, t:'w', h:'1,4', c:'L6', n:'Ổ lavabo IP44', w:'Như NVS trệt. Đặt cạnh gương, cách vòi lavabo hơn 0,6 m. Nước nóng lấy từ máy năng lượng mặt trời trên ô sàn ngay phía trên nên nhà tắm lầu không cần bình nóng điện.'},
+  {f:'u', r:'Nhà tắm lầu', x:17.9, y:2.45, t:'w', h:'2,4', c:'L6', n:'Quạt hút', w:'Gắn tường sau, hút ẩm thẳng ra phía sau nhà, đi chung công tắc với đèn.'},
 ];
 P.forEach((p, i) => p.i = i + 1);
 
@@ -345,16 +347,16 @@ P.forEach((p, i) => p.i = i + 1);
 const AC = [
   {id:'ML1', f:'g', room:'PN1 · 4,0 × 3,2 m = 12,8 m²', btu:'9.000 BTU (1 HP)', in:[14.95, 3.93, 15.85, 4.15],
    inT:'Tường hông, phía trên đầu giường 1,8 m, đáy dàn cao khoảng 2,3 m. Gió thổi về phía chân giường.',
-   outT:'Khu phơi lầu, giá treo 2 tầng chung với DN3 trên tường hông (y = 4,2).',
-   pipe:'Ống đi thẳng lên qua sàn (ống lồng chờ sẵn), dài khoảng 3 m. Nước ngưng xuyên tường x = 16,5 sang NVS, đổ vào ống thoát sàn.'},
+   outT:'Khu phơi lầu, giá treo 2 tầng chung với DN3 trên tường sau (x = 18).',
+   pipe:'Ống đi trong trần thạch cao PN1 sang phía hành lang (y ≈ 1,6), xuyên sàn lên khu phơi qua ống lồng chờ sẵn, rồi chạy dọc tới tường sau; dài khoảng 6 m. Nước ngưng xuyên tường x = 16,5 sang NVS, đổ vào ống thoát sàn.'},
   {id:'ML2', f:'u', room:'PN2 · 4,0 × 3,2 m = 12,8 m²', btu:'9.000 BTU (1 HP)', in:[5.73, 1.15, 5.95, 1.95],
    inT:'Vách thang (x = 6,0), sát vách hành lang. Gió thổi dọc phòng về phía phòng thờ, đi qua phía cuối giường.',
-   outT:'Khu phơi, treo cao (đáy từ 2,6 m) trên tường hông y = 0, phía trên lối vào nhà tắm.',
-   pipe:'Ống xuyên vách hành lang, đi trong trần thạch cao hành lang lầu ra khu phơi, dài khoảng 12 m; thợ phải nạp thêm gas. Nước ngưng đi cùng, dốc đều về thoát sàn khu phơi.'},
+   outT:'Khu phơi, treo cao (đáy từ 2,6 m) trên tường hông y = 0, đoạn x = 16,0–16,75.',
+   pipe:'Ống xuyên vách hành lang, đi trong trần thạch cao hành lang lầu ra khu phơi, dài khoảng 13 m; thợ phải nạp thêm gas. Nước ngưng đi cùng, dốc đều về thoát sàn khu phơi.'},
   {id:'ML3', f:'u', room:'PN3 · 6,0 × 3,2 m = 19,2 m²', btu:'12.000 BTU (1,5 HP)', in:[13.05, 3.93, 13.95, 4.15],
    inT:'Tường hông, phía trên đầu giường 1,8 m. Gió thổi về phía cửa và chân giường.',
-   outT:'Khu phơi, giá 2 tầng chung với DN1.',
-   pipe:'Ống chạy dọc tường hông rồi xuyên vách x = 14,8 phía trên cửa sổ, dài khoảng 2,5 m. Nước ngưng đổ ra thoát sàn khu phơi.'},
+   outT:'Khu phơi, giá 2 tầng chung với DN1 trên tường sau (x = 18).',
+   pipe:'Ống chạy trong PN3 dọc vách x = 14,8 tới phía hành lang, xuyên vách phía trên cửa sổ sang khu phơi rồi tới tường sau; dài khoảng 6 m. Nước ngưng đổ ra thoát sàn khu phơi.'},
 ];
 function acLayer(f) {
   for (const a of AC.filter(a => a.f === f.id)) {
@@ -368,14 +370,15 @@ function acLayer(f) {
     add(`<text class="act" text-anchor="middle" x="${k(my(ly))}" y="${k(lx)}">${label}</text>`);
   };
   if (f.id === 'g') {
-    pl([[15.4, 4.0], [15.4, 3.75]]);
-    add(`<circle class="dn" cx="${k(my(3.68))}" cy="${k(15.4)}" r="9"/>`);   // ống ML1 xuyên sàn lên khu phơi
+    pl([[15.4, 3.95], [15.4, 1.68]]);
+    add(`<circle class="dn" cx="${k(my(1.6))}" cy="${k(15.4)}" r="9"/>`);    // ống ML1 trong trần PN1, xuyên sàn lên khu phơi
   } else {
-    dn(15.2, 3.82, 15.95, 4.15, 'DN1 + DN3', 16.15, 3.75);
-    dn(15.2, 0.05, 15.95, 0.35, 'DN2', 16.15, 0.45);
-    pl([[13.95, 4.04], [15.2, 4.04]]);
-    add(`<circle class="dn" cx="${k(my(3.68))}" cy="${k(15.4)}" r="9"/>`);
-    pl([[5.84, 1.15], [5.84, 0.72], [15.05, 0.72], [15.2, 0.35]]);
+    dn(17.65, 1.05, 17.95, 1.85, 'DN1 + DN3', 17.35, 1.45);
+    dn(16.0, 0.05, 16.75, 0.35, 'DN2', 15.88, 0.5);
+    pl([[13.95, 4.04], [14.65, 4.04], [14.65, 1.4], [17.65, 1.4]]);                // ML3
+    add(`<circle class="dn" cx="${k(my(1.6))}" cy="${k(15.4)}" r="9"/>`);
+    pl([[15.4, 1.6], [15.4, 1.7], [17.65, 1.7]]);                                    // ML1 từ ống xuyên sàn
+    pl([[5.84, 1.15], [5.84, 0.72], [16.2, 0.72], [16.2, 0.35]]);
   }
 }
 function marker(p) {
@@ -408,11 +411,11 @@ document.getElementById('dien-u').innerHTML = draw(UPPER, elecLayer);
 
 // bảng trục
 const AXW = [
-  'Mép trước, ngay chỗ tam cấp. Đỡ tường mặt tiền lầu và hai dầm công-xôn ban công đua 1,2 m.',
+  'Mép trước, ngay chỗ tam cấp. Đỡ hai dầm công-xôn đua 1,2 m; tường mặt tiền lầu nay đặt trên công-xôn tại x = −0,6.',
   'Vách trước lõi thang, cũng là vách giữa PN2 và thang ở lầu. Nhịp phòng khách 6,0 m là nhịp lớn nhất, dầm dọc cao 450.',
   'Vách sau lõi thang, giữa bếp và thang. Thang nằm gọn giữa trục 2 và 3.',
   'Vách giữa bếp và PN1 ở trệt. Lên lầu, trục nằm giữa PN3; dầm ngang ở đây được trần thạch cao che.',
-  'Tường sau. Dầm phụ ở x = 14,8 và 16,4 đỡ tường khu phơi và nhà tắm lầu.',
+  'Tường sau. Dầm phụ ở x = 14,8 và dầm dọc ở y = 2,1 đỡ tường nhà tắm lầu.',
 ];
 document.getElementById('tbl-truc').innerHTML = AX.map((a, i) =>
   `<tr><td class="n">${i + 1}</td><td class="n">x = ${f1(a)}</td><td class="n">${i < AX.length - 1 ? f1(AX[i + 1] - a) + ' m' : '—'}</td><td>${AXW[i]}</td></tr>`).join('');
@@ -484,13 +487,12 @@ const CAO = [
 document.getElementById('tbl-cao').innerHTML = CAO.map(([a, b, c]) => `<tr><td>${a}</td><td class="n">${b}</td><td>${c}</td></tr>`).join('');
 
 const HOI = [
-  '<b>Lộ giới bao nhiêu?</b> Đường rộng 8 m là chỉ phần mặt đường, hay tính cả vỉa hè hai bên? Lộ giới 7–12 m thì ban công chỉ được đua 0,9 m, phải trên 12 m mới được 1,2 m.',
-  '<b>Máy giặt đặt ở đâu?</b> Câu 22 chọn khu phơi, câu 37 chọn tầng trệt. Nếu ở trệt thì đặt chỗ nào (gầm thang, NVS trệt, góc bếp)?',
+  '<b>Ranh đất phía trước theo sổ đỏ</b> trùng mép tường mặt tiền (x = 0) hay còn đất phía trước? Quyết định phòng thờ lấn 0,6 m có đưa vào hồ sơ xin phép được không.',
   '<b>Có đồng ý đổ ô sàn bê tông nhỏ trên nhà tắm lầu</b> để đặt bồn 1.000 L, máy nước nóng năng lượng mặt trời và bơm không? Mái tôn không đỡ được bồn đầy nước.',
   '<b>Người đi lại khó khăn dùng gì để di chuyển?</b> Gậy, khung tập đi hay xe lăn? Nếu dùng xe lăn thì cửa PN1, cửa NVS trệt phải rộng 0,9 m, NVS không có bậc cửa, và tam cấp cần cầu dắt hoặc tay vịn.',
   '<b>Áp lực nước máy khu vực có mạnh không?</b> Ban ngày nước có tự lên được tầng lầu không? Nếu có thể bỏ được bơm đẩy (mạch C8).',
   '<b>Điện lực khu vực cấp công tơ 1 pha tối đa bao nhiêu A?</b> (khảo sát ghi "chưa hỏi").',
-  '<b>Ngân sách 1,1 tỷ đồng đã gồm nội thất, vật tư phổ thông.</b> Chủ đầu tư xác nhận lại con số (phiếu ghi "1100000000 triệu đồng", tôi hiểu là 1,1 tỷ đồng).',
+  '<b>Hạn "xong trước 02/2027"</b> là hạn khởi công hay hạn dọn vào ở? Khởi công sau 3 tháng thì không thể xong trước 02/2027.',
 ];
 document.getElementById('hoi-ds').innerHTML = HOI.map(q => `<li>${q}</li>`).join('');
 </script>

@@ -2,7 +2,7 @@
 
 Mặt bằng nhà phố 4,2 × 18 m (KT-03): https://hienphuong99.github.io/nhaPho/
 
-Phiếu khảo sát lần 2, các câu bổ sung (điền trên điện thoại hoặc in A4): https://hienphuong99.github.io/nhaPho/khaosat.html
+Phiếu khảo sát lần 2 theo bản chốt 01/11, có gợi ý trả lời (điền trên điện thoại hoặc in A4): https://hienphuong99.github.io/nhaPho/khaosat.html
 
 Phiếu khảo sát lần 1 (đã trả lời 30/10/2026): https://hienphuong99.github.io/nhaPho/khaosat-lan1.html
 

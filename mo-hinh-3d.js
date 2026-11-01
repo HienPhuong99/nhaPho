@@ -129,36 +129,39 @@ function nha3D() {
   label(LG, 17.25, 2.6, 1.6, 'NVS', '1,5 × 3,2 · 4,80 m²');
   label(LG, 7.4, 0.5, 2.4, 'CẦU THANG', '22 bậc × 17,2 cm');
 
-  // ---------- tầng lầu ----------
-  const HU = H2 - SLAB;
+  // ---------- tầng lầu (chốt 01/11/2026): phòng thờ lấn ra ban công 0,6 m, mặt tiền lầu ở X = −0,6;
+  // phía sau chia dọc: khu phơi Y 0–2,1 (mái che lối đi 1 m), nhà tắm Y 2,1–4,2 ----------
+  const HU = H2 - SLAB, XF = -0.6;
   box(-1.2, 6.05, 0, 4.2, H1 - SLAB, H1, mat.slab, U);             // sàn lầu (chừa ô thang)
   box(8.75, 18, 0, 4.2, H1 - SLAB, H1, mat.slab, U);
   box(6.05, 8.75, 0, y1, H1 - SLAB, H1, mat.slab, U);
   floors(U, H1, [
-    [-1.2, 0, 0, 4.2, mat.balc], [0, 2, 0, 4.2, mat.tile], [2, 6, 1, 4.2, mat.room], [8.8, 14.8, 1, 4.2, mat.room],
-    [2, 14.8, 0, 1, mat.corr], [14.8, 16.4, 0, 4.2, mat.dry], [16.4, 18, 0, 4.2, mat.wet],
+    [-1.2, XF, 0, 4.2, mat.balc], [XF, 2, 0, 4.2, mat.tile], [2, 6, 1, 4.2, mat.room], [8.8, 14.8, 1, 4.2, mat.room],
+    [2, 14.8, 0, 1, mat.corr], [14.8, 18, 0, 2.1, mat.dry], [14.8, 18, 2.1, 4.2, mat.wet],
   ]);
-  wall(U, H1, HU, 0, 0, 18, 0, [], true); wall(U, H1, HU, 0, 4.2, 18, 4.2, [], true);
-  wall(U, H1, HU, 0, 0, 0, 4.2, [[1.3, 2.9, 'D']]); wall(U, H1, HU, 18, 0, 18, 4.2);
+  wall(U, H1, HU, XF, 0, 18, 0, [], true); wall(U, H1, HU, XF, 4.2, 18, 4.2, [], true);
+  wall(U, H1, HU, XF, 0, XF, 4.2, [[0.15, 0.95, 'd'], [2.3, 3.7, 'w']]); wall(U, H1, HU, 18, 0, 18, 4.2, [[2.8, 3.7, 'w']]);
   wall(U, H1, HU, 2, 0, 2, 4.2, [[0.1, 0.9, 'd']]);
   wall(U, H1, HU, 6, 1, 6, 4.2, [[2.0, 3.2, 'w']]); wall(U, H1, HU, 8.8, 1, 8.8, 4.2, [[2.0, 3.2, 'w']]);
-  wall(U, H1, HU, 14.8, 0, 14.8, 4.2, [[0.1, 0.9, 'd'], [1.15, 1.85, 'w'], [2.5, 3.7, 'w']]);
-  wall(U, H1, HU, 16.4, 0, 16.4, 4.2, [[0.1, 0.85, 'd']]);
+  wall(U, H1, HU, 14.8, 0, 14.8, 4.2, [[0.1, 0.9, 'd'], [1.1, 1.95, 'w']]);
+  wall(U, H1, HU, 14.8, 2.1, 18, 2.1, [[15.0, 15.75, 'd']]);
   wall(U, H1, HU, 2, 1, 6, 1, [[2.15, 3.05, 'd']]); wall(U, H1, HU, 8.8, 1, 14.8, 1, [[8.95, 9.85, 'd']]);
-  leaf(U, H1, 0, 1.3, 0, 2.1, -1, 0, 'D'); leaf(U, H1, 0, 2.9, 0, 2.1, -1, 0, 'D');
+  leaf(U, H1, XF, 0.15, XF, 0.95, 1, 0);                             // cửa ra ban công 1 cánh, mở vào
   leaf(U, H1, 2, 0.1, 2, 0.9, -1, 0); leaf(U, H1, 2.15, 1, 3.05, 1, 0, 1); leaf(U, H1, 8.95, 1, 9.85, 1, 0, 1);
-  leaf(U, H1, 14.8, 0.1, 14.8, 0.9, 1, 0); leaf(U, H1, 16.4, 0.1, 16.4, 0.85, 1, 0);
-  rail(U, -1.2, -1.16, 0, 4.2, H1); rail(U, -1.2, 0, 0, .04, H1); rail(U, -1.2, 0, 4.16, 4.2, H1);   // lan can ban công
+  leaf(U, H1, 14.8, 0.1, 14.8, 0.9, 1, 0); leaf(U, H1, 15.0, 2.1, 15.75, 2.1, 0, 1);
+  rail(U, -1.2, -1.16, 0, 4.2, H1); rail(U, -1.2, XF, 0, .04, H1); rail(U, -1.2, XF, 4.16, 4.2, H1);   // lan can ban công
+  box(16.25, 16.75, 3.6, 4.15, H1, H1 + .42, mat.bed, U); box(15.85, 16.15, 3.65, 4.15, H1 + .75, H1 + .85, mat.bed, U);   // bồn cầu, lavabo
+  box(17.25, 17.9, 0.05, 0.7, H1, H1 + .85, mat.bed, U);                                  // máy giặt
   rail(U, 6.05, 7.45, y1 - .04, y1, H1, .9);                        // lan can ô thang
   box(1.55, 1.95, 1.5, 3.2, H1, H1 + .9, mat.altar, U);
   bed(U, H1, 4.0, 5.8, 2.15, 4.15); bed(U, H1, 12.6, 14.4, 2.15, 4.15);
 
-  label(LU, -0.6, 2.1, H1 + 1.4, 'BAN CÔNG', '1,2 × 4,2 · 5,04 m²');
-  label(LU, 0.9, 2.4, H1 + 1.6, 'PHÒNG THỜ', '2,0 × 4,2 · 8,40 m²');
+  label(LU, -0.9, 2.1, H1 + 1.4, 'BAN CÔNG', '0,6 × 4,2 · 2,52 m²');
+  label(LU, 0.6, 2.4, H1 + 1.6, 'PHÒNG THỜ', '2,6 × 4,2 · 10,92 m²');
   label(LU, 3.3, 2.6, H1 + 1.6, 'PHÒNG NGỦ 2', '4,0 × 3,2 · 12,80 m²');
   label(LU, 10.9, 2.6, H1 + 1.6, 'PHÒNG NGỦ 3', '6,0 × 3,2 · 19,20 m²');
-  label(LU, 15.6, 2.1, H1 + 1.6, 'KHU PHƠI', '1,6 × 4,2 · lộ thiên');
-  label(LU, 17.2, 2.1, H1 + 2.2, 'NHÀ TẮM', '1,6 × 4,2 · 6,72 m²');
+  label(LU, 16.6, 1.05, H1 + 1.6, 'KHU PHƠI', '3,2 × 2,1 · lộ thiên');
+  label(LU, 16.4, 3.15, H1 + 2.2, 'NHÀ TẮM', '3,2 × 2,1 · 6,72 m²');
 
   // ---------- mái tôn (khảo sát): dốc từ mặt tiền ra sau, giếng trời trên thang có mái che nâng cao,
   // khu phơi lộ thiên, ô sàn bê tông trên nhà tắm đặt bồn nước và máy nước nóng năng lượng mặt trời ----------
@@ -173,23 +176,24 @@ function nha3D() {
   // mảng tường hồi phía trên đỉnh tường hông, theo độ dốc mái
   function gable(Y) {
     const x = WX(Y), g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute([x, ZR, 0, x, ZR, RF_END, x, RF_LO, RF_END, x, ZR, 0, x, RF_LO, RF_END, x, RF_HI, 0], 3));
+    g.setAttribute('position', new THREE.Float32BufferAttribute([x, ZR, XF, x, ZR, RF_END, x, RF_LO, RF_END, x, ZR, XF, x, RF_LO, RF_END, x, roofZ(XF), XF], 3));
     g.computeVertexNormals();
     RF.add(new THREE.Mesh(g, mat.wallDS));
   }
   mat.roof = M(0x7f8f9a, { roughness: .6, metalness: .2 }); mat.wallDS = M(0xf2efe9, { side: THREE.DoubleSide });
   mat.tank = M(0xd9dde0, { metalness: .3, roughness: .5 }); mat.solar = M(0x1f3550, { roughness: .3 });
-  sheet(0, 6, 0, mat.roof); sheet(8.8, RF_END, 0, mat.roof); sheet(6, 8.8, 0.55, mat.roof);
+  sheet(XF, 6, 0, mat.roof); sheet(8.8, RF_END, 0, mat.roof); sheet(6, 8.8, 0.55, mat.roof);
   gable(0); gable(4.2);
-  box(-0.05, 0.05, 0, 4.2, ZR - SLAB, RF_HI + 0.15, mat.wall, RF);                 // tường chắn mái mặt tiền
-  box(16.4, 18, 0, 4.2, ZR - SLAB, ZR, mat.slab, RF);                               // ô sàn đặt bồn
+  box(XF - 0.05, XF + 0.05, 0, 4.2, ZR - SLAB, roofZ(XF) + 0.15, mat.wall, RF);   // tường chắn mái mặt tiền
+  box(14.8, 18, 2.1, 4.2, ZR - SLAB, ZR, mat.slab, RF);                            // ô sàn đặt bồn trên nhà tắm
+  box(14.8, 15.8, -0.05, 2.1, ZR + .1, ZR + .14, mat.roof, RF);                     // mái che lối đi khu phơi
   const tank = new THREE.Mesh(new THREE.CylinderGeometry(.55, .55, 1.25, 24), mat.tank);
-  tank.position.set(WX(3.2), ZR + .65, 17.2); RF.add(tank);
-  box(16.6, 17.8, 0.4, 1.9, ZR + .5, ZR + .56, mat.solar, RF).rotation.x = -.35; boxes.pop();
+  tank.position.set(WX(3.4), ZR + .65, 17.35); RF.add(tank);
+  box(15.0, 16.4, 2.3, 4.0, ZR + .5, ZR + .56, mat.solar, RF).rotation.x = -.35; boxes.pop();
 
   // trần thạch cao (chỉ hiện khi đi bộ trong nhà): trệt cao 3,3 m, lầu cao 3,2 m; chừa ô thang làm giếng trời
   for (const [X1, X2, Y1, Y2] of [[0.6, 6, 0, 4.2], [6, 8.8, 0, 1], [8.8, 18, 0, 4.2]]) box(X1, X2, Y1, Y2, 3.3, 3.32, mat.ceil, CEIL);
-  for (const [X1, X2, Y1, Y2] of [[0, 6, 0, 4.2], [6, 8.8, 0, 1], [8.8, 14.8, 0, 4.2], [16.4, 18, 0, 4.2]]) box(X1, X2, Y1, Y2, H1 + 3.2, H1 + 3.22, mat.ceil, CEIL);
+  for (const [X1, X2, Y1, Y2] of [[XF, 6, 0, 4.2], [6, 8.8, 0, 1], [8.8, 14.8, 0, 4.2], [14.8, 18, 2.1, 4.2]]) box(X1, X2, Y1, Y2, H1 + 3.2, H1 + 3.22, mat.ceil, CEIL);
 
   // ---------- ánh sáng ----------
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f86, .75));
