@@ -79,6 +79,8 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
 .dn-x{stroke:var(--ac);stroke-width:1.2}
 .opt{stroke-dasharray:6 4}
 .pipe{fill:none;stroke:var(--ac);stroke-width:3;stroke-dasharray:9 5}
+.cable{fill:none;stroke:var(--data);stroke-width:2.6;stroke-dasharray:3 5;stroke-linecap:round}
+.fiber{fill:none;stroke:var(--data);stroke-width:2;stroke-dasharray:14 5 3 5}
 .act{fill:var(--ac);font-size:15px;font-weight:700;dominant-baseline:central;paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
 .tdien{fill:var(--ink)}
 .tdt{fill:var(--ink);font-size:15px;font-weight:700;dominant-baseline:central;paint-order:stroke;stroke:var(--paper);stroke-width:5px}
@@ -193,6 +195,8 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
       <span><svg viewBox="0 0 34 22"><rect class="ml" x="2" y="7" width="30" height="8"/></svg>Dàn lạnh máy lạnh</span>
       <span><svg viewBox="0 0 34 22"><rect class="dn" x="5" y="4" width="24" height="14"/><line class="dn-x" x1="5" y1="4" x2="29" y2="18"/></svg>Dàn nóng</span>
       <span><svg viewBox="0 0 34 22"><line class="pipe" x1="1" y1="11" x2="33" y2="11"/></svg>Ống đồng</span>
+      <span><svg viewBox="0 0 34 22"><line class="cable" x1="1" y1="11" x2="33" y2="11"/></svg>Cáp mạng camera (trong trần)</span>
+      <span><svg viewBox="0 0 34 22"><line class="fiber" x1="1" y1="11" x2="33" y2="11"/></svg>Ống chờ cáp quang (âm nền)</span>
       <span><svg viewBox="0 0 34 22"><rect class="tdien" x="6" y="6" width="22" height="10"/></svg>Tủ điện</span>
     </div>
     <div class="plans">
@@ -231,6 +235,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
       <li><b>Hỏi điện lực khu vực xem công tơ 1 pha được cấp tối đa bao nhiêu</b> (khảo sát ghi "chưa hỏi"). Nhà cần khoảng 9 kW lúc cao điểm, tức khoảng 45 A. Nếu công tơ chỉ 40 A, chọn bếp từ có chế độ giới hạn công suất là đủ, không cần xin 3 pha.</li>
       <li><b>Nối đất.</b> Đóng cọc tiếp địa cho tủ điện. Dây PE (vàng–xanh) phải đi tới mọi ổ cắm, nhất là ổ bình nước nóng, máy giặt, bếp từ và tủ lạnh. Đây là điều kiện để CB chống giật hoạt động đúng.</li>
       <li><b>Điện nhẹ (mạng, camera) đi ống riêng</b>, không chung ống với dây điện, để tránh nhiễu. Chừa ống chờ từ ngoài đường vào gầm thang cho cáp quang, ống từ gầm thang lên hành lang lầu cho bộ phát wifi thứ 2, và ống tới 3 camera. Camera dùng loại cấp nguồn qua cáp mạng (PoE) nên không cần ổ điện riêng ở chỗ gắn.</li>
+      <li><b>Đường cáp camera (khảo sát 01/11: trong nhà 2, ngoài sân 1; đầu ghi theo bản vẽ).</b> Đầu ghi và switch PoE đặt trong tủ mạng ở gầm thang. Từ đó 3 sợi cáp mạng Cat6, mỗi camera một sợi, đi trong ống luồn riêng lên trần lối đi, rồi chạy dọc trần phía hành lang (trên trần thạch cao, sát tường hông): sợi 1 ra trước, xuyên tường x = 0,6 tới camera ngoài sân dưới sàn ban công, dài khoảng 10 m; sợi 2 tới góc phòng khách, khoảng 4 m; sợi 3 về góc bếp nhìn hành lang sau, khoảng 5 m. Cáp đi riêng, không chung ống với dây điện. Chừa ống dư một sợi ra trước và một sợi ra sau để sau này thêm camera.</li>
     </ol>
   </section>
 
@@ -383,6 +388,14 @@ function marker(p) {
 function elecLayer(f) {
   columns(f, false);
   acLayer(f);
+  if (f.id === 'g') {
+    // cáp camera: từ tủ mạng gầm thang lên trần lối đi, chạy dọc trần phía hành lang tới từng camera
+    const pl = (pts, cls) => add(`<polyline class="${cls}" points="${pts.map(([x, y]) => `${k(my(y))},${k(x)}`).join(' ')}"/>`);
+    pl([[8.55, 1.3], [8.55, 0.62], [5.75, 0.62], [5.75, 0.45]], 'cable');               // camera 2
+    pl([[8.45, 1.3], [8.45, 0.72], [0.42, 0.72], [0.42, 0.55]], 'cable');               // camera 1, xuyên tường x = 0,6
+    pl([[8.65, 1.3], [8.65, 0.62], [12.45, 0.62], [12.45, 0.45]], 'cable');             // camera 3
+    pl([[0, 0.15], [0.7, 0.15], [0.7, 0.92], [8.4, 0.92], [8.4, 1.3]], 'fiber');        // cáp quang từ đường vào
+  }
   if (f.id === 'g') { rect(0.65, 0.25, 0.8, 0.7, 'tdien'); add(`<text class="tdt" x="${k(my(0.85))}" y="${k(0.95)}">TĐ</text>`); }
   else { rect(10.0, 0.05, 10.45, 0.2, 'tdien'); add(`<text class="tdt" text-anchor="middle" x="${k(my(0.45))}" y="${k(10.22)}">TĐ2</text>`); }
   for (const p of P.filter(p => p.f === f.id)) marker(p);

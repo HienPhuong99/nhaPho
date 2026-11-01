@@ -116,7 +116,7 @@ File gốc: `Phiếu Khảo Sát Chủ Đầu Tư 18h33ph 01-11-2026.pdf`. Câu 
 | 31 | TV phòng khách | Đặt trên kệ | **Treo tường** | Đổi ổ TV lên cao 1,2 m, gia cố tường treo |
 | 35 | Tủ lạnh | Side-by-side 0,9 m | **Loại thường ≤ 0,7 m**, tủ có sẵn | Dư 0,2 m cho tủ bếp |
 | 37 | Máy giặt | Tầng trệt | **Khu phơi** | Hết mâu thuẫn với câu 22: chốt khu phơi |
-| 39 | Camera | 3 mắt, đầu ghi gầm thang | 3 mắt: trong nhà 2, ngoài sân 1 (chữ bị cắt); đầu ghi "gợi ý đi đường đ…" (chữ bị cắt) | Đề xuất đường dây bên dưới |
+| 39 | Camera | 3 mắt, đầu ghi gầm thang | 3 mắt: trong nhà 2, ngoài sân 1; "gợi ý đi đường điện và vị trí đặt theo bản vẽ" | Đã vẽ đường cáp trên bản bố trí điện tầng trệt |
 | 42 | Điện lực | Chưa hỏi | Chỉ 1 pha, chưa ghi số A | Vẫn cần số A của công tơ |
 | 13 | Ghi chú giếng trời | | "gợi ý thêm thông gió" | Đề xuất bên dưới |
 
@@ -130,4 +130,10 @@ File gốc: `Phiếu Khảo Sát Chủ Đầu Tư 18h33ph 01-11-2026.pdf`. Câu 
 6. **Thông gió.** Giếng trời mái nâng hở hai bên (khí nóng thoát lên theo lõi thang). Lam gió hoặc ô thoáng phía trên cửa sổ phòng ngủ trông ra lõi thang. Cửa sau khu phơi và cửa trước tạo luồng gió xuyên nhà. Quạt hút âm trần cho cả 2 nhà vệ sinh. Không trông vào cửa sổ ở tường hông vì sau này nhà bên xây sát.
 7. **Camera.** Đầu ghi và switch PoE đặt ở gầm thang cạnh modem: nằm giữa nhà nên dây ngắn, gần ổ điện, kín đáo. Dây mạng Cat6 luồn ống âm trần: camera ngoài sân trước (dưới ban công), camera phòng khách nhìn cửa chính, camera hành lang sau nhìn bếp và cửa sau.
 8. **Giám sát nhờ người quen.** Nghiệm thu trước khi lấp hoặc đổ: hố móng và thép móng; thép cột, dầm, sàn trước khi đổ bê tông; ống điện nước âm trước khi trát; chống thấm sàn nhà vệ sinh và ô sàn đặt bồn (ngâm nước 24–48 giờ).
-9. **Vẫn cần hỏi:** lộ giới; số A của công tơ; ô sàn bê tông đặt bồn; người đi lại khó khăn dùng gậy hay xe lăn.
+9. **Vẫn cần hỏi:** số A của công tơ; ô sàn bê tông đặt bồn; người đi lại khó khăn dùng gậy hay xe lăn.
+
+**Bổ sung trong ngày 01/11**
+
+- **Lộ giới 15 m** (vỉa hè 3,5 m + đường 8 m + vỉa hè 3,5 m). Theo QCVN 01:2021, lộ giới trên 12 m đến 15 m được đua ban công tối đa 1,2 m, và độ đua phải nhỏ hơn vỉa hè trừ 1 m (2,5 m). Ban công 1,2 m đạt.
+- **Camera:** trong nhà 2 (phòng khách, bếp nhìn hành lang sau), ngoài sân 1 (dưới sàn ban công). Đầu ghi và switch PoE ở tủ mạng gầm thang; 3 sợi Cat6 đi ống riêng trên trần phía hành lang. Đã vẽ trên `Bo_Tri_Cot_Dien.pdf`, trang tầng trệt.
+- **Yêu cầu sửa tầng lầu:** nới phòng thờ 0,6 m ra ban công, mặt tiền làm cửa sổ 2 cánh bên trái và cửa 1 cánh mở vào bên phải; chia lại khu phơi và nhà tắm theo chiều dọc, nhà tắm bên trái. Bản nháp so sánh 3 phương án ở `Phuong_An_Tang_Lau_Nhap.pdf`. Phần lấn ra ban công nằm trên vỉa hè nên theo QCVN 01:2021 không được quây thành phòng; phương án 2 lấy 0,6 m từ PN2 thay vì từ ban công. Chưa áp vào bản vẽ chính, chờ chủ đầu tư chọn.

@@ -9,6 +9,7 @@ Bản sao các file để tải về, mở được cả khi không vào đượ
 | `Phieu_Khao_Sat_Lan2.pdf` | **Phiếu khảo sát lần 2** (25 câu bổ sung, mỗi câu có gợi ý), in ra điền tay (5 trang A4) |
 | `Phieu_Khao_Sat_CDT.pdf` | Phiếu khảo sát lần 1 (42 câu, đã trả lời 30/10/2026), 6 trang A4 |
 | `Ket_Qua_Khao_Sat.md` | Câu trả lời khảo sát của chủ đầu tư (30/10/2026), những gì đã sửa theo đó, và câu còn cần hỏi lại |
+| `Phuong_An_Tang_Lau_Nhap.pdf`, `.png` | Bản nháp so sánh 3 phương án sửa tầng lầu (phòng thờ, khu phơi, nhà tắm); chưa áp vào bản vẽ chính |
 | `Video_Demo_Nha_4x18.mp4` | Video demo 1 phút 35 giây (1080p) gửi khách: mặt bằng trệt, lầu, bố trí cột, máy lạnh và ổ điện, các con số chính, những điểm cần khách xác nhận |
 | `khaosat.html` | Phiếu khảo sát lần 2, bản điền trên điện thoại hoặc máy tính: tải về rồi mở bằng trình duyệt |
 | `khaosat-lan1.html` | Phiếu khảo sát lần 1, bản điền trên máy |

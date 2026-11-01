@@ -8,4 +8,6 @@ Phiếu khảo sát lần 1 (đã trả lời 30/10/2026): https://hienphuong99.
 
 Bố trí cột, máy lạnh và ổ điện (kèm lý do từng điểm): https://hienphuong99.github.io/nhaPho/cot-dien.html
 
+Bản nháp so sánh phương án sửa tầng lầu: https://hienphuong99.github.io/nhaPho/phuong-an-lau.html
+
 Đi bộ trong nhà 3D (bàn phím, chuột hoặc cần điều khiển trên điện thoại): https://hienphuong99.github.io/nhaPho/di-bo.html
