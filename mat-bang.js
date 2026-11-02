@@ -52,6 +52,15 @@ function door(hx, hy, ex, ey, ox, oy) {
       `<line class="leaf" x1="${H[0]}" y1="${H[1]}" x2="${L[0]}" y2="${L[1]}"/>`);
 }
 
+// Cửa lùa: ô cửa x1–x2 trên tường y; cánh treo phía s (−1: phía y nhỏ), trượt dọc nhà theo dir (−1: về phía mặt tiền).
+// Cánh vẽ ở vị trí đóng (phủ hai mép ô cửa 5 cm), nét đứt là chỗ cánh nằm khi mở, mũi tên chỉ hướng trượt
+function slide(x1, x2, y, s, dir) {
+  const a = y + s * (h + 0.02), b = a + s * 0.05, L = x2 - x1 + 0.1, c = (x1 + x2) / 2, m = y + s * (h + 0.2);
+  rect(x1 - 0.05, a, x2 + 0.05, b, 'slid');
+  if (dir < 0) rect(x1 - L, a, x1, b, 'hid'); else rect(x2, a, x2 + L, b, 'hid');
+  add(`<line class="arrow" style="stroke-width:1.6" x1="${k(my(m))}" y1="${k(c - dir * 0.2)}" x2="${k(my(m))}" y2="${k(c + dir * 0.25)}" marker-end="url(#am-${id})"/>`);
+}
+
 function bed(x1, y1, x2, y2) {             // đầu giường ở phía y2
   const m = (x1 + x2) / 2;
   rect(x1, y1, x2, y2, 'furn');
@@ -117,13 +126,18 @@ const GROUND = {
     line(-0.6, 0, -0.6, 4.2, 'riser'); line(-0.3, 0, -0.3, 4.2, 'riser');
     text(-0.3, 0.5, ['2 bậc × 16'], { cls: 'h-balc sm' }); text(-0.3, 2.1, ['ngoài ranh đất'], { cls: 'h-balc sm' });
     wall(6, 1, 6, 4.2); wall(8.8, 1, 8.8, 4.2); wall(12.5, 1, 12.5, 4.2); wall(16.5, 1, 16.5, 4.2);
-    wall(12.5, 1, 18, 1, [[12.65, 13.55], [16.65, 17.35]]);
+    wall(12.5, 1, 18, 1, [[12.65, 13.55], [16.65, 17.45]]);
     win(18, 2.2, 18, 3.2);
     // cửa chính nhôm kính 4 cánh × 0,6 m mở ra ngoài (khảo sát lần 2): cánh quét gọn trên 0,6 m tam cấp;
     // hai cánh giữa bản lề vào cánh bên, mở thường ngày; khung sắt bảo vệ đặt phía trong
     door(0, 0.9, 0, 1.5, -1, 0); door(0, 1.5, 0, 2.1, -1, 0); door(0, 2.7, 0, 2.1, -1, 0); door(0, 3.3, 0, 2.7, -1, 0);
     line(0.12, 0.9, 0.12, 3.3, 'grille');
-    door(12.65, 1, 13.55, 1, 0, 1); door(16.65, 1, 17.35, 1, 0, 1);
+    door(12.65, 1, 13.55, 1, 0, 1);
+    slide(16.65, 17.45, 1, -1, -1);   // NVS: cửa lùa 0,8 m treo phía hành lang, trượt về phía PN1 (bổ sung 02/11)
+    // tủ gầm thang dưới vế 2 (nét đứt, nằm dưới bản thang): 2 cánh lùa ở mép lối đi, kệ sâu 0,4 m dọc vách bếp, tủ mạng ở đầu tủ
+    rect(7.45, 1.15, 8.75, 4.15, 'hid'); rect(8.35, 1.2, 8.75, 3.2, 'hid');
+    rect(7.45, 1.06, 8.15, 1.1, 'slid'); rect(8.05, 1.1, 8.75, 1.14, 'slid');
+    text(8.55, 2.3, ['tủ gầm thang'], { cls: 'sm' });
     // bệ bếp chữ L + bếp nấu + chậu rửa
     rect(9.0, 3.55, 12.45, 4.15, 'counter'); rect(11.85, 2.0, 12.45, 3.55, 'counter');
     for (const x of [9.45, 9.9]) add(`<circle class="furn" cx="${k(my(3.85))}" cy="${k(x)}" r="13"/>`);
@@ -204,7 +218,7 @@ function section() {
   // thấy phía sau mặt cắt (nét mảnh)
   for (const x of [6, 8.8, 12.5, 16.5]) sr(x - h, 0, x + h, HG, 'bey');            // đầu tường tại y = 1
   for (const x of [6, 8.8]) sr(x - h, H1, x + h, HU, 'bey');
-  for (const [a, b, z] of [[12.65, 13.55, 0], [16.65, 17.35, 0], [2.15, 3.05, H1], [8.95, 9.85, H1], [15.0, 15.75, H1], [16.05, 16.75, H1]]) sr(a, z, b, z + DOOR, 'bey');
+  for (const [a, b, z] of [[12.65, 13.55, 0], [16.65, 17.45, 0], [2.15, 3.05, H1], [8.95, 9.85, H1], [15.0, 15.75, H1], [16.05, 16.75, H1]]) sr(a, z, b, z + DOOR, 'bey');
   sr(14.8, H1, 18, ZR, 'bey');                                                      // vách nhà tắm lầu (y = 2,1) phía sau
   // tường hồi phía trên đỉnh tường hông (thấy phía sau), ô sàn và bồn nước trên nhà tắm
   add(`<polyline class="bey" points="${[[XF, ZR], [XF, roofZ(XF)], [RF_END, RF_LO], [RF_END, ZR]].map(([x, z]) => `${k(Q(x))},${k(-z)}`).join(' ')}"/>`);
@@ -234,7 +248,7 @@ function section() {
   sr(-1.2, H1, -1.16, H1 + 1.1, 'glass');                                            // lan can kính ban công
   // tên không gian
   st(3.3, 1.8, ['PHÒNG KHÁCH']); st(6.7, 2.75, ['CẦU THANG', '22 × 17,2 cm'], { cls: 'sm' });
-  st(8.1, 0.9, ['GẦM THANG'], { cls: 'sm' }); st(10.65, 1.9, ['BẾP']); st(15, 1.7, ['HÀNH LANG']);
+  st(8.1, 0.9, ['TỦ GẦM THANG'], { cls: 'sm' }); st(10.65, 1.9, ['BẾP']); st(15, 1.7, ['HÀNH LANG']);
   st(13.1, 1.1, ['PN1'], { cls: 'sm' }); st(17, 1.1, ['NVS'], { cls: 'sm' });
   st(3.3, 3.48, ['trần thạch cao ≈ +3,30'], { cls: 'sm' });
   st(-0.9, 5.3, ['BAN CÔNG'], { rot: 1, cls: 'sm' }); st(0.7, 5.9, ['PHÒNG THỜ']);

@@ -55,3 +55,5 @@ svg text{font-family:var(--f-label)}
 .roof{fill:var(--ink)}
 .hiwin{stroke:var(--dim);stroke-width:2.2;stroke-dasharray:8 5}
 .grille{stroke:var(--ink2);stroke-width:2;stroke-dasharray:2 4}
+.slid{fill:var(--paper);stroke:var(--ink);stroke-width:2}
+.hid{fill:none;stroke:var(--ink2);stroke-width:1.4;stroke-dasharray:7 5}
