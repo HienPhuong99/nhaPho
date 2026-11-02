@@ -26,7 +26,7 @@ node tools/diff-pdf.mjs vechoichoi/Ban_Ve_Final_1.pdf out/Ban_Ve.pdf    # dòng 
 node tools/render.mjs out/Ban_Ve.pdf 9-10                               # chỉ khi cần xem cả trang
 ```
 
-- Thứ tự gộp: bia (trang 1), index (2–8), mat-dung (9–10), cot-dien (11–24). Thêm hay bớt trang thì sửa mục lục trong `bia.html`.
+- Thứ tự gộp: bia (trang 1), index (2–8), mat-dung (9–10), cot-dien (11–25). Thêm hay bớt trang thì sửa mục lục trong `bia.html`.
 - Kiểm tra bằng phần chữ của diff-pdf trước; chỉ mở ảnh cắt (trái bản cũ, phải bản mới) khi cần nhìn hình. Không đọc thẳng file PDF bằng Read.
 - Trang báo đổi hình 0,0x% mà "chữ giữ nguyên" thường chỉ là lệch khử răng cưa.
 - Cần mạng để tải font Barlow (Google Fonts); thiếu font thì build-pdf báo.

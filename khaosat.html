@@ -127,7 +127,7 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-w
   <header>
     <span class="tag">LẦN 3 · CẤP THOÁT NƯỚC · THEO FINAL 1 · NHÀ PHỐ 4,2 × 18 M</span>
     <h1>Phiếu khảo sát cấp thoát nước</h1>
-    <p class="lead">Sau bản vẽ điện, phần tiếp theo là cấp thoát nước. Phiếu này hỏi những chỗ cần biết trước khi vẽ: nước thải, nước mưa thoát ra đâu, đặt bể tự hoại chỗ nào, nước nóng đi tới đâu, chọn thiết bị vệ sinh loại gì. Ống thoát, bể tự hoại và hố ga nằm dưới nền, làm cùng lúc với móng, nên câu có <span class="star">★</span> cần trả lời trước. Mục 5 gom các câu còn mở từ phiếu lần 2. Mỗi câu có phần <b style="color:var(--star)">Gợi ý</b>; phương án có nhãn <span class="badge">nên chọn</span> là phương án đề xuất, bấm “Chọn theo gợi ý” để điền nhanh rồi sửa lại chỗ nào khác ý.</p>
+    <p class="lead">Sau bản vẽ điện, phần tiếp theo là cấp thoát nước. Phiếu này hỏi những chỗ cần biết trước khi vẽ: nước thải, nước mưa thoát ra đâu, đặt bể tự hoại chỗ nào, nước nóng đi tới đâu, chọn thiết bị vệ sinh loại gì. Ống thoát, bể tự hoại và hố ga nằm dưới nền, làm cùng lúc với móng, nên câu có <span class="star">★</span> cần trả lời trước. Mục 5 gom các câu còn mở từ phiếu lần 2. Mục 6 hỏi phần nội thất và điện theo lưu ý ngày 02/11 (trang 7–8 bộ bản vẽ). Mỗi câu có phần <b style="color:var(--star)">Gợi ý</b>; phương án có nhãn <span class="badge">nên chọn</span> là phương án đề xuất, bấm “Chọn theo gợi ý” để điền nhanh rồi sửa lại chỗ nào khác ý.</p>
     <div class="tools">
       <button type="button" onclick="print()">In phiếu</button>
       <button type="button" class="alt share">Chia sẻ câu trả lời</button>
@@ -158,6 +158,9 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-w
       <li>Nước ngưng máy lạnh đổ vào thoát sàn NVS trệt và khu phơi</li>
       <li>Mái tôn dốc ra sau; khu phơi lợp tấm lấy sáng</li>
       <li>Nền nhà cao hơn mặt đường 0,32 m; đất không ngập, đất chắc, móng băng</li>
+      <li>NVS trệt cửa lùa 0,8 m, treo phía hành lang, trượt về phía PN1</li>
+      <li>Tủ gầm thang dưới vế thang thứ hai: 2 cánh lùa mở ra lối đi, kệ dọc vách bếp, tủ mạng ở đầu tủ</li>
+      <li>Công tắc 2 chiều: phòng khách – chân thang, chân thang – đầu thang, hành lang lầu, hành lang trệt, cửa PN1 – đầu giường PN1</li>
     </ul>
   </details>
 
@@ -254,7 +257,36 @@ const S = [
       g:'Hỏi chủ nhà hoặc thợ đã xây căn gần nhất: móng gì, sâu bao nhiêu, nhà có lún nứt không.', p:[
       {f:'Cách lô đất khoảng ___ m, cao ___ tầng'},
       {l:'Móng', r:['Móng băng','Ép cọc','Không rõ']},
-      {l:'Lún nứt', r:['Không thấy','Có lún nứt']}]}]]
+      {l:'Lún nứt', r:['Không thấy','Có lún nứt']}]}]],
+  ['6. Nội thất và điện (theo lưu ý 02/11)', [
+    {t:'Bàn thờ Thần Tài – Ông Địa', w:'Thường đặt sát đất ở phòng khách, nhìn ra cửa, cần một ổ cắm cho đèn. Phải chốt chỗ trước khi đi ống điện.',
+      g:'Nếu có thờ thì ghi chỗ muốn đặt; bản vẽ sẽ thêm ổ đèn và xếp lại chỗ để xe, tủ giày cho hợp.', p:[
+      {r:['Có thờ, đặt ở ________','Không thờ']}]},
+    {t:'Chỗ để xe, tủ giày trong phòng khách', w:'Phòng khách 6,0 × 4,2 m chứa 2 xe máy, giày dép, sofa và TV. Ổ cắm đặt theo chỗ đồ nên cần chốt trước khi đi ống điện.', rec:['0.0'],
+      g:'Đề xuất xe đậu dọc sát tường phía sofa, khoảng 0,7–2,7 m tính từ cửa; sofa văng thẳng lùi vào trong; tủ giày 0,85 × 0,35 m ở góc tường mặt tiền phía TV; ổ cạnh cửa nâng lên 1,0–1,2 m để sau này sạc xe điện.', p:[
+      {r:['Theo đề xuất','Khác: ________']},
+      {l:'Xe điện', r:['Có hoặc sắp có xe điện','Không']}]},
+    {t:'Tủ quần áo, sofa cũ', w:'Từ chân giường tới vách hành lang chỉ còn 0,9 m ở PN1 và 1,1 m ở PN2; tủ sâu 0,6 m kê ở đó thì không mở được cánh. Cần kích thước để vẽ tủ vào mặt bằng.',
+      g:'PN1 đề xuất kê tủ ở vách giáp bếp; PN2 chỉ hợp tủ cửa lùa. Đo cả chiều cao: tủ nguyên khối phải quay đầu ở chiếu nghỉ sâu 0,9 m rồi vào hành lang lầu 1 m mới lên được lầu.', p:[
+      {l:'Tủ áo', r:['Mang tủ cũ (ghi kích thước dưới)','Đóng tủ mới cửa lùa','Mua sau']},
+      {f:'PN1 ____ × ____ × ____ cm · PN2 ____ × ____ × ____ cm · PN3 ____ × ____ × ____ cm'},
+      {f:'Sofa cũ dài ____ × sâu ____ cm'}]},
+    {t:'Hút mùi bếp', w:'Bếp giữa nhà, không có cửa sổ. Hút mùi lọc than chỉ giữ dầu mỡ và bớt mùi; hơi nóng, hơi nước vẫn ở lại, mùi vào PN1 và theo ô thang lên lầu vì giếng trời lợp kín.', rec:['0.0'],
+      g:'Nhà nấu hằng ngày nên đề xuất chừa ống D150 trong trần hành lang trệt ra tường sau lúc làm trần (dài khoảng 11–12 m, gắn quạt hút trên ống). Làm sau phải tháo trần.', p:[
+      {r:['Chừa ống thải ra tường sau','Giữ lọc than, không chừa ống']}]},
+    {t:'Máy lạnh phòng khách, quạt trần', w:'Phòng khách, bếp và ô thang thông nhau, hơn 40 m²; mặt tiền hướng Tây Nam, nắng chiều rọi thẳng cửa kính 2,4 m. Bản điện hiện chỉ có máy lạnh ở 3 phòng ngủ.', rec:['0.0','1.0','1.1'],
+      g:'Đề xuất chừa ống đồng, dây và ống nước ngưng khi làm trần, mua máy sau. Móc quạt trần phải chôn khi đổ sàn lầu.', p:[
+      {l:'Máy lạnh', r:['Chừa ống, mua máy sau','Lắp ngay','Không cần']},
+      {l:'Móc quạt trần', c:['Phòng khách','Chỗ bàn ăn','Không cần']}]},
+    {t:'Phòng cháy', w:'Xe máy để ở trệt, nhà chỉ có một cầu thang, cửa chính có khung sắt; khói đi thẳng lên ô thang và giếng trời.', rec:['0.0','0.1','0.2'],
+      g:'Đầu báo khói chạy pin không cần đi dây, giá thấp. Ban công lầu là lối thoát thứ hai nên không làm chuồng cọp kín.', p:[
+      {l:'Chọn nhiều', c:['Đầu báo khói ở phòng khách, bếp, hành lang lầu','Bình chữa cháy ở chân thang','Khung sắt cửa chính mở từ trong không cần chìa']}]},
+    {t:'Chống thấm mặt ngoài tường hông', w:'Hai bên lô đất còn trống. Đây là lúc duy nhất tô và sơn chống thấm được mặt ngoài tường hông; khi nhà bên xây sát, nước thấm qua khe giữa hai nhà không sửa được từ phía mình.', rec:['0.0'],
+      g:'Cần chủ đất hai bên cho dựng giàn giáo tạm trên phần đất trống.', p:[
+      {r:['Làm lúc xây','Không làm']}]},
+    {t:'Công tắc 2 chiều thêm', w:'Bản điện đã có công tắc 2 chiều ở: phòng khách – chân thang, chân thang – đầu thang, hành lang lầu (hai đầu và đầu thang), hai đầu hành lang trệt, cửa PN1 – đầu giường PN1.',
+      g:'Thêm ở đầu giường phòng ngủ lầu thì tắt đèn không phải ra cửa. Mỗi chỗ chỉ thêm một sợi dây lúc đi ống.', p:[
+      {l:'Thêm ở đầu giường', c:['PN2','PN3','Không cần thêm']}]}]]
 ];
 
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
