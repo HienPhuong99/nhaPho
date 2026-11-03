@@ -11,7 +11,8 @@ const FROZEN = ['vechoichoi/Ban_Ve_Final_1.pdf', 'vechoichoi/Ban_Ve_Dien_Final_1
 const args = process.argv.slice(2);
 const title = (args.find(a => a.startsWith('--title=')) || '--title=Bản vẽ nhà phố 4,2 × 18 m').slice(8);
 const out = path.resolve(args.find(a => !a.startsWith('--')) || path.join(REPO, 'out/Ban_Ve.pdf'));
-if (FROZEN.includes(rel(out))) { console.error(`${rel(out)} đã chốt, không ghi đè. Đặt tên file khác.`); process.exit(1); }
+// So không phân biệt hoa/thường: Windows coi ban_ve_final_1.pdf và Ban_Ve_Final_1.pdf là một file.
+if (FROZEN.some(f => f.toLowerCase() === rel(out).toLowerCase())) { console.error(`${rel(out)} đã chốt, không ghi đè. Đặt tên file khác.`); process.exit(1); }
 
 const t0 = Date.now();
 const srv = await serve(), browser = await launch();
