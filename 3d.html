@@ -56,6 +56,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="row">
     <button id="t-side" aria-pressed="false">Ẩn tường hông</button>
     <button id="t-label" aria-pressed="true">Tên phòng</button>
+    <button id="t-st" aria-pressed="true">Cột, dầm</button>
     <button id="t-reset">Góc nhìn đầu</button>
     <a class="walk" href="di-bo.html">Đi bộ trong nhà</a>
   </div>
@@ -120,6 +121,7 @@ const toggle = (id, fn) => document.getElementById(id).addEventListener('click',
 });
 toggle('t-side', on => scene.traverse(o => { if (o.userData.side) o.visible = !on; }));
 toggle('t-label', on => { showLabels = on; setView(view); });
+toggle('t-st', on => scene.traverse(o => { if (o.userData.st) o.visible = on; }));
 document.getElementById('t-reset').addEventListener('click', resetCam);
 setView('noroof');
 
