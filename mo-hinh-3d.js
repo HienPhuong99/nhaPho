@@ -204,6 +204,41 @@ function nha3D() {
   for (const [X1, X2, Y1, Y2] of [[0, 6, 0, 4.2], [6, 8.8, 0, 1], [8.8, 18, 0, 4.2]]) box(X1, X2, Y1, Y2, 3.3, 3.32, mat.ceil, CEIL);
   for (const [X1, X2, Y1, Y2] of [[XF, 6, 0, 4.2], [6, 8.8, 0, 1], [8.8, 14.8, 0, 4.2], [14.8, 18, 2.1, 4.2]]) box(X1, X2, Y1, Y2, H1 + 3.2, H1 + 3.22, mat.ceil, CEIL);
 
+  // ---------- cột, dầm, máy lạnh (theo cot-dien.html: AX, columns(), AC) ----------
+  // Cột 200 × 200 trong tường hông tại 5 trục; dầm treo dưới sàn lầu; mái tôn thì dầm mái là giằng đỉnh tường 200 × 200.
+  // Nở 5 mm để không trùng mặt tường. Đánh dấu userData.st để 3d.html bật/tắt.
+  mat.col = M(0xb8643c); mat.ml = M(0xfafcfd, { roughness: .5 }); mat.dn = M(0xb7bdc2, { roughness: .6 });
+  const AX = [0, 6, 8.8, 12.5, 18], SIDES = [[-0.05, 0.15], [4.05, 4.25]];
+  const cx = a => a === 0 ? [-0.05, 0.15] : a === 18 ? [17.85, 18.05] : [a - 0.1, a + 0.1];
+  const sbox = (X1, X2, Y1, Y2, z1, z2, g) => {
+    const m = box(X1 - .005, X2 + .005, Y1 - .005, Y2 + .005, z1, z2, mat.col, g); m.userData.st = true; };
+  for (const a of AX) for (const [y1, y2] of SIDES) {
+    const [p, q] = cx(a);
+    sbox(p, q, y1, y2, ROAD, H1 - SLAB, G); sbox(p, q, y1, y2, H1 - SLAB, ZR, U);
+  }
+  // dầm theo X (dọc nhà) và theo Y (ngang); d = chiều cao dầm tính cả sàn, zt = mặt trên dầm
+  const bX = (X1, X2, Y, d, zt, g) => sbox(X1, X2, Y - .1, Y + .1, zt - d, zt, g);
+  const bY = (X, Y1, Y2, d, zt, g) => sbox(X - .1, X + .1, Y1, Y2, zt - d, zt, g);
+  const ZF = H1 - SLAB, F = d => d - SLAB;                          // dầm sàn lầu: phần thò dưới sàn
+  for (const Y of [0.05, 4.15]) {
+    bX(-1.2, 0, Y, F(.35), ZF, G);                                   // ponytail: công-xôn vẽ đều 350, thực tế vuốt còn 200 ở mép
+    [[0, 6, .45], [6, 8.8, .3], [8.8, 12.5, .3], [12.5, 18.05, .45]].forEach(([a, b, d]) => bX(a, b, Y, F(d), ZF, G));
+    bX(XF, 18.05, Y, .2, ZR, U);                                     // giằng đỉnh tường hông
+  }
+  for (const a of AX) { const [p, q] = cx(a); sbox(p, q, .15, 4.05, ZF - F(.3), ZF, G); sbox(p, q, .15, 4.05, ZR - .2, ZR, U); }
+  bY(-1.15, .15, 4.05, .08, ZF, G);                                  // dầm bo mép ban công
+  for (const X of [XF, 2, 14.8]) bY(X, .15, 4.05, F(.3), ZF, G);     // dầm phụ dưới tường lầu
+  bX(14.8, 18, 2.1, F(.3), ZF, G); bY(15.9, 2.1, 4.05, F(.3), ZF, G); bX(2, 6, 1, F(.3), ZF, G); bX(8.8, 14.8, 1, F(.3), ZF, G);
+  bX(6, 8.8, 1, .2, ZR, U); bY(XF, .15, 4.05, .2, ZR, U); bY(14.8, .15, 4.05, .2, ZR, U); bX(14.8, 18, 2.1, .2, ZR, U);   // giằng mái
+
+  // dàn lạnh ML (đáy cao 2,3 m), dàn nóng DN ở khu phơi
+  box(14.95, 15.85, 3.93, 4.15, 2.3, 2.6, mat.ml, G);                // ML1 · PN1 9.000 BTU
+  box(5.73, 5.95, 1.15, 1.95, H1 + 2.3, H1 + 2.6, mat.ml, U);        // ML2 · PN2 9.000 BTU
+  box(13.05, 13.95, 3.93, 4.15, H1 + 2.3, H1 + 2.6, mat.ml, U);      // ML3 · PN3 12.000 BTU
+  box(17.65, 17.95, 1.05, 1.85, H1 + .9, H1 + 1.45, mat.dn, U);      // DN1 + DN3: giá 2 tầng trên tường sau
+  box(17.65, 17.95, 1.05, 1.85, H1 + 1.65, H1 + 2.2, mat.dn, U);
+  box(16.0, 16.75, 0.05, 0.35, H1 + 2.6, H1 + 3.15, mat.dn, U);      // DN2 treo cao trên tường hông
+
   // ---------- ánh sáng ----------
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f86, .75));
   const sun = new THREE.DirectionalLight(0xffffff, .75);
