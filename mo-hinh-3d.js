@@ -1,5 +1,13 @@
 /* Mô hình 3D nhà phố 4,2 × 18 m (KT-03) dùng chung cho 3d.html (xem từ ngoài) và di-bo.html (đi bộ trong nhà).
    nha3D() dựng toàn bộ cảnh và trả về các nhóm cùng danh sách khối hộp (boxes) theo toạ độ bản vẽ. */
+// Phương án vòm trên rào sắt sân trước (xem vom-cong.html, 3d.html?san=1&vom=A). Cao độ ±0 = nền trệt.
+// chan: cao độ chân vòm (đỉnh cột), vong: độ vồng của cung, sau: chiều sâu vòm vào trong sân
+const VOM_PA = [
+  { id: "A", ten: "Vòm cung nan sắt", kieu: "cung", chan: 2.3, vong: 0.6 },
+  { id: "B", ten: "Mái vòm tấm lấy sáng", kieu: "mai", chan: 2.3, vong: 0.5, sau: 1.0 },
+  { id: "C", ten: "Khung ngang, bảng số nhà", kieu: "ngang", chan: 2.65 },
+  { id: "D", ten: "Vòm giàn hoa leo", kieu: "hoa", chan: 2.05, vong: 0.95, sau: 0.6 },
+];
 function nha3D() {
   // Số liệu lấy từ bản vẽ KT-03 (mat-bang.html). Toạ độ bản vẽ: X dọc nhà (0 = mặt tiền), Y bề ngang.
   // Thế giới 3D: x = 4,2 − Y (đứng ở cửa nhìn vào: hành lang bên trái, thang bên phải), y = cao độ (nền trệt = 0), z = X.
@@ -269,6 +277,63 @@ function nha3D() {
     sb(-SD + CT, 0, Y - .015, Y + .015, ZC - .05, ZC, mat.iron, SAN); sb(-SD + CT, 0, Y - .015, Y + .015, ZD - .03, ZD, mat.iron, SAN);
     for (let X = -SD + CT + .12; X < -0.05; X += .12) sb(X - .01, X + .01, Y - .01, Y + .01, -0.22, ZC, mat.iron, SAN);
   }
+  // ---------- vòm trên rào: 4 phương án VOM_PA (vom-cong.html), mỗi phương án một nhóm, ẩn mặc định ----------
+  const VOM = {};
+  const P3 = (X, Y, z) => new THREE.Vector3(WX(Y), z, X);
+  function bar(a, b, t, m, g) {        // thanh sắt thẳng giữa 2 điểm (X, Y, z)
+    const A = P3(...a), B = P3(...b), mesh = new THREE.Mesh(new THREE.BoxGeometry(t, t, A.distanceTo(B)), m);
+    mesh.position.copy(A).add(B).multiplyScalar(.5); mesh.lookAt(B); mesh.castShadow = true; g.add(mesh);
+  }
+  const Y0 = CT / 2, Y1 = 4.2 - CT / 2, SPAN = Y1 - Y0;
+  const arcZ = (y, zs, rise) => {      // cao độ cung tròn qua 2 đầu cột và đỉnh giữa
+    const Rr = (SPAN * SPAN / 4 + rise * rise) / (2 * rise), zc = zs + rise - Rr;
+    return zc + Math.sqrt(Math.max(0, Rr * Rr - (y - 2.1) ** 2));
+  };
+  const arcBar = (X, zs, rise, t, m, g, n = 28) => {
+    for (let i = 0; i < n; i++) { const a = Y0 + SPAN * i / n, b = Y0 + SPAN * (i + 1) / n; bar([X, a, arcZ(a, zs, rise)], [X, b, arcZ(b, zs, rise)], t, m, g); }
+  };
+  const posts = (z, g) => { for (const Y of [0, 4.2 - CT]) sb(-SD, -SD + CT, Y, Y + CT, ZC + .05, z, mat.iron, g); };
+  const nan = (X, z0, top, g) => { for (let y = Y0 + .12; y < Y1 - .06; y += .12) bar([X, y, z0], [X, y, top(y)], .02, mat.iron, g); };
+  mat.leaf = M(0x3f7d3a); mat.flower = M(0xd94f8c); mat.sign = M(0xc9a227, { roughness: .4, metalness: .4 });
+  mat.lamp = M(0xffe2a0, { emissive: 0xffb000, emissiveIntensity: .7 });
+  for (const v of VOM_PA) {
+    const g = VOM[v.id] = new THREE.Group(); g.visible = false; SAN.add(g);
+    if (v.kieu !== 'hoa') posts(v.chan, g);
+    if (v.kieu === 'cung') {           // A: cung sắt hộp, nan dọc lấp đầy
+      bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g);
+      arcBar(GX, v.chan, v.vong, .06, mat.iron, g);
+      nan(GX, ZC + .05, y => arcZ(y, v.chan, v.vong), g);
+    } else if (v.kieu === 'mai') {     // B: mái vòm tấm lấy sáng sâu v.sau m, đua vào trong, chống xiên về cột
+      const X2 = GX + v.sau, Rr = (SPAN * SPAN / 4 + v.vong ** 2) / (2 * v.vong), phi = Math.asin(SPAN / 2 / Rr);
+      for (const X of [GX, (GX + X2) / 2, X2]) arcBar(X, v.chan, v.vong, .05, mat.iron, g);
+      for (const Y of [Y0, Y1]) { bar([GX, Y, v.chan], [X2, Y, v.chan], .06, mat.iron, g); bar([GX, Y, v.chan - .7], [X2 - .1, Y, v.chan], .04, mat.iron, g); }
+      bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g);
+      nan(GX, ZC + .05, () => v.chan, g);
+      const sh = new THREE.Mesh(new THREE.CylinderGeometry(Rr + .03, Rr + .03, v.sau + .1, 48, 1, true, -phi, 2 * phi), mat.poly);
+      sh.rotation.x = -Math.PI / 2; sh.position.set(WX(2.1), v.chan + v.vong - Rr, (GX + X2) / 2); g.add(sh);
+    } else if (v.kieu === 'ngang') {   // C: dầm hộp ngang, bảng số nhà, 2 đèn
+      sb(-SD, -SD + CT, 0, 4.2, v.chan - .2, v.chan, mat.iron, g);
+      nan(GX, ZC + .05, () => v.chan - .2, g);
+      bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g);
+      sb(-SD - .02, -SD, 1.6, 2.6, v.chan - .18, v.chan - .02, mat.sign, g);
+      for (const Y of [0.3, 3.9]) sb(-SD - .08, -SD, Y - .06, Y + .06, v.chan - .17, v.chan - .03, mat.lamp, g);
+    } else {                           // D: 2 cung sâu v.sau m, giằng ngang, cây leo
+      const Xs = [GX, GX + v.sau];
+      for (const X of Xs) { arcBar(X, ZC + .05, v.vong, .04, mat.iron, g); bar([X, Y0, ZC + .05], [X, Y1, ZC + .05], .04, mat.iron, g); }
+      for (let i = 0; i <= 10; i++) { const y = Y0 + SPAN * i / 10, z = arcZ(y, ZC + .05, v.vong); bar([Xs[0], y, z], [Xs[1], y, z], .025, mat.iron, g); }
+      const leafG = new THREE.IcosahedronGeometry(1, 1);
+      let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < 140; i++) {
+        const y = Y0 + SPAN * rnd(), X = Xs[0] + v.sau * rnd(), z = arcZ(y, ZC + .05, v.vong) + (rnd() - .4) * .25;
+        const s = new THREE.Mesh(leafG, rnd() < .25 ? mat.flower : mat.leaf); s.scale.setScalar(.05 + rnd() * .07);
+        s.position.set(WX(y), z, X); s.castShadow = true; g.add(s);
+      }
+      for (const Y of [0.05, 4.15]) for (let z = 0; z < ZC; z += .22) {   // dây leo bám cột
+        const s = new THREE.Mesh(leafG, mat.leaf); s.scale.setScalar(.07); s.position.set(WX(Y), z, GX + (z * 7 % .3) - .1); g.add(s);
+      }
+    }
+  }
+
   // 4 xe máy dọc hai bên, đầu xe quay vào nhà, chừa lối giữa 1,2 m
   const bikeCol = [0xb23a3a, 0x2f5d8a, 0xe7e2d6, 0x2b2b2b].map(c => M(c, { roughness: .4 }));
   const tire = M(0x1c1c1c), wg = new THREE.CylinderGeometry(.27, .27, .1, 20);
@@ -280,7 +345,7 @@ function nha3D() {
     sb(X2 - .42, X2 - .34, Y - .05, Y + .05, zg + .3, zg + 1.0, mat.rail, SAN);        // cổ lái
     sb(X2 - .42, X2 - .36, Y - .33, Y + .33, zg + .98, zg + 1.02, mat.rail, SAN);      // ghi đông
   });
-  label(SAN, -1.9, 2.1, 1.6, 'SÂN TRƯỚC', '3,2 × 4,2 m · 4 xe máy');
+  label(SAN, -1.0, 2.1, 1.1, 'SÂN TRƯỚC', '3,2 × 4,2 m · 4 xe máy');
 
   // ---------- ánh sáng ----------
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f86, .75));
@@ -290,5 +355,5 @@ function nha3D() {
   Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 60 });
   scene.add(sun, sun.target);
 
-  return { scene, base, G, U, RF, CEIL, LG, LU, SAN, NOW, sun, boxes, WX, H1, ROAD };
+  return { scene, base, G, U, RF, CEIL, LG, LU, SAN, NOW, VOM, sun, boxes, WX, H1, ROAD };
 }
