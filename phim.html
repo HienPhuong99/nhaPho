@@ -59,6 +59,17 @@
 <div id="err" hidden>Không tải được thư viện 3D. Kiểm tra kết nối mạng rồi mở lại trang.</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/MaskPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/math/SimplexNoise.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/SSAOShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/SSAOPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
 <script src="mo-hinh-3d.js"></script>
 <script>
 (() => {
@@ -67,46 +78,171 @@ const W = 1920, H = 1080;
 const { scene, U, RF, CEIL, LG, LU, SAN, NOW, LONG, sun } = nha3D();
 LU.visible = false;
 
-// ---------- đồ đạc và đèn chỉ dùng cho phim (bản vẽ không đổi) ----------
+// ---------- đồ đạc, vật liệu và đèn chỉ dùng cho phim (bản vẽ không đổi) ----------
 const FUR = new THREE.Group(); scene.add(FUR);
-const Mf = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .8, ...o });
-const fm = { sofa: Mf(0xd8d2c6), cush: Mf(0xb5643d), wood: Mf(0x9a6b45, { roughness: .6 }), dark: Mf(0x2c2f33, { roughness: .5 }),
-  rug: Mf(0xcfc6b4, { roughness: 1 }), leaf: Mf(0x4f6b3a), pot: Mf(0xe9e4da), lamp: Mf(0xfff3d6, { emissive: 0xffd9a0, emissiveIntensity: 1.2 }),
-  art: Mf(0xf4f1ea), red: Mf(0xc0392b), brass: Mf(0xb08d57, { metalness: .6, roughness: .35 }) };
-// hộp theo toạ độ thế giới: x (0..4,2 ngang), y (cao), z (dọc nhà)
-function fb(x1, x2, y1, y2, z1, z2, m, g = FUR) {
-  const o = new THREE.Mesh(new THREE.BoxGeometry(x2 - x1, y2 - y1, z2 - z1), m);
-  o.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2); o.castShadow = o.receiveShadow = true; g.add(o); return o;
+const FL2 = 3.79;  // mặt sàn lầu (H1 + gạch 12 mm)
+// vân vẽ bằng canvas: sàn gỗ, gạch, vải, đá
+function canvasTex(size, draw, rep = 1) {
+  const c = document.createElement('canvas'); c.width = c.height = size; draw(c.getContext('2d'), size);
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; t.repeat.set(rep, rep); return t;
 }
-function cyl(x, z, r1, r2, y1, y2, m, seg = 24) {
+let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+const woodT = canvasTex(1024, (x, S) => {        // 8 ván theo bề ngang, so le, vân dọc
+  const pw = S / 8;
+  for (let i = 0; i < 8; i++) for (let k = -1; k < 3; k++) {
+    const off = (i % 2) * S / 3 + k * S / 1.5, L = S / 1.5;
+    const h = 28 + rnd() * 10, s = 38 + rnd() * 10, l = 52 + rnd() * 10;
+    x.fillStyle = `hsl(${h},${s}%,${l}%)`; x.fillRect(i * pw, off, pw, L);
+    for (let g = 0; g < 26; g++) {
+      x.strokeStyle = `hsla(${h - 4},${s}%,${l - 12 - rnd() * 10}%,${.18 + rnd() * .2})`; x.lineWidth = .6 + rnd() * 1.6;
+      const gx = i * pw + rnd() * pw; x.beginPath(); x.moveTo(gx, off);
+      x.bezierCurveTo(gx + rnd() * 6 - 3, off + L / 3, gx + rnd() * 6 - 3, off + L * 2 / 3, gx + rnd() * 4 - 2, off + L); x.stroke();
+    }
+    x.fillStyle = 'rgba(40,25,15,.55)'; x.fillRect(i * pw, off, pw, 2); x.fillRect(i * pw, 0, 1.5, S);
+  }
+});
+const tileT = (base, grout, n, jitter = 4) => canvasTex(1024, (x, S) => {
+  const w = S / n;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const v = rnd() * jitter; x.fillStyle = `hsl(${base[0]},${base[1]}%,${base[2] - v}%)`; x.fillRect(i * w, j * w, w, w);
+    for (let k = 0; k < 40; k++) { x.fillStyle = `hsla(${base[0]},${base[1]}%,${base[2] - 8 + rnd() * 16}%,.25)`; x.beginPath(); x.arc(i * w + rnd() * w, j * w + rnd() * w, rnd() * 6, 0, 7); x.fill(); }
+  }
+  x.strokeStyle = grout; x.lineWidth = 4;
+  for (let i = 0; i <= n; i++) { x.beginPath(); x.moveTo(i * w, 0); x.lineTo(i * w, S); x.moveTo(0, i * w); x.lineTo(S, i * w); x.stroke(); }
+});
+const stoneT = tileT([34, 16, 78], '#a99f90', 2, 5), wetT = tileT([205, 10, 80], '#b9c2c8', 6, 3);
+const fabricT = canvasTex(256, (x, S) => {
+  x.fillStyle = '#fff'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 9000; i++) { x.fillStyle = `rgba(0,0,0,${rnd() * .07})`; x.fillRect(rnd() * S, rnd() * S, 2, 1); }
+}, 3);
+const rugT = canvasTex(512, (x, S) => {
+  x.fillStyle = '#d9d0bf'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 20000; i++) { x.fillStyle = `rgba(90,70,50,${rnd() * .08})`; x.fillRect(rnd() * S, rnd() * S, 1, 3); }
+  x.strokeStyle = 'rgba(150,90,60,.5)'; x.lineWidth = 6; x.strokeRect(30, 30, S - 60, S - 60); x.lineWidth = 2; x.strokeRect(46, 46, S - 92, S - 92);
+});
+const marbleT = canvasTex(512, (x, S) => {
+  x.fillStyle = '#f1efea'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 14; i++) {
+    x.strokeStyle = `rgba(120,115,110,${.1 + rnd() * .25})`; x.lineWidth = .5 + rnd() * 2; x.beginPath();
+    let px = rnd() * S, py = 0; x.moveTo(px, py);
+    while (py < S) { px += rnd() * 40 - 20; py += 20 + rnd() * 30; x.lineTo(px, py); }
+    x.stroke();
+  }
+});
+const slatT = canvasTex(512, (x, S) => { for (let i = 0; i < 16; i++) { x.fillStyle = i % 2 ? '#3a2a1e' : `hsl(28,35%,${34 + rnd() * 6}%)`; x.fillRect(i * S / 16, 0, S / 16, S); } });
+const printT = (draw) => canvasTex(512, draw);
+
+// sàn thật theo màu công năng của bản vẽ; lặp vân theo kích thước từng tấm (cạnh mẫu f[1] m)
+const floorBy = { 0xd9bd94: [woodT, 2.0], 0xe6dccb: [stoneT, 1.2], 0xbfe3c3: [stoneT, 1.2], 0xcadcec: [wetT, 1.5], 0xd3cfc1: [stoneT, 1.2], 0xd5dade: [stoneT, 1.2] };
+scene.traverse(o => {
+  if (!o.isMesh || !o.material.color || !o.geometry.parameters) return;
+  const p = o.geometry.parameters, f = floorBy[o.material.color.getHex()];
+  if (f && p.height < .2) {
+    const t = f[0].clone(); t.needsUpdate = true; t.repeat.set(p.width / f[1], p.depth / f[1]);
+    o.material = new THREE.MeshStandardMaterial({ map: t, roughness: f[0] === woodT ? .55 : .22 });
+  }
+});
+const Mf = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .8, ...o });
+const fm = {
+  sofa: Mf(0xd6cfc3, { map: fabricT, roughness: 1 }), sofa2: Mf(0x8a8f7e, { map: fabricT, roughness: 1 }), cush: Mf(0xb8693f, { map: fabricT, roughness: 1 }),
+  cush2: Mf(0xe9e2d3, { map: fabricT, roughness: 1 }), walnut: Mf(0x6b4a33, { roughness: .45 }), oak: Mf(0xb48a5e, { roughness: .5 }),
+  dark: Mf(0x222426, { roughness: .4, metalness: .3 }), black: Mf(0x0d0e10, { roughness: .15 }), white: Mf(0xf3f1ec, { roughness: .35 }),
+  marble: Mf(0xffffff, { map: marbleT, roughness: .18 }), rug: Mf(0xffffff, { map: rugT, roughness: 1 }), slat: Mf(0xffffff, { map: slatT, roughness: .6 }),
+  leaf: Mf(0x3f5f2e, { roughness: .6 }), leaf2: Mf(0x5c7d3c, { roughness: .6 }), pot: Mf(0xd8d2c6, { roughness: .9 }), potDark: Mf(0x3b3836, { roughness: .8 }),
+  glow: Mf(0xfff1d6, { emissive: 0xffd7a0, emissiveIntensity: 5 }), brass: Mf(0xc49a5b, { metalness: .9, roughness: .3 }),
+  quartz: Mf(0xeceae5, { roughness: .2 }), cab: Mf(0xe9e5dc, { roughness: .45 }), tileW: Mf(0xffffff, { map: tileT([40, 10, 92], '#d9d4ca', 8, 2), roughness: .2 }),
+  steel: Mf(0xb9bcbe, { metalness: .9, roughness: .25 }), linen: Mf(0xefe9dc, { roughness: 1, side: THREE.DoubleSide, transparent: true, opacity: .92 }),
+  print: Mf(0xffffff, { roughness: .9, map: printT((x, S) => {
+    x.fillStyle = '#efe9dd'; x.fillRect(0, 0, S, S); x.fillStyle = '#c4572f'; x.beginPath(); x.arc(S * .42, S * .45, S * .2, 0, 7); x.fill();
+    x.fillStyle = '#2b3a3a'; x.fillRect(S * .2, S * .7, S * .6, S * .04); x.fillStyle = '#d8b47a'; x.fillRect(S * .55, S * .25, S * .18, S * .3);
+  }) }),
+  print2: Mf(0xffffff, { roughness: .9, map: printT((x, S) => {
+    x.fillStyle = '#e8e2d4'; x.fillRect(0, 0, S, S);
+    for (let i = 0; i < 6; i++) { x.strokeStyle = `hsl(${20 + i * 30},35%,40%)`; x.lineWidth = 10; x.beginPath(); x.arc(S / 2, S * .9, S * (.15 + i * .07), Math.PI, 0); x.stroke(); }
+  }) }),
+};
+const RB = THREE.RoundedBoxGeometry;
+function fb(x1, x2, y1, y2, z1, z2, m, r = 0) {   // hộp theo toạ độ thế giới (x ngang 0..4,2, y cao, z dọc nhà), r = bo góc
+  const g = r > 0 && RB ? new RB(x2 - x1, y2 - y1, z2 - z1, 3, r) : new THREE.BoxGeometry(x2 - x1, y2 - y1, z2 - z1);
+  const o = new THREE.Mesh(g, m); o.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2); o.castShadow = o.receiveShadow = true; FUR.add(o); return o;
+}
+function cyl(x, z, r1, r2, y1, y2, m, seg = 32) {
   const o = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, y2 - y1, seg), m);
   o.position.set(x, (y1 + y2) / 2, z); o.castShadow = o.receiveShadow = true; FUR.add(o); return o;
 }
-function sphere(x, y, z, r, m) { const o = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), m); o.position.set(x, y, z); o.castShadow = true; FUR.add(o); return o; }
-function plant(x, z, s = 1) { cyl(x, z, .2 * s, .16 * s, 0, .45 * s, fm.pot); sphere(x, .85 * s, z, .38 * s, fm.leaf); sphere(x + .12 * s, 1.15 * s, z - .05, .26 * s, fm.leaf); }
-// phòng khách (z 0..6): sofa chữ L sát tường x≈0, kệ TV sát tường x≈4,2, thảm, bàn trà, tranh
-fb(1.0, 3.3, .01, .02, 2.0, 4.6, fm.rug);
-fb(.12, .95, 0, .42, 1.6, 4.6, fm.sofa); fb(.12, .32, .42, .85, 1.6, 4.6, fm.sofa); fb(.12, 1.9, 0, .42, 4.6, 5.45, fm.sofa); fb(.12, 1.9, .42, .85, 5.25, 5.45, fm.sofa);
-fb(.35, .85, .42, .62, 2.1, 2.6, fm.cush); fb(.35, .85, .42, .62, 3.7, 4.2, fm.cush);
-fb(1.75, 2.55, .32, .38, 2.7, 3.9, fm.wood); fb(1.8, 1.86, 0, .32, 2.75, 3.85, fm.dark); fb(2.44, 2.5, 0, .32, 2.75, 3.85, fm.dark);
-sphere(2.15, .48, 3.3, .1, fm.red);
-fb(3.75, 4.1, 0, .45, 1.8, 4.6, fm.wood); fb(4.08, 4.1, 1.05, 1.9, 2.4, 4.0, fm.dark);
-fb(.06, .09, 1.2, 2.2, 2.5, 3.6, fm.art); fb(.09, .1, 1.5, 1.9, 2.85, 3.25, fm.red);
-plant(3.8, .6, 1.1); plant(.5, .6, .9);
-cyl(2.15, 3.3, .01, .01, 2.5, 3.3, fm.dark); sphere(2.15, 2.45, 3.3, .22, fm.lamp);
-// bếp (z 8.8..12.5): bàn ăn, 4 ghế, 2 đèn thả
-fb(1.9, 2.8, .73, .78, 9.6, 11.4, fm.wood); fb(2.0, 2.06, 0, .73, 9.7, 9.76, fm.dark); fb(2.64, 2.7, 0, .73, 9.7, 9.76, fm.dark);
-fb(2.0, 2.06, 0, .73, 11.24, 11.3, fm.dark); fb(2.64, 2.7, 0, .73, 11.24, 11.3, fm.dark);
-for (const z of [10.0, 10.9]) for (const [a, b] of [[1.35, 1.8], [2.9, 3.35]]) { fb(a, b, .44, .48, z, z + .45, fm.sofa); fb(a < 2 ? a : b - .05, a < 2 ? a + .05 : b, .48, .95, z, z + .45, fm.sofa); }
-for (const z of [10.1, 10.9]) { cyl(2.35, z, .006, .006, 2.4, 3.3, fm.dark); cyl(2.35, z, .05, .2, 2.2, 2.4, fm.brass); }
-plant(3.75, 12.1, .8);
-// lầu: cây ở cuối hành lang, tranh trên tường
-plant(3.7, 2.4 + 0, .8); FUR.children.slice(-3).forEach(o => o.position.y += 3.9);
-fb(4.08, 4.1, 5.0, 5.8, 6.5, 7.4, fm.art); fb(4.07, 4.08, 5.25, 5.55, 6.8, 7.1, fm.red);
-// đèn trong nhà: ấm, không đổ bóng
-for (const [x, y, z, i] of [[2.1, 3.0, 3.2, .9], [2.3, 3.0, 10.5, .9], [3.6, 6.6, 6, .6], [3.6, 6.6, 11, .6], [2.1, 3.0, 7.4, .4]]) {
-  const l = new THREE.PointLight(0xffd7a8, i, 9, 1.6); l.position.set(x, y, z); scene.add(l);
-  if (i > .8) { l.castShadow = true; l.shadow.mapSize.set(1024, 1024); l.shadow.bias = -0.002; l.shadow.camera.near = .1; }
+function ball(x, y, z, r, m, sx = 1, sy = 1, sz = 1) {
+  const o = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), m); o.position.set(x, y, z); o.scale.set(sx, sy, sz); o.castShadow = m !== fm.glow; FUR.add(o); return o;
+}
+function plant(x, y0, z, s = 1, potM = fm.pot) {   // cây lá lớn: chậu, thân, nhiều chùm lá
+  cyl(x, z, .2 * s, .15 * s, y0, y0 + .42 * s, potM); cyl(x, z, .02 * s, .025 * s, y0 + .4 * s, y0 + 1.3 * s, fm.walnut, 8);
+  for (let i = 0; i < 11; i++) {
+    const a = i * 2.4, r = (.12 + rnd() * .22) * s, y = y0 + (.75 + rnd() * .75) * s;
+    const l = ball(x + Math.cos(a) * r, y, z + Math.sin(a) * r, .16 * s, i % 3 ? fm.leaf : fm.leaf2, 1.3, .45, .8); l.rotation.set(rnd(), a, rnd() * .6);
+  }
+}
+function chair(x, z, face) {        // ghế ăn: mặt ngồi bo, lưng, chân gỗ; face = +1 nhìn về +x, -1 nhìn về -x
+  fb(x - .22, x + .22, .44, .5, z - .22, z + .22, fm.oak, .02);
+  const bx = x - face * .2; fb(bx - .02, bx + .02, .5, .92, z - .2, z + .2, fm.oak, .015);
+  for (const [dx, dz] of [[-.18, -.18], [.18, -.18], [-.18, .18], [.18, .18]]) cyl(x + dx, z + dz, .018, .014, 0, .44, fm.walnut, 8);
+}
+// ===== phòng khách (z 0..6) =====
+fb(.9, 3.4, .005, .02, 1.7, 4.9, fm.rug, .005);
+// sofa 3 chỗ sát tường x≈0, mặt nhìn về +x
+fb(.1, 1.0, .1, .42, 1.6, 4.5, fm.sofa, .05); fb(.1, .32, .42, .92, 1.6, 4.5, fm.sofa, .07);
+fb(.1, 1.0, .1, .66, 1.6, 1.82, fm.sofa, .07); fb(.1, 1.0, .1, .66, 4.28, 4.5, fm.sofa, .07);
+for (const z of [1.84, 2.65, 3.46]) fb(.34, .98, .42, .56, z, z + .8, fm.sofa, .05);
+for (const z of [1.86, 2.67, 3.48]) fb(.32, .48, .5, .9, z + .02, z + .76, fm.cush2, .07);
+fb(.46, .6, .56, .86, 2.05, 2.45, fm.cush, .06).rotation.z = -.2; fb(.46, .6, .56, .86, 3.85, 4.25, fm.cush, .06).rotation.z = -.2;
+for (const [x, z] of [[.18, 1.68], [.92, 1.68], [.18, 4.42], [.92, 4.42]]) cyl(x, z, .02, .015, 0, .1, fm.walnut, 8);
+fb(.04, .07, 1.35, 2.15, 2.3, 3.8, fm.walnut); fb(.07, .075, 1.4, 2.1, 2.35, 3.75, fm.print);   // tranh trên sofa
+// bàn trà tròn mặt đá, bàn phụ, đồ trang trí
+cyl(2.05, 3.05, .5, .5, .34, .38, fm.marble, 48); cyl(2.05, 3.05, .3, .34, 0, .34, fm.dark, 48);
+cyl(2.75, 3.8, .22, .22, .44, .47, fm.walnut, 32); cyl(2.75, 3.8, .03, .03, 0, .44, fm.dark, 8);
+ball(1.85, .45, 2.95, .07, fm.brass); cyl(2.25, 3.15, .05, .04, .38, .55, fm.white, 16); ball(2.25, .62, 3.15, .05, fm.leaf2, 1, 1.6, 1);
+fb(1.95, 2.25, .38, .42, 3.15, 3.38, fm.walnut);
+// ghế bành gần cửa
+fb(2.5, 3.3, .1, .4, 1.0, 1.75, fm.sofa2, .06); fb(2.5, 3.3, .4, .85, .95, 1.15, fm.sofa2, .07);
+fb(2.5, 2.66, .1, .62, 1.0, 1.75, fm.sofa2, .06); fb(3.14, 3.3, .1, .62, 1.0, 1.75, fm.sofa2, .06);
+// tường TV x≈4,2: ốp lam gỗ, kệ treo, TV, chậu cây nhỏ
+fb(4.12, 4.18, 0, 3.28, 1.6, 4.7, fm.slat);
+fb(3.7, 4.12, .25, .55, 1.9, 4.4, fm.walnut, .02); fb(4.06, 4.11, 1.0, 1.75, 2.5, 3.8, fm.black, .01);
+cyl(3.92, 4.15, .06, .08, .55, .85, fm.white, 16); ball(3.92, .95, 4.15, .1, fm.leaf2, 1, 1.4, 1);
+// đèn cây vòng cung, đèn thả cụm
+cyl(.55, 4.9, .14, .14, 0, .03, fm.dark); cyl(.55, 4.9, .012, .012, 0, 1.8, fm.brass, 8);
+const arc = new THREE.Mesh(new THREE.TorusGeometry(.55, .012, 8, 32, Math.PI / 2), fm.brass); arc.position.set(1.1, 1.8, 4.9); FUR.add(arc);
+ball(1.65, 1.7, 4.9, .14, fm.glow);
+cyl(2.05, 3.05, .004, .004, 2.55, 3.3, fm.dark, 6); ball(2.05, 2.45, 3.05, .17, fm.glow); ball(1.85, 2.65, 3.25, .12, fm.glow); cyl(1.85, 3.25, .004, .004, 2.75, 3.3, fm.dark, 6);
+// rèm voan cửa mặt tiền, cây lớn ở góc
+for (let i = 0; i < 9; i++) { const c = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, 2.5, 12, 1, true, 0, Math.PI), fm.linen); c.position.set(.25 + i * .1, 1.3, .14); c.rotation.y = i % 2 ? 0 : Math.PI; FUR.add(c); }
+plant(3.75, 0, .65, 1.25, fm.potDark); plant(.45, 0, 5.55, .9);
+for (const z of [1.2, 4.8]) for (const x of [1.0, 3.2]) cyl(x, z, .05, .05, 3.27, 3.3, fm.glow, 16);   // đèn âm trần
+
+// ===== bếp (z 8,8..12,5) =====
+scene.traverse(o => { if (o.isMesh && o.material.color?.getHex() === 0xaebfcd) o.material = fm.cab; });   // tủ bếp dưới màu kem
+fb(.03, .67, .85, .89, 9.0, 12.47, fm.quartz); fb(.65, 2.22, .85, .89, 11.83, 12.47, fm.quartz);
+fb(.02, .05, .89, 1.5, 9.0, 12.47, fm.tileW); fb(.02, .4, 1.5, 2.25, 9.0, 11.2, fm.cab, .01); fb(.02, .4, 1.5, 2.25, 11.9, 12.47, fm.cab, .01);
+for (const z of [9.6, 10.2, 10.8, 12.18]) fb(.39, .41, 1.52, 1.56, z - .1, z + .1, fm.brass);
+fb(.05, .5, 1.75, 2.3, 11.2, 11.9, fm.steel, .01); fb(.05, .55, .89, .9, 11.25, 11.85, fm.black);   // máy hút mùi, bếp từ
+fb(.1, .55, .86, .9, 9.6, 10.3, fm.steel); cyl(.12, 9.95, .015, .015, .9, 1.25, fm.steel, 8);     // chậu rửa, vòi
+fb(3.45, 4.15, 0, 2.0, 11.7, 12.45, fm.steel, .02);                                               // tủ lạnh
+// bàn ăn gỗ óc chó, 4 ghế, 2 đèn thả
+fb(1.75, 2.75, .72, .77, 9.6, 11.3, fm.walnut, .02); fb(1.95, 2.55, 0, .72, 10.2, 10.3, fm.dark); fb(1.95, 2.55, 0, .72, 10.6, 10.7, fm.dark);
+for (const z of [10.0, 10.9]) { chair(1.45, z, 1); chair(3.05, z, -1); }
+for (const z of [10.05, 10.85]) { cyl(2.25, z, .004, .004, 2.15, 3.3, fm.dark, 6); cyl(2.25, z, .04, .19, 1.98, 2.18, fm.brass, 32); ball(2.25, 1.98, z, .05, fm.glow); }
+cyl(2.25, 10.45, .09, .07, .77, .9, fm.white, 16); ball(2.25, 1.0, 10.45, .1, fm.leaf2, 1, 1.3, 1);
+plant(3.75, 0, 9.2, .9, fm.potDark);
+
+// ===== lầu: thảm chạy, tranh, đèn tường, cây cuối hành lang =====
+fb(3.35, 4.05, FL2 + .005, FL2 + .015, 3.0, 14.0, fm.rug, .004);
+fb(4.08, 4.12, FL2 + 1.2, FL2 + 1.9, 6.3, 7.5, fm.walnut); fb(4.07, 4.08, FL2 + 1.25, FL2 + 1.85, 6.35, 7.45, fm.print2);
+fb(4.08, 4.12, FL2 + 1.2, FL2 + 1.9, 10.0, 10.6, fm.walnut); fb(4.07, 4.08, FL2 + 1.25, FL2 + 1.85, 10.05, 10.55, fm.print);
+for (const z of [5, 8.6, 12.2]) ball(4.12, FL2 + 2.0, z, .08, fm.glow, .5, 1.2, 1);
+plant(3.7, FL2, 2.5, .9);
+
+// đèn trong nhà, ánh ấm; hai đèn chính đổ bóng mềm
+for (const [x, y, z, i, sh] of [[2.0, 2.3, 3.1, 2.2, 1], [1.6, 1.6, 4.9, .8, 0], [2.25, 1.9, 10.45, 2.0, 1], [3.9, FL2 + 2.0, 8.6, 1.0, 0], [3.9, FL2 + 2.0, 5, .8, 0], [3.9, FL2 + 2.0, 12.2, .8, 0], [2.1, 3.0, 7.4, .5, 0]]) {
+  const l = new THREE.PointLight(0xffc98a, i, 8, 2); l.position.set(x, y, z); scene.add(l);
+  if (sh) { l.castShadow = true; l.shadow.mapSize.set(1024, 1024); l.shadow.bias = -0.003; l.shadow.camera.near = .2; }
 }
 // cột dầm trong bản dựng màu cùng màu tường (bản vẽ kết cấu mới tô cam)
 const wallM = new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: .9 });
@@ -116,13 +252,13 @@ scene.traverse(o => { if (o.userData.st) o.material = wallM; });
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H, false);
 renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+// bản dựng màu giữ HDR tuyến tính tới bước ghép cuối; ACES + sRGB làm trong shader ghép
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.localClippingEnabled = true;
 document.getElementById('frame').prepend(renderer.domElement);
 sun.intensity = 1.25; sun.shadow.bias = -0.0004; sun.shadow.mapSize.set(4096, 4096);
 
-const camera = new THREE.PerspectiveCamera(40, W / H, .05, 300);
+const camera = new THREE.PerspectiveCamera(40, W / H, .05, 90);
 const CUT = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1.2);          // giữ phần dưới cao độ CUT.constant
 const PAPER = new THREE.Color('#efece4'), SKY = new THREE.Color('#cfdbe3');
 const skPaper = new THREE.MeshBasicMaterial({ color: 0xf7f5ef, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, clippingPlanes: [CUT], toneMapped: false });
@@ -140,22 +276,35 @@ for (const m of meshes) {
 }
 function pass(sketch) {
   for (const m of meshes) { m.material = sketch ? m.userData.sk : m.userData.real; m.userData.e.visible = sketch; m.castShadow = !sketch && m.userData.cs; }
-  scene.background = sketch ? PAPER : SKY;
+  scene.background = sketch ? PAPER : SKY; scene.environment = sketch ? null : ENV;
 }
 meshes.forEach(m => m.userData.cs = m.castShadow);
 
-const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4, encoding: THREE.sRGBEncoding });
+// ánh sáng môi trường (phòng studio dựng sẵn) cho phản chiếu và sáng dịu trong nhà
+const pmrem = new THREE.PMREMGenerator(renderer), ENV = pmrem.fromScene(new THREE.RoomEnvironment(), .04).texture;
+scene.traverse(o => { if (o.isHemisphereLight) o.intensity = .25; if (o.isMesh && o.material.isMeshStandardMaterial) o.material.envMapIntensity = .35; });
+// bản dựng màu: SSAO (bóng tiếp xúc ở góc, chân đồ) rồi bloom cho đèn
+const HDR = { type: THREE.HalfFloatType };
+const composer = new THREE.EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, HDR)); composer.renderToScreen = false;
+const ssao = new THREE.SSAOPass(scene, camera, W, H);
+Object.assign(ssao, { kernelRadius: .45, minDistance: .0008, maxDistance: .05 });
+ssao.beautyRenderTarget.dispose(); ssao.beautyRenderTarget = new THREE.WebGLRenderTarget(W, H, { ...HDR, samples: 4 });
+ssao.ssaoMaterial.uniforms.tDiffuse.value = ssao.beautyRenderTarget.texture;
+composer.addPass(ssao);
+composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(W, H), .45, .55, 1.6));
 const rtB = new THREE.WebGLRenderTarget(W, H, { samples: 4, encoding: THREE.sRGBEncoding });
 const comp = new THREE.ShaderMaterial({
-  uniforms: { real: { value: rtA.texture }, sketch: { value: rtB.texture }, p: { value: 0 }, seed: { value: 0 } },
+  uniforms: { real: { value: null }, sketch: { value: rtB.texture }, p: { value: 0 }, seed: { value: 0 }, expo: { value: 1 } },
   vertexShader: 'varying vec2 v; void main(){ v = uv; gl_Position = vec4(position.xy, 0., 1.); }',
   fragmentShader: `
-    uniform sampler2D real, sketch; uniform float p, seed; varying vec2 v;
+    uniform sampler2D real, sketch; uniform float p, seed, expo; varying vec2 v;
+    vec3 aces(vec3 x){ return clamp(x*(2.51*x+.03)/(x*(2.43*x+.59)+.14), 0., 1.); }
     float h(vec2 q){ return fract(sin(dot(q, vec2(12.9898, 78.233))) * 43758.5453); }
     float n(vec2 q){ vec2 i = floor(q), f = fract(q); f = f*f*(3.-2.*f);
       return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
     void main(){
-      vec3 a = texture2D(real, v).rgb, b = texture2D(sketch, v).rgb;
+      vec3 a = pow(aces(texture2D(real, v).rgb * expo), vec3(1./2.2)), b = texture2D(sketch, v).rgb;
+      a = mix(a, a * vec3(1.03, 1., .95), .6);   // ấm nhẹ
       // giấy: hạt + lưới chấm mờ
       vec2 px = v * vec2(1920., 1080.);
       float grain = n(px * .35) * .05 + h(px + seed) * .025;
@@ -240,7 +389,8 @@ function seek(i, t) {
   CUT.constant = track(s.cut, t);
   const lab = s.lab ? track(s.lab, t) : 0;
   labMats.forEach(m => { m.opacity = lab; m.transparent = true; });
-  if (mix > 0) { show(s.vis); LG.visible = false; pass(false); sanLab.forEach(o => o.visible = false); renderer.setRenderTarget(rtA); renderer.render(scene, camera); }
+  if (mix > 0) { show(s.vis); LG.visible = false; pass(false); sanLab.forEach(o => o.visible = false); composer.render(); comp.uniforms.real.value = composer.readBuffer.texture; }
+  comp.uniforms.expo.value = s.expo ?? .6;
   if (mix < 1) { show(s.skVis || s.vis); LG.visible = lab > 0; pass(true); sanLab.forEach(o => o.visible = true); renderer.setRenderTarget(rtB); renderer.render(scene, camera); }
   comp.uniforms.p.value = mix; comp.uniforms.seed.value = Math.floor(t * 12) % 7;   // hạt giấy đổi 12 lần/giây như phim vẽ tay
   renderer.setRenderTarget(null); renderer.render(qs, qc);
