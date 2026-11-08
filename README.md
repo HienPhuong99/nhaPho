@@ -7,7 +7,7 @@ Nhà phố 4,2 × 18 m, 2 tầng, mái tôn. Bản vẽ **Final 1** (01/11/2026)
 | Mặt bằng, mặt cắt A–A | https://hienphuong99.github.io/nhaPho/ |
 | Mặt đứng và 3 bảng màu mặt tiền | https://hienphuong99.github.io/nhaPho/mat-dung.html |
 | Bố trí cột, máy lạnh, ổ điện | https://hienphuong99.github.io/nhaPho/cot-dien.html |
-| Phương án sân trước, rào sắt để xe khi mua thêm 3,5 m đất (chưa chốt) | https://hienphuong99.github.io/nhaPho/cong-truoc.html |
+| Phương án sân trước, lồng sắt kín để xe và thú cưng khi mua thêm 3,5 m đất (chưa chốt) | https://hienphuong99.github.io/nhaPho/cong-truoc.html |
 | Phương án lồng sắt kín trùm sân trước (2 kiểu mái, có 3D) | https://hienphuong99.github.io/nhaPho/long-sat.html |
 | Mô hình 3D | https://hienphuong99.github.io/nhaPho/3d.html |
 | Đi bộ trong nhà 3D | https://hienphuong99.github.io/nhaPho/di-bo.html |

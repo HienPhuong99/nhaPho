@@ -134,7 +134,7 @@ function setLong(id) {
   for (const b of longRow.children) b.setAttribute('aria-pressed', String(b.dataset.long === id));
 }
 longRow.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setLong(b.dataset.long); });
-setLong('');
+setLong('1');   // lồng kiểu 1 đã chọn
 function setSan(on) { SAN.visible = on; NOW.forEach(m => m.visible = !on); longRow.hidden = !on; document.getElementById('t-san').setAttribute('aria-pressed', String(on)); }
 document.getElementById('t-san').addEventListener('click', e => setSan(e.currentTarget.getAttribute('aria-pressed') !== 'true'));
 if (new URLSearchParams(location.search).has('san')) {   // mở từ link demo: bật sân, nhìn từ ngoài đường vào

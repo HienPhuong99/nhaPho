@@ -329,7 +329,7 @@ function nha3D() {
   // 4 xe máy dọc hai bên, đầu xe quay vào nhà, chừa lối giữa 1,2 m
   const bikeCol = [0xb23a3a, 0x2f5d8a, 0xe7e2d6, 0x2b2b2b].map(c => M(c, { roughness: .4 }));
   const tire = M(0x1c1c1c), wg = new THREE.CylinderGeometry(.27, .27, .1, 20);
-  [[0.2, 0.85], [0.85, 1.5], [2.7, 3.35], [3.35, 4.0]].forEach(([a, b], i) => {
+  [[0.2, 0.85], [0.85, 1.5], [2.7, 3.35]].forEach(([a, b], i) => {
     const Y = (a + b) / 2, X1 = -2.4, X2 = -0.62, zg = -0.27 + ((X1 + X2) / 2 + 3.2) / 2.9 * .11;   // mặt sân dưới xe
     for (const X of [X1 + .3, X2 - .3]) { const w = new THREE.Mesh(wg, tire); w.rotation.z = Math.PI / 2; w.position.set(WX(Y), zg + .27, X); w.castShadow = true; SAN.add(w); }
     sb(X1 + .35, X2 - .4, Y - .16, Y + .16, zg + .32, zg + .62, bikeCol[i], SAN);       // thân, yên
@@ -337,7 +337,10 @@ function nha3D() {
     sb(X2 - .42, X2 - .34, Y - .05, Y + .05, zg + .3, zg + 1.0, mat.rail, SAN);        // cổ lái
     sb(X2 - .42, X2 - .36, Y - .33, Y + .33, zg + .98, zg + 1.02, mat.rail, SAN);      // ghi đông
   });
-  label(SAN, -1.0, 2.1, 1.1, 'SÂN TRƯỚC', '3,2 × 4,2 m · 4 xe máy');
+  // góc thú cưng sát nhà phía cầu thang (dưới mái tôn và ban công): thảm, chuồng gỗ có mái
+  sb(-2.3, -0.4, 3.4, 4.12, -0.2, -0.18, M(0x7a8f6a), SAN);
+  sb(-1.9, -1.2, 3.45, 4.05, -0.18, 0.42, mat.wood, SAN); sb(-1.95, -1.15, 3.4, 4.1, 0.42, 0.48, M(0xa23b2a), SAN);
+  label(SAN, -1.0, 2.1, 1.1, 'SÂN TRƯỚC', '3 xe máy · góc thú cưng');
 
   // ---------- ánh sáng ----------
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f86, .75));
