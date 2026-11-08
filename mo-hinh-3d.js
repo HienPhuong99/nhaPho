@@ -135,6 +135,12 @@ function nha3D() {
   box(6.05, 8.75, yL, 4.15, 0, N1 * R, mat.stair, G);
   for (let i = 0; i < N2 - 1; i++) box(7.45, 8.75, yL - (i + 1) * TR, yL - i * TR, 0, (N1 + i + 1) * R, mat.stair, G);
   box(7.35, 7.45, y1, yL, 0, N1 * R + 1.0, mat.wall, G);           // tường giữa 2 vế
+  // tủ gầm vế 1 mở ra phòng khách: cánh gỗ ở mặt x = 6,05 theo bụng thang (chừa 15 cm bản thang), từ chỗ cao ≥ 0,55 m tới hết chiếu nghỉ
+  for (let i = 0; i < N1 - 1; i++) if (i * R - .15 >= .55) box(6.0, 6.05, y1 + i * TR, y1 + (i + 1) * TR, 0, i * R - .15, mat.wood, G);
+  box(6.0, 6.05, yL, 4.15, 0, N1 * R - .15, mat.wood, G);
+  // vách gỗ kín phía bếp cho tủ gầm vế 2 (đã bỏ tường trục 8,8), mặt trong làm kệ
+  for (let i = 0; i < N2 - 1; i++) box(8.75, 8.8, yL - (i + 1) * TR, yL - i * TR, 0, (N1 + i) * R - .15, mat.wood, G);
+  box(8.75, 8.8, yL, 4.15, 0, N1 * R - .15, mat.wood, G);
 
   label(LG, 3.0, 2.1, 1.6, 'PHÒNG KHÁCH', '6,0 × 4,2 · 25,20 m²');
   label(LG, 10.3, 1.9, 1.6, 'BẾP', '3,7 × 4,2 · 15,54 m²');

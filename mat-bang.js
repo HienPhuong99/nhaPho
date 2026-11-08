@@ -139,6 +139,10 @@ const GROUND = {
     rect(7.45, 1.15, 8.75, 4.15, 'hid'); rect(8.35, 1.2, 8.75, 3.2, 'hid');
     rect(7.45, 1.06, 8.15, 1.1, 'slid'); rect(8.05, 1.1, 8.75, 1.14, 'slid');
     text(8.55, 2.3, ['tủ gầm thang'], { cls: 'sm' });
+    // tủ gầm vế 1 mở ra phòng khách (y 2,0–4,15, cao 0,55 → 1,7 m theo bụng thang): 3 cánh mở ở mặt x = 6,05; vách gỗ kín tủ vế 2 phía bếp
+    rect(6.05, 2.0, 7.35, 4.15, 'hid'); rect(6.0, 2.0, 6.05, 4.15, 'slid'); for (const y of [2.72, 3.44]) line(5.98, y, 6.07, y, 'riser');
+    text(6.3, 2.75, ['tủ thấp'], { rot: 1, cls: 'sm' });
+    rect(8.75, 1.15, 8.8, 4.15, 'slid');
     // bệ bếp chữ L + bếp nấu + chậu rửa
     rect(9.0, 3.55, 12.45, 4.15, 'counter'); rect(11.85, 2.0, 12.45, 3.55, 'counter');
     for (const x of [9.45, 9.9]) add(`<circle class="furn" cx="${k(my(3.85))}" cy="${k(x)}" r="13"/>`);
