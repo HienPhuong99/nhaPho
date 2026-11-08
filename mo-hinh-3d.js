@@ -97,11 +97,11 @@ function nha3D() {
   }
 
   // ---------- nền, đường, tam cấp ----------
-  box(-10, 30, -12, 16, ROAD - .1, ROAD, mat.ground, base);
-  box(-9, -2, -12, 16, ROAD, ROAD + .01, mat.road, base);
-  box(-2, 0, -12, 16, ROAD, ROAD + .02, mat.walk, base);
+  box(-14, 30, -12, 16, ROAD - .1, ROAD, mat.ground, base);
+  const roadNow = box(-9, -2, -12, 16, ROAD, ROAD + .01, mat.road, base);
+  const walkNow = box(-2, 0, -12, 16, ROAD, ROAD + .02, mat.walk, base);
   box(-0.3, 18, 0, 4.2, ROAD, 0, mat.plinth, base);                // khối nền cao 0,32 m (gồm bậc 2 tam cấp ngoài ranh)
-  box(-0.6, -0.3, 0, 4.2, ROAD, ROAD + 0.16, mat.plinth, base);    // bậc tam cấp 1, ngoài ranh đất
+  const step1 = box(-0.6, -0.3, 0, 4.2, ROAD, ROAD + 0.16, mat.plinth, base);    // bậc tam cấp 1, ngoài ranh đất
 
   // ---------- tầng trệt ----------
   const HG = H1 - SLAB;
@@ -239,6 +239,49 @@ function nha3D() {
   box(17.65, 17.95, 1.05, 1.85, H1 + 1.65, H1 + 2.2, mat.dn, U);
   box(16.0, 16.75, 0.05, 0.35, H1 + 2.6, H1 + 3.15, mat.dn, U);      // DN2 treo cao trên tường hông
 
+  // ---------- phương án sân trước + rào sắt khi mua thêm 3,5 m đất (cong-truoc.html, chưa chốt; ẩn mặc định) ----------
+  // Số liệu lấy theo SAN trong cong-truoc.html: ranh mới X = −3,5, cột sắt 0,1, ngưỡng −0,28, sân −0,27 → −0,16 sát tam cấp
+  const SAN = new THREE.Group(); SAN.visible = false; scene.add(SAN);
+  const NOW = [roadNow, walkNow, step1];               // các khối của hiện trạng, ẩn khi bật phương án
+  const sb = (...a) => { const m = box(...a); if (m) boxes.pop(); return m; };   // không tính vào va chạm của di-bo
+  const SD = 3.5, CT = 0.1, GX = -SD + CT / 2, ZC = 2.0, ZB = -0.24, ZD = 0.6;
+  mat.iron = M(0x4a4f55, { roughness: .6, metalness: .3 }); mat.conc = M(0xbab5ab); mat.grate = M(0x3a3d40, { roughness: .5 });
+  sb(-SD - 7, -SD - 2, -12, 16, ROAD, ROAD + .01, mat.road, SAN);       // đường lùi ra theo ranh mới
+  sb(-SD - 2, -SD, -12, 16, ROAD, ROAD + .02, mat.walk, SAN);           // vỉa hè trước rào
+  sb(-SD - 2, 0, -12, 0, ROAD, ROAD + .02, mat.walk, SAN); sb(-SD - 2, 0, 4.2, 16, ROAD, ROAD + .02, mat.walk, SAN);
+  sb(-SD, -SD + CT + .2, 0, 4.2, ROAD, -0.28, mat.conc, SAN);           // ngưỡng
+  sb(-SD + CT, -SD + CT + .2, CT, 4.2 - CT, -0.29, -0.285, mat.grate, SAN);   // nắp rãnh thu nước
+  {   // sân bê tông dốc từ rãnh (−0,27) lên sát tam cấp (−0,16)
+    const X1 = -SD + CT + .2, X2 = -0.3, z1 = -0.27, z2 = -0.16, L = X2 - X1;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(4.2, .12, Math.hypot(L, z2 - z1)), mat.conc);
+    m.position.set(WX(2.1), (z1 + z2) / 2 - .06, (X1 + X2) / 2); m.rotation.x = -Math.atan2(z2 - z1, L);
+    m.receiveShadow = true; SAN.add(m);
+  }
+  for (const Y of [0, 4.2 - CT]) sb(-SD, -SD + CT, Y, Y + CT, ROAD, ZC + .05, mat.iron, SAN);   // cột sắt hộp 100
+  for (let i = 0; i < 4; i++) {        // 4 cánh cửa rào xếp, đang đóng
+    const a = CT + i * 1.0 + .01, b = a + .98;
+    sb(GX - .02, GX + .02, a, b, ZB, ZD, mat.iron, SAN);                 // tấm đặc dưới
+    sb(GX - .02, GX + .02, a, b, ZC - .05, ZC, mat.iron, SAN);           // thanh trên
+    for (const y of [a, b - .04]) sb(GX - .02, GX + .02, y, y + .04, ZB, ZC, mat.iron, SAN);
+    for (let y = a + .12; y < b - .06; y += .12) sb(GX - .01, GX + .01, y - .01, y + .01, ZD, ZC, mat.iron, SAN);
+  }
+  for (const Y of [0.03, 4.17]) {      // rào sắt hông (chỗ chưa có tường nhà bên)
+    sb(-SD + CT, 0, Y - .015, Y + .015, ZC - .05, ZC, mat.iron, SAN); sb(-SD + CT, 0, Y - .015, Y + .015, ZD - .03, ZD, mat.iron, SAN);
+    for (let X = -SD + CT + .12; X < -0.05; X += .12) sb(X - .01, X + .01, Y - .01, Y + .01, -0.22, ZC, mat.iron, SAN);
+  }
+  // 4 xe máy dọc hai bên, đầu xe quay vào nhà, chừa lối giữa 1,2 m
+  const bikeCol = [0xb23a3a, 0x2f5d8a, 0xe7e2d6, 0x2b2b2b].map(c => M(c, { roughness: .4 }));
+  const tire = M(0x1c1c1c), wg = new THREE.CylinderGeometry(.27, .27, .1, 20);
+  [[0.2, 0.85], [0.85, 1.5], [2.7, 3.35], [3.35, 4.0]].forEach(([a, b], i) => {
+    const Y = (a + b) / 2, X1 = -2.4, X2 = -0.62, zg = -0.27 + ((X1 + X2) / 2 + 3.2) / 2.9 * .11;   // mặt sân dưới xe
+    for (const X of [X1 + .3, X2 - .3]) { const w = new THREE.Mesh(wg, tire); w.rotation.z = Math.PI / 2; w.position.set(WX(Y), zg + .27, X); w.castShadow = true; SAN.add(w); }
+    sb(X1 + .35, X2 - .4, Y - .16, Y + .16, zg + .32, zg + .62, bikeCol[i], SAN);       // thân, yên
+    sb(X1 + .2, X1 + .75, Y - .14, Y + .14, zg + .62, zg + .78, mat.rail, SAN);
+    sb(X2 - .42, X2 - .34, Y - .05, Y + .05, zg + .3, zg + 1.0, mat.rail, SAN);        // cổ lái
+    sb(X2 - .42, X2 - .36, Y - .33, Y + .33, zg + .98, zg + 1.02, mat.rail, SAN);      // ghi đông
+  });
+  label(SAN, -1.9, 2.1, 1.6, 'SÂN TRƯỚC', '3,2 × 4,2 m · 4 xe máy');
+
   // ---------- ánh sáng ----------
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f86, .75));
   const sun = new THREE.DirectionalLight(0xffffff, .75);
@@ -247,5 +290,5 @@ function nha3D() {
   Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 60 });
   scene.add(sun, sun.target);
 
-  return { scene, base, G, U, RF, CEIL, LG, LU, sun, boxes, WX, H1, ROAD };
+  return { scene, base, G, U, RF, CEIL, LG, LU, SAN, NOW, sun, boxes, WX, H1, ROAD };
 }
