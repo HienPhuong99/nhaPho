@@ -1,12 +1,10 @@
 /* Mô hình 3D nhà phố 4,2 × 18 m (KT-03) dùng chung cho 3d.html (xem từ ngoài) và di-bo.html (đi bộ trong nhà).
    nha3D() dựng toàn bộ cảnh và trả về các nhóm cùng danh sách khối hộp (boxes) theo toạ độ bản vẽ. */
-// Phương án vòm trên rào sắt sân trước (xem vom-cong.html, 3d.html?san=1&vom=A). Cao độ ±0 = nền trệt.
-// chan: cao độ chân vòm (đỉnh cột), vong: độ vồng của cung, sau: chiều sâu vòm vào trong sân
-const VOM_PA = [
-  { id: "A", ten: "Vòm cung nan sắt", kieu: "cung", chan: 2.3, vong: 0.6 },
-  { id: "B", ten: "Mái vòm tấm lấy sáng", kieu: "mai", chan: 2.3, vong: 0.5, sau: 1.0 },
-  { id: "C", ten: "Khung ngang, bảng số nhà", kieu: "ngang", chan: 2.65 },
-  { id: "D", ten: "Vòm giàn hoa leo", kieu: "hoa", chan: 2.05, vong: 0.95, sau: 0.6 },
+// Phương án lồng sắt kín trùm sân trước (xem long-sat.html, 3d.html?san=1&long=1). Cao độ ±0 = nền trệt.
+// zTruoc: cao độ mái ở vách trước; kiểu "doc" mái dốc lên sát đáy ban công, "phang" mái phẳng + vách lưới đứng lên ban công
+const LONG_PA = [
+  { id: "1", ten: "Mái dốc tấm lấy sáng", ngan: "mái dốc lấy sáng", kieu: "doc", zTruoc: 2.7 },
+  { id: "2", ten: "Mái lưới phẳng, chông chống trèo", ngan: "mái lưới phẳng", kieu: "phang", zTruoc: 2.7 },
 ];
 function nha3D() {
   // Số liệu lấy từ bản vẽ KT-03 (mat-bang.html). Toạ độ bản vẽ: X dọc nhà (0 = mặt tiền), Y bề ngang.
@@ -277,60 +275,51 @@ function nha3D() {
     sb(-SD + CT, 0, Y - .015, Y + .015, ZC - .05, ZC, mat.iron, SAN); sb(-SD + CT, 0, Y - .015, Y + .015, ZD - .03, ZD, mat.iron, SAN);
     for (let X = -SD + CT + .12; X < -0.05; X += .12) sb(X - .01, X + .01, Y - .01, Y + .01, -0.22, ZC, mat.iron, SAN);
   }
-  // ---------- vòm trên rào: 4 phương án VOM_PA (vom-cong.html), mỗi phương án một nhóm, ẩn mặc định ----------
-  const VOM = {};
+  // ---------- lồng sắt kín trùm sân trước: 2 kiểu mái LONG_PA (long-sat.html), mỗi kiểu một nhóm, ẩn mặc định ----------
+  // Vách trước, 2 vách hông và mái kín, nối lên sát đáy ban công (X = −1,2, +3,48); dưới ban công đã có sàn bê tông che.
+  const LONG = {};
   const P3 = (X, Y, z) => new THREE.Vector3(WX(Y), z, X);
   function bar(a, b, t, m, g) {        // thanh sắt thẳng giữa 2 điểm (X, Y, z)
     const A = P3(...a), B = P3(...b), mesh = new THREE.Mesh(new THREE.BoxGeometry(t, t, A.distanceTo(B)), m);
     mesh.position.copy(A).add(B).multiplyScalar(.5); mesh.lookAt(B); mesh.castShadow = true; g.add(mesh);
   }
-  const Y0 = CT / 2, Y1 = 4.2 - CT / 2, SPAN = Y1 - Y0;
-  const arcZ = (y, zs, rise) => {      // cao độ cung tròn qua 2 đầu cột và đỉnh giữa
-    const Rr = (SPAN * SPAN / 4 + rise * rise) / (2 * rise), zc = zs + rise - Rr;
-    return zc + Math.sqrt(Math.max(0, Rr * Rr - (y - 2.1) ** 2));
-  };
-  const arcBar = (X, zs, rise, t, m, g, n = 28) => {
-    for (let i = 0; i < n; i++) { const a = Y0 + SPAN * i / n, b = Y0 + SPAN * (i + 1) / n; bar([X, a, arcZ(a, zs, rise)], [X, b, arcZ(b, zs, rise)], t, m, g); }
-  };
-  const posts = (z, g) => { for (const Y of [0, 4.2 - CT]) sb(-SD, -SD + CT, Y, Y + CT, ZC + .05, z, mat.iron, g); };
-  const nan = (X, z0, top, g) => { for (let y = Y0 + .12; y < Y1 - .06; y += .12) bar([X, y, z0], [X, y, top(y)], .02, mat.iron, g); };
-  mat.leaf = M(0x3f7d3a); mat.flower = M(0xd94f8c); mat.sign = M(0xc9a227, { roughness: .4, metalness: .4 });
-  mat.lamp = M(0xffe2a0, { emissive: 0xffb000, emissiveIntensity: .7 });
-  for (const v of VOM_PA) {
-    const g = VOM[v.id] = new THREE.Group(); g.visible = false; SAN.add(g);
-    if (v.kieu !== 'hoa') posts(v.chan, g);
-    if (v.kieu === 'cung') {           // A: cung sắt hộp, nan dọc lấp đầy
-      bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g);
-      arcBar(GX, v.chan, v.vong, .06, mat.iron, g);
-      nan(GX, ZC + .05, y => arcZ(y, v.chan, v.vong), g);
-    } else if (v.kieu === 'mai') {     // B: mái vòm tấm lấy sáng sâu v.sau m, đua vào trong, chống xiên về cột
-      const X2 = GX + v.sau, Rr = (SPAN * SPAN / 4 + v.vong ** 2) / (2 * v.vong), phi = Math.asin(SPAN / 2 / Rr);
-      for (const X of [GX, (GX + X2) / 2, X2]) arcBar(X, v.chan, v.vong, .05, mat.iron, g);
-      for (const Y of [Y0, Y1]) { bar([GX, Y, v.chan], [X2, Y, v.chan], .06, mat.iron, g); bar([GX, Y, v.chan - .7], [X2 - .1, Y, v.chan], .04, mat.iron, g); }
-      bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g);
-      nan(GX, ZC + .05, () => v.chan, g);
-      const sh = new THREE.Mesh(new THREE.CylinderGeometry(Rr + .03, Rr + .03, v.sau + .1, 48, 1, true, -phi, 2 * phi), mat.poly);
-      sh.rotation.x = -Math.PI / 2; sh.position.set(WX(2.1), v.chan + v.vong - Rr, (GX + X2) / 2); g.add(sh);
-    } else if (v.kieu === 'ngang') {   // C: dầm hộp ngang, bảng số nhà, 2 đèn
-      sb(-SD, -SD + CT, 0, 4.2, v.chan - .2, v.chan, mat.iron, g);
-      nan(GX, ZC + .05, () => v.chan - .2, g);
-      bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g);
-      sb(-SD - .02, -SD, 1.6, 2.6, v.chan - .18, v.chan - .02, mat.sign, g);
-      for (const Y of [0.3, 3.9]) sb(-SD - .08, -SD, Y - .06, Y + .06, v.chan - .17, v.chan - .03, mat.lamp, g);
-    } else {                           // D: 2 cung sâu v.sau m, giằng ngang, cây leo
-      const Xs = [GX, GX + v.sau];
-      for (const X of Xs) { arcBar(X, ZC + .05, v.vong, .04, mat.iron, g); bar([X, Y0, ZC + .05], [X, Y1, ZC + .05], .04, mat.iron, g); }
-      for (let i = 0; i <= 10; i++) { const y = Y0 + SPAN * i / 10, z = arcZ(y, ZC + .05, v.vong); bar([Xs[0], y, z], [Xs[1], y, z], .025, mat.iron, g); }
-      const leafG = new THREE.IcosahedronGeometry(1, 1);
-      let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-      for (let i = 0; i < 140; i++) {
-        const y = Y0 + SPAN * rnd(), X = Xs[0] + v.sau * rnd(), z = arcZ(y, ZC + .05, v.vong) + (rnd() - .4) * .25;
-        const s = new THREE.Mesh(leafG, rnd() < .25 ? mat.flower : mat.leaf); s.scale.setScalar(.05 + rnd() * .07);
-        s.position.set(WX(y), z, X); s.castShadow = true; g.add(s);
-      }
-      for (const Y of [0.05, 4.15]) for (let z = 0; z < ZC; z += .22) {   // dây leo bám cột
-        const s = new THREE.Mesh(leafG, mat.leaf); s.scale.setScalar(.07); s.position.set(WX(Y), z, GX + (z * 7 % .3) - .1); g.add(s);
-      }
+  mat.mesh = M(0x30363c, { transparent: true, opacity: .32, depthWrite: false, side: THREE.DoubleSide, roughness: .6 });
+  mat.spike = M(0x8a9097, { metalness: .5, roughness: .4 });
+  const XBC = -1.2, ZBC = H1 - 0.3, Y0 = CT / 2, Y1 = 4.2 - CT / 2;
+  function sideMesh(Y, prof, g) {      // lưới vách hông theo biên dạng prof = [[X, z], …] (vẽ trong mặt phẳng X–z)
+    const s = new THREE.Shape(); prof.forEach(([X, z], i) => i ? s.lineTo(X, z) : s.moveTo(X, z));
+    const m = new THREE.Mesh(new THREE.ShapeGeometry(s), mat.mesh); m.rotation.y = -Math.PI / 2; m.position.x = WX(Y); g.add(m);
+  }
+  function quad(a, b, c, d, g, m = mat.mesh) {   // tấm phẳng qua 4 điểm (X, Y, z)
+    const geo = new THREE.BufferGeometry().setFromPoints([a, b, c, a, c, d].map(p => P3(...p)));
+    geo.computeVertexNormals(); const q = new THREE.Mesh(geo, m); g.add(q); return q;
+  }
+  for (const v of LONG_PA) {
+    const g = LONG[v.id] = new THREE.Group(); g.visible = false; SAN.add(g);
+    const zF = v.zTruoc, roof = v.kieu === 'doc' ? X => zF + (ZBC - .06 - zF) * (X - GX) / (XBC - GX) : () => zF;
+    // cột 4 góc kéo lên mái, dầm trên vách trước, nan dọc phần trên cửa rào
+    for (const Y of [0, 4.2 - CT]) { sb(-SD, -SD + CT, Y, Y + CT, ZC + .05, zF, mat.iron, g); sb(XBC - CT, XBC, Y, Y + CT, ZC, roof(XBC), mat.iron, g); }
+    bar([GX, Y0, ZC + .05], [GX, Y1, ZC + .05], .05, mat.iron, g); bar([GX, Y0, zF], [GX, Y1, zF], .06, mat.iron, g);
+    for (let y = Y0 + .12; y < Y1 - .06; y += .12) bar([GX, y, ZC + .05], [GX, y, zF], .02, mat.iron, g);
+    quad([GX - .03, 0, ROAD], [GX - .03, 4.2, ROAD], [GX - .03, 4.2, zF], [GX - .03, 0, zF], g);   // lưới chống leo vách trước
+    // vách hông: lưới từ chân lên mái, dưới ban công lên sát đáy ban công; thanh sắt viền trên
+    const prof = [[-SD, ROAD], [0, ROAD], [0, ZBC], [XBC, ZBC], [XBC, roof(XBC)], [GX, zF], [-SD, zF]];
+    for (const Y of [0.03, 4.17]) {
+      sideMesh(Y, prof, g);
+      bar([GX, Y, zF], [XBC, Y, roof(XBC)], .05, mat.iron, g); bar([XBC, Y, roof(XBC)], [XBC, Y, ZBC], .05, mat.iron, g); bar([XBC, Y, ZBC], [0, Y, ZBC], .05, mat.iron, g);
+      for (let X = -SD + CT + .12; X < -0.05; X += .12) bar([X, Y, ZC], [X, Y, X < XBC ? roof(X) : ZBC], .02, mat.iron, g);
+    }
+    // mái: xà dọc mỗi ~1 m, xà ngang mỗi ~0,6 m
+    for (const y of [Y0, 1.075, 2.1, 3.125, Y1]) bar([GX, y, zF], [XBC, y, roof(XBC)], .05, mat.iron, g);
+    for (let X = GX; X <= XBC + 1e-6; X += (XBC - GX) / 4) bar([X, Y0, roof(X)], [X, Y1, roof(X)], .04, mat.iron, g);
+    for (let y = Y0 + .05; y < Y1; y += .1) bar([XBC - .02, y, ZBC - .02], [XBC - .25, y, ZBC - .3], .015, mat.spike, g);   // chông dưới mép ban công
+    if (v.kieu === 'doc') {            // tấm lấy sáng đặt trên xà, máng xối ở mép trước
+      quad([GX, 0, zF + .03], [GX, 4.2, zF + .03], [XBC, 4.2, roof(XBC) + .03], [XBC, 0, roof(XBC) + .03], g, mat.poly);
+      sb(GX - .15, GX, 0, 4.2, zF - .05, zF + .05, mat.iron, g);
+    } else {                           // lưới phẳng, vách lưới đứng lên đáy ban công, hàng chông chống trèo
+      quad([GX, 0, zF + .02], [GX, 4.2, zF + .02], [XBC, 4.2, zF + .02], [XBC, 0, zF + .02], g);
+      quad([XBC, 0, zF], [XBC, 4.2, zF], [XBC, 4.2, ZBC], [XBC, 0, ZBC], g);
+      for (let y = Y0 + .05; y < Y1; y += .1) bar([GX, y, zF], [GX - .2, y, zF + .22], .015, mat.spike, g);
     }
   }
 
@@ -355,5 +344,5 @@ function nha3D() {
   Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 60 });
   scene.add(sun, sun.target);
 
-  return { scene, base, G, U, RF, CEIL, LG, LU, SAN, NOW, VOM, sun, boxes, WX, H1, ROAD };
+  return { scene, base, G, U, RF, CEIL, LG, LU, SAN, NOW, LONG, sun, boxes, WX, H1, ROAD };
 }

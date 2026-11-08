@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lồng Sắt Sân Trước</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="mat-bang.css">
+<style>
+/* So 2 kiểu mái lồng sắt kín trùm sân trước. Số liệu LONG_PA trong mo-hinh-3d.js (dùng chung với 3d.html) */
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+nav{max-width:1040px;margin:0 auto;padding:14px 16px 0;display:flex;flex-wrap:wrap;gap:8px 20px;font:600 16px var(--f-body)}
+nav a{color:var(--dim)}
+main{max-width:1040px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:grid;gap:22px}
+h1,h2,h3{font-family:var(--f-label);margin:0;letter-spacing:.3px;text-wrap:balance}
+h1{font-size:30px;line-height:1.1}
+h2{font-size:22px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--dim)}
+h3{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink2)}
+header{display:grid;gap:8px}
+header p{margin:0;color:var(--ink2);max-width:75ch}
+.tag{font-family:var(--f-label);font-weight:700;letter-spacing:1px;background:var(--up);color:#fff;padding:1px 8px;border-radius:3px;justify-self:start}
+.cards{display:grid;gap:18px}
+@media (min-width:820px){.cards{grid-template-columns:1fr 1fr}}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:14px;display:grid;gap:10px;align-content:start}
+.card svg{display:block;width:100%;height:auto}
+.card p{margin:0}
+.pc{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px}
+.pc b{font-family:var(--f-label);font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink2)}
+.cost{color:var(--up);letter-spacing:2px}
+.btn{justify-self:start;font-family:var(--f-label);font-size:16px;font-weight:600;color:#fff;background:var(--dim);border-radius:4px;padding:6px 12px;text-decoration:none}
+.note{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;display:grid;gap:8px}
+.note ol{margin:0;padding-left:20px;display:grid;gap:6px;max-width:80ch}
+.warn{border-left:4px solid var(--bad)}
+.e-ln{stroke:#2b3137;stroke-width:1.4;fill:none}
+.e-th{stroke:#2b3137;stroke-width:.7;fill:none}
+.e-bg{stroke:var(--ink2);stroke-width:1;fill:none;opacity:.55}
+.e-cut{fill:var(--ink)}
+.e-ir{fill:#4a4f55}
+.e-ms{fill:#30363c;fill-opacity:.12;stroke:#2b3137;stroke-width:.8;stroke-dasharray:3 2}
+.e-pc{fill:#bfe0f5;fill-opacity:.7;stroke:#2b3137;stroke-width:1.2}
+.e-sp{stroke:#8a9097;stroke-width:2}
+.e-dim{stroke:var(--dim);stroke-width:1}
+.e-tx{fill:var(--ink);font-size:15px;font-family:var(--f-label);font-weight:600}
+.e-red{fill:var(--bad);font-size:15px;font-family:var(--f-label);font-weight:600}
+.e-cap{fill:var(--ink2);font-size:14px;font-family:var(--f-label);font-weight:600;text-anchor:middle;text-transform:uppercase;letter-spacing:1px}
+</style>
+</head>
+<body>
+<nav><a href="cong-truoc.html">Phương án sân trước</a><a href="3d.html?san=1&long=1">Xem 3D</a><a href="index.html">Mặt bằng</a></nav>
+<main>
+  <header>
+    <span class="tag">PHƯƠNG ÁN · ĐỂ CHỌN</span>
+    <h1>Lồng sắt kín trùm sân trước</h1>
+    <p>Vách trước, hai vách hông và mái đều kín, nối lên sát đáy ban công lầu. Người ngoài không leo vào được, để xe và thú cưng ở sân được. Hai kiểu khác nhau ở phần mái. Hình dưới là mặt cắt dọc sân (đường bên trái, nhà bên phải); cao độ tính từ nền trệt ±0,00.</p>
+  </header>
+  <div class="cards" id="cards"></div>
+
+  <section class="note">
+    <h3>Làm chung cho cả hai kiểu</h3>
+    <ol>
+      <li><b>Lưới chống leo</b> bọc mặt ngoài toàn bộ vách trước và vách hông: lưới thép hàn mạ kẽm ô nhỏ (ô 76 × 12,7 mm, loại "lưới 358", hoặc ô 25 × 25 mm), không có thanh ngang ở mặt ngoài nên không có chỗ đặt chân. Ô lưới nhỏ thì chó mèo cũng không chui ra được.</li>
+      <li><b>Khung:</b> cột sắt hộp 100 × 100 ở 4 góc, 2 cột sau đặt ngay dưới mép ban công. Xà mái sắt hộp 40 × 80, cách nhau khoảng 1 m dọc và 0,6 m ngang. Vách hông áp sát tường nhà bên; chỗ nhà bên chưa xây thì lưới chạy từ chân lên mái.</li>
+      <li><b>Kín tới ban công:</b> phần dưới ban công (sâu 1,2 m sát nhà) đã có sàn bê tông che, nên chỉ cần lưới vách hông chạy lên sát đáy ban công (+3,48). Không có khe hở nào lớn hơn ô lưới.</li>
+      <li><b>Cửa rào</b> giữ cửa xếp 4 cánh cao 2,0 m, bọc lưới mặt ngoài. Phía trên cửa là ô cố định nan dọc, lưới kín lên tới mái.</li>
+      <li><b>Thú cưng:</b> chừa một góc có mái che, khô ráo để đặt chuồng hoặc ổ. Sân nắng chiều sẽ nóng: dùng tấm lấy sáng có lớp chống tia UV, hoặc lợp một phần bằng tôn lạnh để có bóng mát.</li>
+    </ol>
+  </section>
+
+  <section class="note warn">
+    <h3>An toàn cháy và chống trộm</h3>
+    <ol>
+      <li><b>Cửa rào phải mở được từ bên trong mà không cần chìa:</b> khoá có núm vặn phía trong, hoặc cửa ngách 0,8 m có khoá như vậy. Khi có cháy, lồng là lối ra duy nhất ở tầng trệt. Không khoá móc từ bên ngoài khi trong nhà còn người.</li>
+      <li><b>Ban công lầu không bọc lồng</b>, để còn là lối thoát và chỗ cứu hộ tiếp cận. Cửa ban công có khoá chắc, cửa sổ phòng thờ có khung sắt bảo vệ phía trong (đã có trong bản vẽ).</li>
+      <li><b>Nóc lồng thành bậc trèo lên ban công</b> (khoảng cách ghi trên hình). Cả hai kiểu đều gắn hàng chông sắt chĩa xuống dưới mép ban công, và giữ cửa ban công luôn khoá. Kiểu 1 mái tấm nhựa dốc, trơn nên khó bò lên hơn; kiểu 2 nóc phẳng đứng được nên thêm hàng chông ở mép trước.</li>
+    </ol>
+  </section>
+</main>
+
+<script src="mo-hinh-3d.js"></script>
+<script>
+const MO_TA = {
+  1: { mo: 'Mái dốc từ vách trước (+2,70) lên sát đáy ban công (+3,42), lợp tấm polycarbonate đặc ruột 5 mm trên xà sắt. Nước chảy ra mép trước, có máng xối.',
+       uu: 'Kín mưa nắng: xe không ướt, thú cưng có chỗ khô. Mái dốc tấm nhựa trơn, khó bò lên. Sân vẫn sáng.',
+       nhuoc: 'Đắt hơn. Tấm bám bụi, lá, cần lau; giữa trưa sân hơi nóng.', cost: 3 },
+  2: { mo: 'Mái lưới phẳng ở +2,70, vách lưới đứng từ mái lên sát đáy ban công. Hàng chông sắt dọc mép trước và dưới mép ban công.',
+       uu: 'Rẻ hơn, thoáng gió, không nóng.', nhuoc: 'Mưa, lá rơi lọt xuống sân; xe cần áo trùm, thú cưng cần chuồng có mái. Nóc phẳng thì đứng lên được, phải dựa vào hàng chông.', cost: 2 },
+};
+
+const kk = v => Math.round(v * 100), f2 = n => n.toFixed(2).replace('.', ','), lvl = z => (z >= 0 ? '+' : '−') + f2(Math.abs(z));
+const SD = 3.5, GX = -3.45, ZC = 2.0, ROAD = -0.32, H1 = 3.78, ZBC = H1 - 0.3, XBC = -1.2;
+
+// Mặt cắt dọc sân qua lối giữa: x SVG = X (đường bên trái), y SVG = −z
+function svg(v) {
+  const o = [], zF = v.zTruoc, zB = v.kieu === 'doc' ? ZBC - .06 : zF;
+  const R = (x1, z1, x2, z2, cls) => o.push(`<rect x="${kk(x1)}" y="${kk(-z2)}" width="${kk(x2 - x1)}" height="${kk(z2 - z1)}" class="${cls}"/>`);
+  const L = (x1, z1, x2, z2, cls = 'e-ln') => o.push(`<line x1="${kk(x1)}" y1="${kk(-z1)}" x2="${kk(x2)}" y2="${kk(-z2)}" class="${cls}"/>`);
+  const Pg = (pts, cls) => o.push(`<path d="M${pts.map(([x, z]) => `${kk(x)},${kk(-z)}`).join(' L')} Z" class="${cls}"/>`);
+  const T = (x, z, s, cls = 'e-tx', a = '') => o.push(`<text class="${cls}" x="${kk(x)}" y="${kk(-z)}"${a}>${s}</text>`);
+  // đất, sân, nền nhà
+  L(-4.4, ROAD, -SD, ROAD); Pg([[-SD, -0.28], [-0.3, -0.16], [-0.3, 0], [1.4, 0], [1.4, -0.12], [-SD, -0.4]], 'e-cut');
+  // nhà: tường trệt, sàn lầu đua ra ban công, lan can, tường phòng thờ
+  L(0, 0, 0, 2.6, 'e-bg'); R(-0.05, 2.6, 0.05, H1 - .12, 'e-cut');
+  R(XBC, H1 - .12, 1.4, H1, 'e-cut'); R(XBC, ZBC, XBC + .1, H1, 'e-cut');
+  L(XBC + .02, H1, XBC + .02, H1 + 1.1); L(XBC - .02, H1 + 1.1, XBC + .1, H1 + 1.1);
+  R(-0.65, H1, -0.55, H1 + 1.4, 'e-cut');
+  T(-0.5, H1 + 1.25, 'phòng thờ', 'e-tx', ' style="fill:var(--ink2)"');
+  // lưới vách hông (thấy phía sau), cột, nan
+  Pg([[-SD, ROAD], [0, ROAD], [0, ZBC], [XBC, ZBC], [XBC, zB], [GX, zF], [-SD, zF]], 'e-ms');
+  R(-SD, ROAD, -SD + .1, zF, 'e-ir'); R(XBC - .1, 0, XBC, zB, 'e-ir');
+  L(GX, -0.24, GX, ZC); L(GX, ZC + .05, GX, zF);
+  // mái
+  for (let i = 0; i < 3; i++) L(XBC - .02, ZBC - .02 - i * .02, XBC - .25, ZBC - .3, 'e-sp');
+  T(XBC - .3, ZBC - .5, 'chông', 'e-red', ' text-anchor="end"');
+  if (v.kieu === 'doc') { Pg([[GX, zF], [XBC, zB], [XBC, zB + .05], [GX, zF + .05]], 'e-pc'); R(GX - .15, zF - .06, GX, zF + .04, 'e-ir'); T(-2.3, zF + .55, 'tấm lấy sáng dốc', 'e-tx', ' text-anchor="middle"'); }
+  else {
+    L(GX, zF, XBC, zF); L(XBC, zF, XBC, ZBC, 'e-th'); T(-2.3, zF + .12, 'mái lưới', 'e-tx', ' text-anchor="middle"');
+    for (let i = 0; i < 3; i++) L(GX, zF, GX - .2, zF + .22, 'e-sp');
+    T(GX - .25, zF + .3, 'chông', 'e-red', ' text-anchor="end"');
+  }
+  // khoảng từ nóc lồng tới lan can ban công
+  L(XBC - .35, zB, XBC - .35, H1 + 1.1, 'e-dim'); T(XBC - .42, (zB + H1 + 1.1) / 2, `${String((H1 + 1.1 - zB).toFixed(2)).replace('.', ',')} m`, 'e-tx', ' text-anchor="end"');
+  // cao độ
+  const lv = (x, z, s, anc = 'end') => { L(x - .15, z, x + .15, z, 'e-dim'); T(x + (anc === 'end' ? -.2 : .2), z - .04, s, 'e-tx', ` text-anchor="${anc}"`); };
+  lv(-SD - .1, zF, `${lvl(zF)} mái trước`); lv(-SD - .1, ZC, `${lvl(ZC)} đỉnh cửa rào`); lv(-SD - .1, ROAD, `${lvl(ROAD)} vỉa hè`);
+  lv(0.25, ZBC, `${lvl(ZBC)} đáy ban công`, 'start'); lv(0.25, H1 + 1.1, `${lvl(H1 + 1.1)} tay vịn ban công`, 'start');
+  T(-1.75, 0.6, 'sân để xe, thú cưng', 'e-tx', ' text-anchor="middle"');
+  // kích thước
+  L(-SD, -0.7, 0, -0.7, 'e-dim'); L(-SD, -0.6, -SD, -0.8, 'e-dim'); L(XBC, -0.6, XBC, -0.8, 'e-dim'); L(0, -0.6, 0, -0.8, 'e-dim');
+  T((-SD + XBC) / 2, -0.64, '2,3 mái lồng', 'e-tx', ' text-anchor="middle"'); T(XBC / 2, -0.64, '1,2 dưới ban công', 'e-tx', ' text-anchor="middle"');
+  T(-1.75, -1.0, 'mặt cắt dọc sân', 'e-cap');
+  return `<svg viewBox="-640 -520 900 640" role="img" aria-label="Lồng ${v.id}: ${v.ten}, mặt cắt dọc">${o.join('')}</svg>`;
+}
+
+document.getElementById('cards').innerHTML = LONG_PA.map(v => { const m = MO_TA[v.id]; return `<article class="card">
+  <h2>Lồng ${v.id}. ${v.ten}</h2>
+  ${svg(v)}
+  <p>${m.mo}</p>
+  <div class="pc"><b>Ưu</b><span>${m.uu}</span><b>Nhược</b><span>${m.nhuoc}</span><b>Chi phí</b><span class="cost" aria-label="mức ${m.cost} trên 4">${'●'.repeat(m.cost)}${'○'.repeat(4 - m.cost)}</span></div>
+  <a class="btn" href="3d.html?san=1&long=${v.id}">Xem 3D lồng ${v.id}</a>
+</article>`; }).join('');
+</script>
+</body>
+</html>

@@ -14,7 +14,7 @@ Sửa số trong mảng dữ liệu, không sửa SVG. Tìm bằng grep (`grep -
 | `cot-dien.html` | cột, dầm, máy lạnh, ổ điện, mạch | `AX` trục cột, `P` ổ điện, `AC` máy lạnh, `M` mạch, `TAI` công suất, `CAO` chiều cao lắp, `HOI` câu hỏi |
 | `mo-hinh-3d.js` | 3D cho 3d.html, di-bo.html | số riêng trong `nha3D()` (`H1`, `H2`, `SLAB`, `TOP`, `SILL`) |
 | `cong-truoc.html` | phương án sân trước + rào sắt (chưa chốt), mặt bằng trệt dùng lại `GROUND` | `SAN` (sâu 3,5 m, cao độ, cột và cánh rào, chỗ xe) |
-| `vom-cong.html` | so 4 phương án vòm trên rào (không in PDF) | `VOM_PA` trong `mo-hinh-3d.js` (dùng chung với 3D), `MO_TA` |
+| `long-sat.html` | so 2 kiểu lồng sắt kín trùm sân trước (không in PDF) | `LONG_PA` trong `mo-hinh-3d.js` (dùng chung với 3D), `MO_TA` |
 | `bia.html` | bìa bộ PDF | mục lục ghi số trang |
 
 Cao độ và kích thước phòng lặp ở nhiều file: đổi số nào thì grep số cũ trong cả `mat-bang.js`, `mat-dung.html`, `mo-hinh-3d.js`, `index.html`, `cot-dien.html`.

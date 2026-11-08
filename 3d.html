@@ -49,7 +49,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <p>Nền +0,32 · Trệt 3,78 m · Lầu 3,6 m</p>
 </div>
 <div class="bar">
-  <div class="row" id="vom" role="group" aria-label="Chọn vòm trên rào" hidden></div>
+  <div class="row" id="long" role="group" aria-label="Chọn kiểu lồng sắt" hidden></div>
   <div class="row" role="group" aria-label="Chọn tầng">
     <button id="v-all" data-view="all">Cả nhà</button>
     <button id="v-noroof" data-view="noroof">Bỏ mái (xem lầu)</button>
@@ -74,7 +74,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 (() => {
 if (!window.THREE || !THREE.OrbitControls) { document.getElementById('err').hidden = false; return; }
 
-const { scene, U, RF, CEIL, LG, LU, SAN, NOW, VOM } = nha3D();
+const { scene, U, RF, CEIL, LG, LU, SAN, NOW, LONG } = nha3D();
 CEIL.visible = false;
 
 const stage = document.getElementById('stage');
@@ -127,19 +127,19 @@ toggle('t-label', on => { showLabels = on; setView(view); });
 toggle('t-st', on => scene.traverse(o => { if (o.userData.st) o.visible = on; }));
 document.getElementById('t-reset').addEventListener('click', resetCam);
 // phương án sân trước 3,5 m (cong-truoc.html); mở sẵn bằng 3d.html?san=1
-const vomRow = document.getElementById('vom');
-vomRow.innerHTML = [['', 'Không vòm'], ...VOM_PA.map(v => [v.id, `${v.id}. ${v.ten}`])].map(([id, t]) => `<button data-vom="${id}">${t}</button>`).join('');
-function setVom(id) {
-  for (const k in VOM) VOM[k].visible = k === id;
-  for (const b of vomRow.children) b.setAttribute('aria-pressed', String(b.dataset.vom === id));
+const longRow = document.getElementById('long');
+longRow.innerHTML = [['', 'Chỉ rào'], ...LONG_PA.map(v => [v.id, `Lồng ${v.id}: ${v.ngan}`])].map(([id, t]) => `<button data-long="${id}">${t}</button>`).join('');
+function setLong(id) {
+  for (const k in LONG) LONG[k].visible = k === id;
+  for (const b of longRow.children) b.setAttribute('aria-pressed', String(b.dataset.long === id));
 }
-vomRow.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setVom(b.dataset.vom); });
-setVom('');
-function setSan(on) { SAN.visible = on; NOW.forEach(m => m.visible = !on); vomRow.hidden = !on; document.getElementById('t-san').setAttribute('aria-pressed', String(on)); }
+longRow.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setLong(b.dataset.long); });
+setLong('');
+function setSan(on) { SAN.visible = on; NOW.forEach(m => m.visible = !on); longRow.hidden = !on; document.getElementById('t-san').setAttribute('aria-pressed', String(on)); }
 document.getElementById('t-san').addEventListener('click', e => setSan(e.currentTarget.getAttribute('aria-pressed') !== 'true'));
 if (new URLSearchParams(location.search).has('san')) {   // mở từ link demo: bật sân, nhìn từ ngoài đường vào
-  setSan(true); controls.target.set(2.1, -0.8, -2.5); camera.position.set(-4.5, 4, -11.5); controls.update();
-  const v = new URLSearchParams(location.search).get('vom'); if (v && VOM[v]) setVom(v);
+  setSan(true); controls.target.set(2.1, -0.8, -2.5); camera.position.set(-5.5, 5, -13.5); controls.update();
+  const v = new URLSearchParams(location.search).get('long'); if (v && LONG[v]) setLong(v);
 }
 setView('noroof');
 
