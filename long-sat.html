@@ -41,6 +41,7 @@ header p{margin:0;color:var(--ink2);max-width:75ch}
 .e-ir{fill:#4a4f55}
 .e-ms{fill:#30363c;fill-opacity:.12;stroke:#2b3137;stroke-width:.8;stroke-dasharray:3 2}
 .e-pc{fill:#bfe0f5;fill-opacity:.7;stroke:#2b3137;stroke-width:1.2}
+.e-ton{fill:#9aa3a8;stroke:#2b3137;stroke-width:1.2}
 .e-sp{stroke:#8a9097;stroke-width:2}
 .e-dim{stroke:var(--dim);stroke-width:1}
 .e-tx{fill:var(--ink);font-size:15px;font-family:var(--f-label);font-weight:600}
@@ -65,7 +66,8 @@ header p{margin:0;color:var(--ink2);max-width:75ch}
       <li><b>Khung:</b> cột sắt hộp 100 × 100 ở 4 góc, 2 cột sau đặt ngay dưới mép ban công. Xà mái sắt hộp 40 × 80, cách nhau khoảng 1 m dọc và 0,6 m ngang. Vách hông áp sát tường nhà bên; chỗ nhà bên chưa xây thì lưới chạy từ chân lên mái.</li>
       <li><b>Kín tới ban công:</b> phần dưới ban công (sâu 1,2 m sát nhà) đã có sàn bê tông che, nên chỉ cần lưới vách hông chạy lên sát đáy ban công (+3,48). Không có khe hở nào lớn hơn ô lưới.</li>
       <li><b>Cửa rào</b> giữ cửa xếp 4 cánh cao 2,0 m, bọc lưới mặt ngoài. Phía trên cửa là ô cố định nan dọc, lưới kín lên tới mái.</li>
-      <li><b>Thú cưng:</b> chừa một góc có mái che, khô ráo để đặt chuồng hoặc ổ. Sân nắng chiều sẽ nóng: dùng tấm lấy sáng có lớp chống tia UV, hoặc lợp một phần bằng tôn lạnh để có bóng mát.</li>
+      <li><b>Mái kết hợp cho thú cưng:</b> khoảng 1,1 m mái sát ban công lợp tôn cách nhiệt PU 3 lớp (tôn lạnh, lõi PU, màng nhôm): mát, đỡ ồn khi mưa. Cộng với 1,2 m dưới ban công thành góc râm sâu khoảng 2,3 m để đặt chuồng, ổ. Phần ngoài để sáng và thoáng. Không lợp cả mái bằng tấm nhựa trong suốt hay tôn thường không cách nhiệt vì dưới nắng rất nóng.</li>
+      <li><b>Thông gió, nền:</b> vách để toàn lưới, không bịt kín; chừa khe hở dưới mép mái cho hơi nóng thoát. Góc thú nằm lát gạch hoặc trải thảm (nền bê tông dưới nắng rất nóng), luôn có nước.</li>
     </ol>
   </section>
 
@@ -82,11 +84,11 @@ header p{margin:0;color:var(--ink2);max-width:75ch}
 <script src="mo-hinh-3d.js"></script>
 <script>
 const MO_TA = {
-  1: { mo: 'Mái dốc từ vách trước (+2,70) lên sát đáy ban công (+3,42), lợp tấm polycarbonate đặc ruột 5 mm trên xà sắt. Nước chảy ra mép trước, có máng xối.',
-       uu: 'Kín mưa nắng: xe không ướt, thú cưng có chỗ khô. Mái dốc tấm nhựa trơn, khó bò lên. Sân vẫn sáng.',
-       nhuoc: 'Đắt hơn. Tấm bám bụi, lá, cần lau; giữa trưa sân hơi nóng.', cost: 3 },
-  2: { mo: 'Mái lưới phẳng ở +2,70, vách lưới đứng từ mái lên sát đáy ban công. Hàng chông sắt dọc mép trước và dưới mép ban công.',
-       uu: 'Rẻ hơn, thoáng gió, không nóng.', nhuoc: 'Mưa, lá rơi lọt xuống sân; xe cần áo trùm, thú cưng cần chuồng có mái. Nóc phẳng thì đứng lên được, phải dựa vào hàng chông.', cost: 2 },
+  1: { mo: 'Mái dốc từ vách trước (+2,70) lên sát đáy ban công (+3,42), phần ngoài lợp polycarbonate rỗng ruột có lớp chống UV, phần sát nhà lợp tôn cách nhiệt PU. Nước chảy ra mép trước, có máng xối.',
+       uu: 'Kín mưa toàn sân: xe không ướt, thú cưng có góc râm mát. Phía ngoài vẫn sáng. Mái dốc, trơn nên khó bò lên.',
+       nhuoc: 'Đắt hơn. Tấm lấy sáng bám bụi, lá, cần lau; phần lấy sáng giữa trưa vẫn hơi nóng.', cost: 3 },
+  2: { mo: 'Mái lưới phẳng ở +2,70, khoảng 1,1 m sát ban công lợp tôn cách nhiệt PU. Vách lưới đứng từ mái lên sát đáy ban công. Hàng chông sắt dọc mép trước và dưới mép ban công.',
+       uu: 'Rẻ hơn, thoáng gió. Vẫn có góc tôn râm, khô cho thú cưng.', nhuoc: 'Mưa, lá lọt xuống chỗ để xe; xe cần áo trùm. Nóc phẳng thì đứng lên được, phải dựa vào hàng chông.', cost: 2 },
 };
 
 const kk = v => Math.round(v * 100), f2 = n => n.toFixed(2).replace('.', ','), lvl = z => (z >= 0 ? '+' : '−') + f2(Math.abs(z));
@@ -114,9 +116,12 @@ function svg(v) {
   // mái
   for (let i = 0; i < 3; i++) L(XBC - .02, ZBC - .02 - i * .02, XBC - .25, ZBC - .3, 'e-sp');
   T(XBC - .3, ZBC - .5, 'chông', 'e-red', ' text-anchor="end"');
-  if (v.kieu === 'doc') { Pg([[GX, zF], [XBC, zB], [XBC, zB + .05], [GX, zF + .05]], 'e-pc'); R(GX - .15, zF - .06, GX, zF + .04, 'e-ir'); T(-2.3, zF + .55, 'tấm lấy sáng dốc', 'e-tx', ' text-anchor="middle"'); }
+  const XT = v.tonTu, zr = X => zF + (zB - zF) * (X - GX) / (XBC - GX);
+  Pg([[XT, zr(XT)], [XBC, zB], [XBC, zB + .07], [XT, zr(XT) + .07]], 'e-ton');
+  T((XT + XBC) / 2 - .1, zr((XT + XBC) / 2) - .25, 'tôn PU', 'e-tx', ' text-anchor="middle"');
+  if (v.kieu === 'doc') { Pg([[GX, zF], [XT, zr(XT)], [XT, zr(XT) + .05], [GX, zF + .05]], 'e-pc'); R(GX - .15, zF - .06, GX, zF + .04, 'e-ir'); T((GX + XT) / 2, zr((GX + XT) / 2) + .3, 'tấm lấy sáng', 'e-tx', ' text-anchor="middle"'); }
   else {
-    L(GX, zF, XBC, zF); L(XBC, zF, XBC, ZBC, 'e-th'); T(-2.3, zF + .12, 'mái lưới', 'e-tx', ' text-anchor="middle"');
+    L(GX, zF, XT, zF); L(XBC, zF, XBC, ZBC, 'e-th'); T((GX + XT) / 2, zF + .12, 'mái lưới', 'e-tx', ' text-anchor="middle"');
     for (let i = 0; i < 3; i++) L(GX, zF, GX - .2, zF + .22, 'e-sp');
     T(GX - .25, zF + .3, 'chông', 'e-red', ' text-anchor="end"');
   }
@@ -126,7 +131,8 @@ function svg(v) {
   const lv = (x, z, s, anc = 'end') => { L(x - .15, z, x + .15, z, 'e-dim'); T(x + (anc === 'end' ? -.2 : .2), z - .04, s, 'e-tx', ` text-anchor="${anc}"`); };
   lv(-SD - .1, zF, `${lvl(zF)} mái trước`); lv(-SD - .1, ZC, `${lvl(ZC)} đỉnh cửa rào`); lv(-SD - .1, ROAD, `${lvl(ROAD)} vỉa hè`);
   lv(0.25, ZBC, `${lvl(ZBC)} đáy ban công`, 'start'); lv(0.25, H1 + 1.1, `${lvl(H1 + 1.1)} tay vịn ban công`, 'start');
-  T(-1.75, 0.6, 'sân để xe, thú cưng', 'e-tx', ' text-anchor="middle"');
+  T(-2.6, 0.6, 'chỗ để xe', 'e-tx', ' text-anchor="middle"'); T((XT + 0) / 2, 0.6, 'góc râm thú cưng', 'e-tx', ' text-anchor="middle"');
+  L(XT, -0.95, XT, -0.6, 'e-dim'); 
   // kích thước
   L(-SD, -0.7, 0, -0.7, 'e-dim'); L(-SD, -0.6, -SD, -0.8, 'e-dim'); L(XBC, -0.6, XBC, -0.8, 'e-dim'); L(0, -0.6, 0, -0.8, 'e-dim');
   T((-SD + XBC) / 2, -0.64, '2,3 mái lồng', 'e-tx', ' text-anchor="middle"'); T(XBC / 2, -0.64, '1,2 dưới ban công', 'e-tx', ' text-anchor="middle"');

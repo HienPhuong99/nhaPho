@@ -1,10 +1,10 @@
 /* Mô hình 3D nhà phố 4,2 × 18 m (KT-03) dùng chung cho 3d.html (xem từ ngoài) và di-bo.html (đi bộ trong nhà).
    nha3D() dựng toàn bộ cảnh và trả về các nhóm cùng danh sách khối hộp (boxes) theo toạ độ bản vẽ. */
 // Phương án lồng sắt kín trùm sân trước (xem long-sat.html, 3d.html?san=1&long=1). Cao độ ±0 = nền trệt.
-// zTruoc: cao độ mái ở vách trước; kiểu "doc" mái dốc lên sát đáy ban công, "phang" mái phẳng + vách lưới đứng lên ban công
+// zTruoc: cao độ mái ở vách trước; tonTu: từ X này vào tới ban công lợp tôn cách nhiệt PU (góc râm cho thú cưng); kiểu "doc" mái dốc lên sát đáy ban công, "phang" mái phẳng + vách lưới đứng lên ban công
 const LONG_PA = [
-  { id: "1", ten: "Mái dốc tấm lấy sáng", ngan: "mái dốc lấy sáng", kieu: "doc", zTruoc: 2.7 },
-  { id: "2", ten: "Mái lưới phẳng, chông chống trèo", ngan: "mái lưới phẳng", kieu: "phang", zTruoc: 2.7 },
+  { id: "1", ten: "Mái dốc: tôn PU sát nhà, tấm lấy sáng phía ngoài", ngan: "mái dốc tôn + lấy sáng", kieu: "doc", zTruoc: 2.7, tonTu: -2.35 },
+  { id: "2", ten: "Mái lưới phẳng, góc tôn PU sát nhà, chông chống trèo", ngan: "mái lưới + góc tôn", kieu: "phang", zTruoc: 2.7, tonTu: -2.35 },
 ];
 function nha3D() {
   // Số liệu lấy từ bản vẽ KT-03 (mat-bang.html). Toạ độ bản vẽ: X dọc nhà (0 = mặt tiền), Y bề ngang.
@@ -285,6 +285,7 @@ function nha3D() {
   }
   mat.mesh = M(0x30363c, { transparent: true, opacity: .32, depthWrite: false, side: THREE.DoubleSide, roughness: .6 });
   mat.spike = M(0x8a9097, { metalness: .5, roughness: .4 });
+  mat.ton = M(0xc9ced2, { roughness: .5, metalness: .3, side: THREE.DoubleSide });   // tôn cách nhiệt PU, mặt trên tôn lạnh
   const XBC = -1.2, ZBC = H1 - 0.3, Y0 = CT / 2, Y1 = 4.2 - CT / 2;
   function sideMesh(Y, prof, g) {      // lưới vách hông theo biên dạng prof = [[X, z], …] (vẽ trong mặt phẳng X–z)
     const s = new THREE.Shape(); prof.forEach(([X, z], i) => i ? s.lineTo(X, z) : s.moveTo(X, z));
@@ -313,11 +314,13 @@ function nha3D() {
     for (const y of [Y0, 1.075, 2.1, 3.125, Y1]) bar([GX, y, zF], [XBC, y, roof(XBC)], .05, mat.iron, g);
     for (let X = GX; X <= XBC + 1e-6; X += (XBC - GX) / 4) bar([X, Y0, roof(X)], [X, Y1, roof(X)], .04, mat.iron, g);
     for (let y = Y0 + .05; y < Y1; y += .1) bar([XBC - .02, y, ZBC - .02], [XBC - .25, y, ZBC - .3], .015, mat.spike, g);   // chông dưới mép ban công
-    if (v.kieu === 'doc') {            // tấm lấy sáng đặt trên xà, máng xối ở mép trước
-      quad([GX, 0, zF + .03], [GX, 4.2, zF + .03], [XBC, 4.2, roof(XBC) + .03], [XBC, 0, roof(XBC) + .03], g, mat.poly);
+    const XT = v.tonTu, rp = X => roof(X) + .03;
+    quad([XT, 0, rp(XT) + .01], [XT, 4.2, rp(XT) + .01], [XBC, 4.2, rp(XBC) + .01], [XBC, 0, rp(XBC) + .01], g, mat.ton);   // tôn PU sát nhà
+    if (v.kieu === 'doc') {            // tấm lấy sáng rỗng ruột phía ngoài, máng xối ở mép trước
+      quad([GX, 0, rp(GX)], [GX, 4.2, rp(GX)], [XT, 4.2, rp(XT)], [XT, 0, rp(XT)], g, mat.poly);
       sb(GX - .15, GX, 0, 4.2, zF - .05, zF + .05, mat.iron, g);
     } else {                           // lưới phẳng, vách lưới đứng lên đáy ban công, hàng chông chống trèo
-      quad([GX, 0, zF + .02], [GX, 4.2, zF + .02], [XBC, 4.2, zF + .02], [XBC, 0, zF + .02], g);
+      quad([GX, 0, zF + .02], [GX, 4.2, zF + .02], [XT, 4.2, zF + .02], [XT, 0, zF + .02], g);
       quad([XBC, 0, zF], [XBC, 4.2, zF], [XBC, 4.2, ZBC], [XBC, 0, ZBC], g);
       for (let y = Y0 + .05; y < Y1; y += .1) bar([GX, y, zF], [GX - .2, y, zF + .22], .015, mat.spike, g);
     }
