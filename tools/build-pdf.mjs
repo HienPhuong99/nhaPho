@@ -5,7 +5,7 @@ import path from 'node:path';
 import { PDFDocument } from 'pdf-lib';
 import { REPO, rel, serve, launch } from './lib.mjs';
 
-const PAGES = ['bia.html', 'index.html', 'mat-dung.html', 'cot-dien.html'];
+const PAGES = ['bia.html', 'index.html', 'mat-dung.html', 'cot-dien.html', 'cong-truoc.html'];
 const FROZEN = ['vechoichoi/Ban_Ve_Final_1.pdf', 'vechoichoi/Ban_Ve_Dien_Final_1.pdf'];   // đã gửi chủ đầu tư, không ghi đè
 
 const args = process.argv.slice(2);

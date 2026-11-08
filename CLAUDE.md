@@ -13,6 +13,7 @@ Sửa số trong mảng dữ liệu, không sửa SVG. Tìm bằng grep (`grep -
 | `mat-dung.html` | mặt đứng, 3 bảng màu | `PAL`, `PARTS`; cao độ riêng `H1`, `ZR`, `ZP` |
 | `cot-dien.html` | cột, dầm, máy lạnh, ổ điện, mạch | `AX` trục cột, `P` ổ điện, `AC` máy lạnh, `M` mạch, `TAI` công suất, `CAO` chiều cao lắp, `HOI` câu hỏi |
 | `mo-hinh-3d.js` | 3D cho 3d.html, di-bo.html | số riêng trong `nha3D()` (`H1`, `H2`, `SLAB`, `TOP`, `SILL`) |
+| `cong-truoc.html` | phương án sân trước + cổng (chưa chốt), mặt bằng trệt dùng lại `GROUND` | `SAN` (sâu 3,5 m, cao độ, cánh cổng, chỗ xe) |
 | `bia.html` | bìa bộ PDF | mục lục ghi số trang |
 
 Cao độ và kích thước phòng lặp ở nhiều file: đổi số nào thì grep số cũ trong cả `mat-bang.js`, `mat-dung.html`, `mo-hinh-3d.js`, `index.html`, `cot-dien.html`.
@@ -26,7 +27,7 @@ node tools/diff-pdf.mjs vechoichoi/Ban_Ve_Final_1.pdf out/Ban_Ve.pdf    # dòng 
 node tools/render.mjs out/Ban_Ve.pdf 9-10                               # chỉ khi cần xem cả trang
 ```
 
-- Thứ tự gộp: bia (trang 1), index (2–8), mat-dung (9–10), cot-dien (11–25). Thêm hay bớt trang thì sửa mục lục trong `bia.html`.
+- Thứ tự gộp: bia (trang 1), index (2–8), mat-dung (9–10), cot-dien (11–25), cong-truoc (26–27). Thêm hay bớt trang thì sửa mục lục trong `bia.html`.
 - Kiểm tra bằng phần chữ của diff-pdf trước; chỉ mở ảnh cắt (trái bản cũ, phải bản mới) khi cần nhìn hình. Không đọc thẳng file PDF bằng Read.
 - Trang báo đổi hình 0,0x% mà "chữ giữ nguyên" thường chỉ là lệch khử răng cưa.
 - Cần mạng để tải font Barlow (Google Fonts); thiếu font thì build-pdf báo.
