@@ -126,7 +126,7 @@ const GROUND = {
     // (cong-truoc.html vẽ sân trước riêng, đặt san = 1 để bỏ phần tam cấp này)
     if (!this.san) { line(-0.6, 0, -0.6, 4.2, 'riser'); line(-0.3, 0, -0.3, 4.2, 'riser');
       text(-0.3, 0.5, ['2 bậc × 16'], { cls: 'h-balc sm' }); text(-0.3, 2.1, ['ngoài ranh đất'], { cls: 'h-balc sm' }); }
-    wall(6, 1, 6, 4.2); wall(8.8, 1, 8.8, 4.2); wall(12.5, 1, 12.5, 4.2); wall(16.5, 1, 16.5, 4.2);
+    wall(12.5, 1, 12.5, 4.2); wall(16.5, 1, 16.5, 4.2);   // trệt bỏ vách 2 bên cầu thang (trục 6, 8,8): khách–thang–bếp thông nhau
     wall(12.5, 1, 18, 1, [[12.65, 13.55], [16.65, 17.45]]);
     win(18, 2.2, 18, 3.2);
     // cửa chính nhôm kính 4 cánh × 0,6 m mở ra ngoài (khảo sát lần 2): cánh quét gọn trên 0,6 m tam cấp;
