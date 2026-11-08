@@ -20,14 +20,15 @@ Cao độ và kích thước phòng lặp ở nhiều file: đổi số nào th�
 
 ## Dựng và kiểm tra PDF
 
+Dùng skill `banve:pdf` (plugin `banve@banve-kit`, cài ở user scope; `B` là thư mục `scripts` của skill, ví dụ `~/.claude/plugins/cache/banve-kit/banve/<bản>/skills/pdf/scripts`). Trang in, thứ tự, file đã chốt khai trong `banve.json`.
+
 ```bash
-npm ci --prefix tools                                                   # lần đầu trên máy
-node tools/build-pdf.mjs out/Ban_Ve.pdf                                 # khoảng 15 s, in bảng trang
-node tools/diff-pdf.mjs vechoichoi/Ban_Ve_Final_1.pdf out/Ban_Ve.pdf    # dòng chữ −/+ từng trang, ảnh cắt vùng đổi ở out/diff/
-node tools/render.mjs out/Ban_Ve.pdf 9-10                               # chỉ khi cần xem cả trang
+node "$B/build-pdf.mjs" out/Ban_Ve.pdf                                 # khoảng 15 s, in bảng trang
+node "$B/diff-pdf.mjs" vechoichoi/Ban_Ve_Final_1.pdf out/Ban_Ve.pdf    # dòng chữ −/+ từng trang, ảnh cắt vùng đổi ở out/diff/
+node "$B/render.mjs" out/Ban_Ve.pdf 9-10                               # chỉ khi cần xem cả trang
 ```
 
-- Thứ tự gộp: bia (trang 1), index (2–8), mat-dung (9–10), cot-dien (11–25), cong-truoc (26–27). Thêm hay bớt trang thì sửa mục lục trong `bia.html`.
+- Thứ tự gộp (`pages` trong `banve.json`): bia (trang 1), index (2–8), mat-dung (9–10), cot-dien (11–25), cong-truoc (26–27). Thêm hay bớt trang thì sửa mục lục trong `bia.html`.
 - Kiểm tra bằng phần chữ của diff-pdf trước; chỉ mở ảnh cắt (trái bản cũ, phải bản mới) khi cần nhìn hình. Không đọc thẳng file PDF bằng Read.
 - Trang báo đổi hình 0,0x% mà "chữ giữ nguyên" thường chỉ là lệch khử răng cưa.
 - Cần mạng để tải font Barlow (Google Fonts); thiếu font thì build-pdf báo.
@@ -35,7 +36,7 @@ node tools/render.mjs out/Ban_Ve.pdf 9-10                               # chỉ 
 
 ## Quy tắc
 
-- `vechoichoi/Ban_Ve_Final_1.pdf` và `vechoichoi/Ban_Ve_Dien_Final_1.pdf` đã gửi chủ đầu tư: không in lại, không ghi đè (build-pdf từ chối). Bản mới đặt tên mới.
+- `vechoichoi/Ban_Ve_Final_1.pdf` và `vechoichoi/Ban_Ve_Dien_Final_1.pdf` đã gửi chủ đầu tư: không in lại, không ghi đè (`frozen` trong `banve.json`, build-pdf từ chối kể cả khi gõ sai hoa thường). Bản mới đặt tên mới.
 - Gộp lệnh vào ít lượt: sửa, dựng PDF, so bản cũ trong cùng một lượt.
 - Máy Windows, Node 24, không có Python. Chromium của Playwright 1.64.0 đã cài sẵn; `pdftotext` có trong Git Bash.
 - Commit message tiếng Việt, một câu nói thay đổi gì (xem `git log`).

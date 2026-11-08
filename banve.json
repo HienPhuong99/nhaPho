@@ -1,0 +1,6 @@
+{
+  "title": "Bản vẽ nhà phố 4,2 × 18 m",
+  "pages": ["bia.html", "index.html", "mat-dung.html", "cot-dien.html", "cong-truoc.html"],
+  "out": "out/Ban_Ve.pdf",
+  "frozen": ["vechoichoi/Ban_Ve_Final_1.pdf", "vechoichoi/Ban_Ve_Dien_Final_1.pdf"]
+}
