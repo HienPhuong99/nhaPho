@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phim nhà phố</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+  /* Phim giới thiệu nhà phố: bản vẽ nét chì chuyển dần sang bản dựng màu, từng cảnh một.
+     Xem thử: phim.html (tự chạy, lặp). Dựng video: tools/phim-render.mjs gọi seek(cảnh, giây) từng khung. */
+  :root { --ink: #1d2328; --paper: #efece4; --accent: #d9542b; --mute: #6b7176; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: #111; overflow: hidden; }
+  #frame { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; margin: auto; top: 50%; transform: translateY(-50%); overflow: hidden; font-family: Barlow, system-ui, sans-serif; color: var(--ink); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .ov { position: absolute; opacity: 0; will-change: opacity; }
+  /* đơn vị theo bề ngang khung: 1vw của khung 1920 px = 19,2 px */
+  #brand { top: 2.2%; left: 2%; font: 700 1.05vw/1 'Barlow Condensed'; letter-spacing: .18em; text-transform: uppercase; opacity: 1; }
+  #brand b { color: var(--accent); }
+  #pill { top: 2%; right: 2%; font: 600 .78vw/1 Barlow; letter-spacing: .12em; border: 1px solid currentColor; border-radius: 99px; padding: .45vw .9vw; opacity: 1; background: rgba(239,236,228,.75); }
+  #title { left: 4.5%; top: 12%; width: 34%; }
+  #title h1 { font: 700 4.1vw/.95 'Barlow Condensed'; text-transform: uppercase; letter-spacing: .01em; }
+  #title h1 em { font-style: normal; color: var(--accent); }
+  #title p { margin-top: 1.6vw; font: 500 1.05vw/1.5 Barlow; color: var(--mute); max-width: 22vw; }
+  #title .rule { width: 6vw; height: 3px; background: var(--accent); margin-top: 1.6vw; }
+  .card { left: 4%; top: 9%; padding: 1.1vw 1.4vw 1.2vw; background: rgba(250,248,243,.88); border-left: 4px solid var(--accent); min-width: 19vw; }
+  .card .k { font: 600 .72vw/1 Barlow; letter-spacing: .2em; color: var(--mute); text-transform: uppercase; }
+  .card h2 { font: 700 2.5vw/1 'Barlow Condensed'; text-transform: uppercase; margin-top: .5vw; }
+  .card .dim { display: flex; align-items: center; gap: .6vw; margin-top: .7vw; font: 600 .95vw/1 Barlow; letter-spacing: .06em; }
+  .card .dim i { flex: 1; height: 1px; background: var(--accent); position: relative; min-width: 3vw; }
+  .card .dim i::before, .card .dim i::after { content: ''; position: absolute; top: -.35vw; width: 1px; height: .8vw; background: var(--accent); }
+  .card .dim i::before { left: 0; } .card .dim i::after { right: 0; }
+  #end { left: 4.5%; top: 12%; }
+  #end .box { }
+  #end h1 { font: 700 4.1vw/.95 'Barlow Condensed'; text-transform: uppercase; letter-spacing: .04em; }
+  #end h1 em { font-style: normal; color: var(--accent); }
+  #end p { margin-top: 1vw; font: 500 1.1vw/1.4 Barlow; color: var(--mute); letter-spacing: .08em; text-transform: uppercase; }
+  #err[hidden] { display: none; }
+  #err { position: fixed; inset: 0; display: grid; place-content: center; color: #eee; font: 16px system-ui; }
+</style>
+</head>
+<body>
+<div id="frame">
+  <div class="ov" id="brand">nha<b>Pho</b> · Hồ sơ thiết kế</div>
+  <div class="ov" id="pill">NHÀ PHỐ 4,2 × 18 M · 2 TẦNG</div>
+  <div class="ov" id="title">
+    <h1>Mọi ngôi nhà<br>đều bắt đầu<br>từ một <em>bản vẽ.</em></h1>
+    <div class="rule"></div>
+    <p>Mặt bằng tầng trệt, cắt ở cao độ +1,2 m: phòng khách, cầu thang, bếp, phòng ngủ, vệ sinh.</p>
+  </div>
+  <div class="ov card" id="c-khach"><div class="k">Tầng trệt · 01</div><h2>Phòng khách</h2><div class="dim">6,0 m <i></i> 4,2 m · 25,2 m²</div></div>
+  <div class="ov card" id="c-bep"><div class="k">Tầng trệt · 02</div><h2>Bếp &amp; bàn ăn</h2><div class="dim">3,7 m <i></i> 4,2 m · 15,5 m²</div></div>
+  <div class="ov card" id="c-lau"><div class="k">Tầng lầu · 03</div><h2>Hành lang lầu</h2><div class="dim">3 phòng ngủ <i></i> phòng thờ · ban công</div></div>
+  <div class="ov card" id="c-ngoai"><div class="k">Mặt tiền · 04</div><h2>Sân trước</h2><div class="dim">sâu 3,5 m <i></i> lồng sắt, 3 xe máy</div></div>
+  <div class="ov" id="end"><div class="box"><h1>Từ bản vẽ<br><em>đến ngôi nhà.</em></h1><p>Nhà phố 4,2 × 18 m · 2 tầng · 1 tum</p></div></div>
+</div>
+<div id="err" hidden>Không tải được thư viện 3D. Kiểm tra kết nối mạng rồi mở lại trang.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="mo-hinh-3d.js"></script>
+<script>
+(() => {
+if (!window.THREE) { document.getElementById('err').hidden = false; return; }
+const W = 1920, H = 1080;
+const { scene, U, RF, CEIL, LG, LU, SAN, NOW, LONG, sun } = nha3D();
+LU.visible = false;
+
+// ---------- đồ đạc và đèn chỉ dùng cho phim (bản vẽ không đổi) ----------
+const FUR = new THREE.Group(); scene.add(FUR);
+const Mf = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .8, ...o });
+const fm = { sofa: Mf(0xd8d2c6), cush: Mf(0xb5643d), wood: Mf(0x9a6b45, { roughness: .6 }), dark: Mf(0x2c2f33, { roughness: .5 }),
+  rug: Mf(0xcfc6b4, { roughness: 1 }), leaf: Mf(0x4f6b3a), pot: Mf(0xe9e4da), lamp: Mf(0xfff3d6, { emissive: 0xffd9a0, emissiveIntensity: 1.2 }),
+  art: Mf(0xf4f1ea), red: Mf(0xc0392b), brass: Mf(0xb08d57, { metalness: .6, roughness: .35 }) };
+// hộp theo toạ độ thế giới: x (0..4,2 ngang), y (cao), z (dọc nhà)
+function fb(x1, x2, y1, y2, z1, z2, m, g = FUR) {
+  const o = new THREE.Mesh(new THREE.BoxGeometry(x2 - x1, y2 - y1, z2 - z1), m);
+  o.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2); o.castShadow = o.receiveShadow = true; g.add(o); return o;
+}
+function cyl(x, z, r1, r2, y1, y2, m, seg = 24) {
+  const o = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, y2 - y1, seg), m);
+  o.position.set(x, (y1 + y2) / 2, z); o.castShadow = o.receiveShadow = true; FUR.add(o); return o;
+}
+function sphere(x, y, z, r, m) { const o = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), m); o.position.set(x, y, z); o.castShadow = true; FUR.add(o); return o; }
+function plant(x, z, s = 1) { cyl(x, z, .2 * s, .16 * s, 0, .45 * s, fm.pot); sphere(x, .85 * s, z, .38 * s, fm.leaf); sphere(x + .12 * s, 1.15 * s, z - .05, .26 * s, fm.leaf); }
+// phòng khách (z 0..6): sofa chữ L sát tường x≈0, kệ TV sát tường x≈4,2, thảm, bàn trà, tranh
+fb(1.0, 3.3, .01, .02, 2.0, 4.6, fm.rug);
+fb(.12, .95, 0, .42, 1.6, 4.6, fm.sofa); fb(.12, .32, .42, .85, 1.6, 4.6, fm.sofa); fb(.12, 1.9, 0, .42, 4.6, 5.45, fm.sofa); fb(.12, 1.9, .42, .85, 5.25, 5.45, fm.sofa);
+fb(.35, .85, .42, .62, 2.1, 2.6, fm.cush); fb(.35, .85, .42, .62, 3.7, 4.2, fm.cush);
+fb(1.75, 2.55, .32, .38, 2.7, 3.9, fm.wood); fb(1.8, 1.86, 0, .32, 2.75, 3.85, fm.dark); fb(2.44, 2.5, 0, .32, 2.75, 3.85, fm.dark);
+sphere(2.15, .48, 3.3, .1, fm.red);
+fb(3.75, 4.1, 0, .45, 1.8, 4.6, fm.wood); fb(4.08, 4.1, 1.05, 1.9, 2.4, 4.0, fm.dark);
+fb(.06, .09, 1.2, 2.2, 2.5, 3.6, fm.art); fb(.09, .1, 1.5, 1.9, 2.85, 3.25, fm.red);
+plant(3.8, .6, 1.1); plant(.5, .6, .9);
+cyl(2.15, 3.3, .01, .01, 2.5, 3.3, fm.dark); sphere(2.15, 2.45, 3.3, .22, fm.lamp);
+// bếp (z 8.8..12.5): bàn ăn, 4 ghế, 2 đèn thả
+fb(1.9, 2.8, .73, .78, 9.6, 11.4, fm.wood); fb(2.0, 2.06, 0, .73, 9.7, 9.76, fm.dark); fb(2.64, 2.7, 0, .73, 9.7, 9.76, fm.dark);
+fb(2.0, 2.06, 0, .73, 11.24, 11.3, fm.dark); fb(2.64, 2.7, 0, .73, 11.24, 11.3, fm.dark);
+for (const z of [10.0, 10.9]) for (const [a, b] of [[1.35, 1.8], [2.9, 3.35]]) { fb(a, b, .44, .48, z, z + .45, fm.sofa); fb(a < 2 ? a : b - .05, a < 2 ? a + .05 : b, .48, .95, z, z + .45, fm.sofa); }
+for (const z of [10.1, 10.9]) { cyl(2.35, z, .006, .006, 2.4, 3.3, fm.dark); cyl(2.35, z, .05, .2, 2.2, 2.4, fm.brass); }
+plant(3.75, 12.1, .8);
+// lầu: cây ở cuối hành lang, tranh trên tường
+plant(3.7, 2.4 + 0, .8); FUR.children.slice(-3).forEach(o => o.position.y += 3.9);
+fb(4.08, 4.1, 5.0, 5.8, 6.5, 7.4, fm.art); fb(4.07, 4.08, 5.25, 5.55, 6.8, 7.1, fm.red);
+// đèn trong nhà: ấm, không đổ bóng
+for (const [x, y, z, i] of [[2.1, 3.0, 3.2, .9], [2.3, 3.0, 10.5, .9], [3.6, 6.6, 6, .6], [3.6, 6.6, 11, .6], [2.1, 3.0, 7.4, .4]]) {
+  const l = new THREE.PointLight(0xffd7a8, i, 9, 1.6); l.position.set(x, y, z); scene.add(l);
+  if (i > .8) { l.castShadow = true; l.shadow.mapSize.set(1024, 1024); l.shadow.bias = -0.002; l.shadow.camera.near = .1; }
+}
+// cột dầm trong bản dựng màu cùng màu tường (bản vẽ kết cấu mới tô cam)
+const wallM = new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: .9 });
+scene.traverse(o => { if (o.userData.st) o.material = wallM; });
+
+// ---------- hai lượt vẽ: nét chì (sketch) và bản dựng màu (real) ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.localClippingEnabled = true;
+document.getElementById('frame').prepend(renderer.domElement);
+sun.intensity = 1.25; sun.shadow.bias = -0.0004; sun.shadow.mapSize.set(4096, 4096);
+
+const camera = new THREE.PerspectiveCamera(40, W / H, .05, 300);
+const CUT = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1.2);          // giữ phần dưới cao độ CUT.constant
+const PAPER = new THREE.Color('#efece4'), SKY = new THREE.Color('#cfdbe3');
+const skPaper = new THREE.MeshBasicMaterial({ color: 0xf7f5ef, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, clippingPlanes: [CUT], toneMapped: false });
+const skFloor = new THREE.MeshBasicMaterial({ color: 0xeeebe2, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, clippingPlanes: [CUT], toneMapped: false });
+const skHide = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false });
+const skLine = new THREE.LineBasicMaterial({ color: 0x23282c, transparent: true, opacity: .8, clippingPlanes: [CUT], toneMapped: false });
+const meshes = [];
+scene.traverse(o => { if (o.isMesh) meshes.push(o); });
+for (const m of meshes) {
+  const r = m.material, see = r.transparent && r.opacity < .6;
+  m.userData.real = r;
+  m.userData.sk = see ? skHide : (m.geometry.parameters?.height < .2 ? skFloor : skPaper);
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry, 25), skLine);
+  e.visible = false; e.userData.edge = true; m.add(e); m.userData.e = e;
+}
+function pass(sketch) {
+  for (const m of meshes) { m.material = sketch ? m.userData.sk : m.userData.real; m.userData.e.visible = sketch; m.castShadow = !sketch && m.userData.cs; }
+  scene.background = sketch ? PAPER : SKY;
+}
+meshes.forEach(m => m.userData.cs = m.castShadow);
+
+const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4, encoding: THREE.sRGBEncoding });
+const rtB = new THREE.WebGLRenderTarget(W, H, { samples: 4, encoding: THREE.sRGBEncoding });
+const comp = new THREE.ShaderMaterial({
+  uniforms: { real: { value: rtA.texture }, sketch: { value: rtB.texture }, p: { value: 0 }, seed: { value: 0 } },
+  vertexShader: 'varying vec2 v; void main(){ v = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  fragmentShader: `
+    uniform sampler2D real, sketch; uniform float p, seed; varying vec2 v;
+    float h(vec2 q){ return fract(sin(dot(q, vec2(12.9898, 78.233))) * 43758.5453); }
+    float n(vec2 q){ vec2 i = floor(q), f = fract(q); f = f*f*(3.-2.*f);
+      return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
+    void main(){
+      vec3 a = texture2D(real, v).rgb, b = texture2D(sketch, v).rgb;
+      // giấy: hạt + lưới chấm mờ
+      vec2 px = v * vec2(1920., 1080.);
+      float grain = n(px * .35) * .05 + h(px + seed) * .025;
+      vec2 g = mod(px, 48.); float dot = step(length(g - 24.), 1.3) * .08;
+      b = b * (1. - grain) - dot * .5;
+      // mép quét: chéo từ trái sang, có rung giấy
+      float f = v.x * .78 + (1. - v.y) * .22 + (n(v * vec2(9., 5.)) - .5) * .06;
+      float pp = p * 1.36 - .18;
+      float m = smoothstep(pp + .03, pp - .03, f);
+      vec3 c = mix(b, a, m);
+      float edge = (1. - smoothstep(0., .006, abs(f - pp))) * step(.001, p) * step(p, .999);
+      c = mix(c, vec3(.85, .33, .17), edge * .9);
+      // khung tối nhẹ ở bản dựng màu
+      float vig = smoothstep(1.15, .35, length(v - .5) * 1.3);
+      c *= mix(1., .82 + .18 * vig, m);
+      gl_FragColor = vec4(c, 1.);
+    }`,
+  depthTest: false, depthWrite: false,
+});
+const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), comp);
+const qs = new THREE.Scene(); qs.add(quad); const qc = new THREE.Camera();
+
+// ---------- kịch bản: khung khoá [giây, vị trí máy, điểm nhìn, độ nghiêng] ----------
+const R90 = 1;   // 1 = nhìn thẳng xuống, nhà nằm ngang khung (mặt tiền bên trái)
+const show = o => { U.visible = o.U !== false; RF.visible = o.RF !== false; CEIL.visible = !!o.CEIL;
+  SAN.visible = !!o.SAN; NOW.forEach(m => m.visible = !o.SAN); for (const k in LONG) LONG[k].visible = !!o.SAN && k === '1'; };
+const SHOTS = [
+  { id: 'ban-ve', dur: 10, vis: {},
+    cam: [[0, [2.1, 22, 4.2], [2.1, 0, 4.2], R90], [3.8, [2.1, 20.5, 4.6], [2.1, 0, 4.6], R90], [7, [5.5, 5, -8], [2.1, 2, 3], 0], [10, [2.1, 1.6, 0.5], [2.1, 1.4, 6], 0]],
+    fov: [[0, 40], [10, 62]], mix: [[0, 0]], cut: [[0, 1.2], [4, 1.2], [8.5, 12]], lab: [[0, 1], [4, 1], [5.2, 0]],
+    ov: { title: [.6, 5.2] } },
+  { id: 'khach', dur: 8, vis: { CEIL: 1 },
+    cam: [[0, [2.1, 1.6, 0.5], [2.1, 1.4, 6]], [8, [3.1, 1.5, 1.4], [0.6, 1.0, 4.6]]],
+    fov: [[0, 62], [8, 58]], mix: [[0, 0], [1.2, 0], [5.2, 1]], cut: [[0, 12]], ov: { 'c-khach': [1.2, 7.2] } },
+  { id: 'bep', dur: 7, vis: { CEIL: 1 },
+    cam: [[0, [3.65, 1.6, 8.95], [1.8, 1.0, 11.8]], [7, [3.0, 1.5, 9.25], [1.0, 0.95, 12.1]]],
+    fov: [[0, 64]], mix: [[0, 0], [.8, 0], [4.4, 1]], cut: [[0, 12]], ov: { 'c-bep': [.8, 6.3] } },
+  { id: 'lau', dur: 7, vis: { CEIL: 1 },
+    cam: [[0, [3.72, 5.4, 14.3], [3.5, 5.2, 2.0]], [7, [3.68, 5.4, 9.2], [3.3, 5.1, 0.5]]],
+    fov: [[0, 62]], mix: [[0, 0], [.8, 0], [4.4, 1]], cut: [[0, 12]], ov: { 'c-lau': [.8, 6.3] } },
+  { id: 'ngoai', dur: 12, vis: { SAN: 1 },
+    cam: [[0, [-7, 1.7, -14], [2.1, 3.2, 0]], [4, [11, 7, -8], [2.1, 3, 4]], [7.6, [4, 24, -11], [2.1, 0, 6.5], 0], [10, [2.1, 25, 7], [2.1, 0, 7.2], .95], [12, [2.1, 23, 7.2], [2.1, 0, 7.2], R90]],
+    fov: [[0, 45], [8.5, 40]], mix: [[0, 1], [8.6, 1], [10.8, 0]], cut: [[0, 1.2]], skVis: { SAN: 1, RF: false, U: false },
+    ov: { 'c-ngoai': [.5, 4.6], end: [9.6, 13] } },
+];
+window.SHOTS = SHOTS.map(s => ({ id: s.id, dur: s.dur }));
+
+const ease = x => x < .5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2;
+const sstep = x => x * x * (3 - 2 * x);
+function track(keys, t) {           // giá trị số theo khung khoá, nối êm từng đoạn
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) if (t <= keys[i][0]) {
+    const [t0, a] = keys[i - 1], [t1, b] = keys[i]; return a + (b - a) * sstep((t - t0) / (t1 - t0));
+  }
+  return keys[keys.length - 1][1];
+}
+const V = a => new THREE.Vector3(...a);
+SHOTS.forEach(s => {
+  s.pc = new THREE.CatmullRomCurve3(s.cam.map(k => V(k[1])), false, 'centripetal');
+  s.tc = new THREE.CatmullRomCurve3(s.cam.map(k => V(k[2])), false, 'centripetal');
+});
+function camAt(s, t) {              // máy chạy mượt qua các khung khoá; cả cảnh vào/ra chậm
+  const ks = s.cam, n = ks.length;
+  if (n === 1) return [V(ks[0][1]), V(ks[0][2]), ks[0][3] || 0];
+  const x = Math.min(1, Math.max(0, t / s.dur)), w = n > 2 ? .35 : 1;   // nhiều khung khoá: giữ nhịp từng khoá, chỉ vào/ra hơi chậm
+  const tt = ks[0][0] + (x + (ease(x) - x) * w) * (ks[n - 1][0] - ks[0][0]);
+  let i = 1; while (i < n - 1 && tt > ks[i][0]) i++;
+  const u = (i - 1 + (tt - ks[i - 1][0]) / (ks[i][0] - ks[i - 1][0])) / (n - 1);
+  const roll = track(ks.map(k => [k[0], k[3] || 0]), tt);
+  return [s.pc.getPoint(u), s.tc.getPoint(u), roll];
+}
+const ovs = [...document.querySelectorAll('.ov')].filter(e => !['brand', 'pill'].includes(e.id));
+const labMats = []; LG.traverse(o => o.isSprite && labMats.push(o.material));
+const sanLab = []; SAN.traverse(o => o.isSprite && sanLab.push(o));
+
+function seek(i, t) {
+  const s = SHOTS[i];
+  const [pos, tgt, roll] = camAt(s, t);
+  camera.position.copy(pos); camera.up.set(roll, 1 - roll, 0).normalize(); camera.lookAt(tgt);
+  camera.fov = track(s.fov, t); camera.updateProjectionMatrix();
+  const mix = track(s.mix, t);
+  CUT.constant = track(s.cut, t);
+  const lab = s.lab ? track(s.lab, t) : 0;
+  labMats.forEach(m => { m.opacity = lab; m.transparent = true; });
+  if (mix > 0) { show(s.vis); LG.visible = false; pass(false); sanLab.forEach(o => o.visible = false); renderer.setRenderTarget(rtA); renderer.render(scene, camera); }
+  if (mix < 1) { show(s.skVis || s.vis); LG.visible = lab > 0; pass(true); sanLab.forEach(o => o.visible = true); renderer.setRenderTarget(rtB); renderer.render(scene, camera); }
+  comp.uniforms.p.value = mix; comp.uniforms.seed.value = Math.floor(t * 12) % 7;   // hạt giấy đổi 12 lần/giây như phim vẽ tay
+  renderer.setRenderTarget(null); renderer.render(qs, qc);
+  for (const e of ovs) {
+    const r = s.ov?.[e.id];
+    e.style.opacity = r ? Math.min(sstep(Math.min(1, Math.max(0, (t - r[0]) / .6))), sstep(Math.min(1, Math.max(0, (r[1] - t) / .6)))) : 0;
+  }
+}
+window.seek = seek;
+
+// ---------- xem thử trên trình duyệt: chạy lần lượt các cảnh, lặp ----------
+const q = new URLSearchParams(location.search);
+if (q.has('render')) { document.fonts.ready.then(() => window.ready = true); return; }
+let t0 = performance.now();
+const total = SHOTS.reduce((a, s) => a + s.dur, 0);
+(function loop() {
+  let t = ((performance.now() - t0) / 1000) % total, i = 0;
+  while (t > SHOTS[i].dur) t -= SHOTS[i++].dur;
+  seek(i, t); requestAnimationFrame(loop);
+})();
+})();
+</script>
+</body>
+</html>

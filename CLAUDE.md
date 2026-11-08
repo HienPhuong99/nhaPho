@@ -16,6 +16,7 @@ Sửa số trong mảng dữ liệu, không sửa SVG. Tìm bằng grep (`grep -
 | `cong-truoc.html` | phương án sân trước + rào sắt (chưa chốt), mặt bằng trệt dùng lại `GROUND` | `SAN` (sâu 3,5 m, cao độ, cột và cánh rào, chỗ xe) |
 | `long-sat.html` | so 2 kiểu lồng sắt kín trùm sân trước (không in PDF) | `LONG_PA` trong `mo-hinh-3d.js` (dùng chung với 3D), `MO_TA` |
 | `bia.html` | bìa bộ PDF | mục lục ghi số trang |
+| `phim.html` | phim giới thiệu: bản vẽ nét chì chuyển sang bản dựng màu (không in PDF); dựng video bằng `phim-render.mjs` (Playwright + ffmpeg) rồi `phim-dung.mjs` (FilmCraft CLI) | `SHOTS` (khung khoá máy quay, `mix` nét chì→màu, `cut` cao độ cắt mặt bằng), đồ đạc riêng `FUR` |
 
 Cao độ và kích thước phòng lặp ở nhiều file: đổi số nào thì grep số cũ trong cả `mat-bang.js`, `mat-dung.html`, `mo-hinh-3d.js`, `index.html`, `cot-dien.html`.
 
