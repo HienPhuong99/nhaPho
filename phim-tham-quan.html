@@ -1,0 +1,1701 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tham quan 3D tương tác · Nhà phố 4,2 × 18 m</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+  /* Phim & bản demo tham quan 3D trực tiếp từ bản vẽ 2D (nhaPho 4,2 × 18 m, 2 tầng):
+     - Góc trái trên: bản vẽ mặt bằng Blueprint (Trệt + Lầu) có chấm vị trí & phễu hướng nhìn thời gian thực.
+     - Không gian 3D: đi bộ mượt qua Phòng khách → Bếp → PN1 → Cầu thang U → Lầu (PN3, Hành lang, PN2, Phòng thờ & Ban công).
+     - Tương tác trực tiếp: bấm đổi nội thất / vật liệu và cập nhật giá nâng cấp ngay trong không gian 3D. */
+  :root {
+    --bp-bg: rgba(24, 42, 70, 0.93);
+    --bp-bg2: rgba(17, 31, 54, 0.96);
+    --bp-line: rgba(226, 238, 255, 0.9);
+    --bp-dim: rgba(172, 198, 232, 0.55);
+    --bp-border: rgba(180, 208, 244, 0.42);
+    --amber: #f5a524;
+    --accent: #d95d39;
+    --ok: #22c55e;
+    --glass: rgba(18, 24, 33, 0.84);
+    --glass-b: rgba(255, 255, 255, 0.16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #0d1117; overflow: hidden; user-select: none; -webkit-user-select: none; }
+  #frame {
+    position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh;
+    margin: auto; top: 50%; transform: translateY(-50%); overflow: hidden;
+    font-family: Barlow, system-ui, -apple-system, sans-serif; color: #f4f6f9;
+  }
+  #frame > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* ===== Bản vẽ Blueprint góc trái trên (giống Video_mẫu.mp4) ===== */
+  #bp-card {
+    position: absolute; left: 1.5%; top: 2.5%; width: 28.5%;
+    background: linear-gradient(165deg, var(--bp-bg), var(--bp-bg2));
+    border: 1.5px solid var(--bp-border); border-radius: 0.75vw;
+    box-shadow: 0 1vw 2.6vw rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    padding: 0.65vw 0.8vw 0.55vw; z-index: 10; backdrop-filter: blur(8px);
+    background-image:
+      linear-gradient(rgba(160, 195, 240, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(160, 195, 240, 0.05) 1px, transparent 1px),
+      linear-gradient(165deg, var(--bp-bg), var(--bp-bg2));
+    background-size: 1.1vw 1.1vw, 1.1vw 1.1vw, 100% 100%;
+  }
+  .bp-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.4vw; padding-bottom: 0.32vw; border-bottom: 1px solid rgba(190, 215, 248, 0.18);
+  }
+  .bp-title { font: 700 0.66vw/1 'Barlow Condensed', sans-serif; letter-spacing: 0.14em; color: rgba(224, 237, 255, 0.92); text-transform: uppercase; }
+  .bp-badge {
+    font: 700 0.62vw/1 'Barlow Condensed', sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.2vw 0.48vw; border-radius: 99px; background: rgba(245, 165, 36, 0.2);
+    border: 1px solid rgba(245, 165, 36, 0.65); color: #ffd27d;
+  }
+  #bp-svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .bp-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 0.35vw; padding-top: 0.3vw; border-top: 1px solid rgba(190, 215, 248, 0.15);
+    font: 600 0.62vw/1 Barlow, sans-serif; letter-spacing: 0.08em; color: rgba(210, 226, 248, 0.85); text-transform: uppercase;
+  }
+  .bp-foot b { color: #fff; font-weight: 700; }
+
+  /* ===== Thanh trạng thái & tổng giá nâng cấp góc phải trên ===== */
+  #hud-top {
+    position: absolute; right: 1.6%; top: 2.5%; display: flex; align-items: center; gap: 0.6vw; z-index: 10;
+  }
+  .live-pill {
+    display: flex; align-items: center; gap: 0.45vw; padding: 0.45vw 0.85vw;
+    background: var(--glass); border: 1px solid var(--glass-b); border-radius: 99px;
+    backdrop-filter: blur(10px); font: 600 0.72vw/1 Barlow, sans-serif; letter-spacing: 0.05em;
+    box-shadow: 0 0.5vw 1.6vw rgba(0, 0, 0, 0.28);
+  }
+  .live-dot { width: 0.48vw; height: 0.48vw; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0.5vw var(--ok); }
+  #price-pill {
+    display: flex; align-items: center; gap: 0.55vw; padding: 0.42vw 0.95vw;
+    background: rgba(20, 28, 38, 0.9); border: 1px solid rgba(245, 165, 36, 0.5); border-radius: 99px;
+    backdrop-filter: blur(10px); box-shadow: 0 0.5vw 1.6vw rgba(0, 0, 0, 0.32);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+  #price-pill.bump { transform: scale(1.06); border-color: #ffd27d; }
+  #price-pill .lbl { font: 600 0.66vw/1 Barlow, sans-serif; color: rgba(226, 234, 244, 0.78); text-transform: uppercase; letter-spacing: 0.08em; }
+  #price-val { font: 700 0.92vw/1 'Barlow Condensed', sans-serif; color: #ffd166; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+  #saved-cnt {
+    font: 700 0.62vw/1 Barlow, sans-serif; padding: 0.2vw 0.46vw; border-radius: 99px;
+    background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.45);
+  }
+
+  /* ===== Thanh chọn 2 chế độ (Demo tất cả vs Tự di chuyển như Game) ở giữa trên cùng ===== */
+  #mode-bar {
+    position: absolute; left: 50%; top: 2.5%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 0.35vw; padding: 0.28vw 0.35vw;
+    background: rgba(14, 22, 32, 0.9); border: 1.2px solid rgba(255, 255, 255, 0.18);
+    border-radius: 99px; z-index: 20; backdrop-filter: blur(14px);
+    box-shadow: 0 0.6vw 2.2vw rgba(0, 0, 0, 0.45);
+  }
+  body.rendering #mode-bar { display: none !important; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 0.45vw; padding: 0.38vw 0.95vw;
+    border-radius: 99px; border: none; background: transparent; color: rgba(220, 232, 246, 0.82);
+    font: 700 0.72vw/1 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .mode-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+  .mode-btn.active {
+    background: linear-gradient(135deg, #f5a524, #d95d39); color: #fff;
+    box-shadow: 0 0.25vw 0.8vw rgba(245, 165, 36, 0.4);
+  }
+  .mode-btn .m-icon { font-size: 0.85vw; }
+
+  /* ===== Game HUD: Crosshair & Thanh công cụ đáy màn hình ===== */
+  #game-hud[hidden], #ctrl[hidden] { display: none !important; }
+  #game-bar {
+    position: absolute; left: 1.5%; bottom: 2.2%; right: 1.5%;
+    display: flex; align-items: center; justify-content: space-between; gap: 0.8vw;
+    padding: 0.42vw 0.9vw; background: rgba(14, 20, 28, 0.9); border: 1.2px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.65vw; z-index: 15; backdrop-filter: blur(14px);
+    font: 500 0.7vw/1 Barlow, sans-serif; color: rgba(230, 238, 248, 0.92);
+  }
+  body.rendering #game-hud { display: none !important; }
+  .game-tip { display: flex; align-items: center; gap: 0.45vw; flex-wrap: wrap; }
+  .badge-key {
+    background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.28);
+    padding: 0.18vw 0.42vw; border-radius: 0.3vw; font: 700 0.62vw/1 'Barlow Condensed', sans-serif;
+    color: #ffd166; letter-spacing: 0.05em;
+  }
+  .game-actions { display: flex; align-items: center; gap: 0.5vw; }
+  #teleport-sel {
+    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff; padding: 0.3vw 0.65vw; border-radius: 0.4vw;
+    font: 600 0.66vw/1 Barlow, sans-serif; cursor: pointer; outline: none;
+  }
+  #teleport-sel option { background: #1a2330; color: #fff; }
+  .hud-btn {
+    background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff; padding: 0.3vw 0.7vw; border-radius: 0.4vw;
+    font: 700 0.64vw/1 'Barlow Condensed', sans-serif; letter-spacing: 0.06em;
+    cursor: pointer; text-transform: uppercase; transition: background 0.18s;
+  }
+  .hud-btn:hover { background: rgba(255, 255, 255, 0.22); }
+  .hud-btn.active { background: rgba(245, 165, 36, 0.25); border-color: #f5a524; color: #ffd166; }
+
+  /* ===== Bảng đổi nội thất & vật liệu trực tiếp góc phải dưới ===== */
+  #cfg-card {
+    position: absolute; right: 1.8%; bottom: 4.2%; width: 25.5%;
+    background: var(--glass); border: 1px solid var(--glass-b); border-radius: 0.8vw;
+    padding: 0.85vw 1vw 0.9vw; z-index: 12; backdrop-filter: blur(14px);
+    box-shadow: 0 1.2vw 3vw rgba(0, 0, 0, 0.45);
+    opacity: 0; transform: translateY(0.8vw); pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  #cfg-card.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .cfg-kicker {
+    display: flex; align-items: center; justify-content: space-between;
+    font: 700 0.64vw/1 'Barlow Condensed', sans-serif; letter-spacing: 0.14em; color: #ffd166; text-transform: uppercase;
+  }
+  .cfg-kicker span:last-child { color: rgba(220, 230, 242, 0.68); font-weight: 600; }
+  .cfg-room { font: 700 1.25vw/1.15 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 0.22vw; color: #fff; }
+  .cfg-group { margin-top: 0.62vw; }
+  .cfg-gtitle { font: 600 0.65vw/1 Barlow, sans-serif; color: rgba(214, 224, 238, 0.78); margin-bottom: 0.36vw; letter-spacing: 0.04em; }
+  .cfg-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45vw; }
+  .opt-btn {
+    position: relative; display: flex; align-items: center; gap: 0.48vw;
+    padding: 0.46vw 0.58vw; border-radius: 0.48vw; cursor: pointer; text-align: left;
+    background: rgba(255, 255, 255, 0.06); border: 1.2px solid rgba(255, 255, 255, 0.15);
+    color: #eef2f7; transition: background 0.2s, border-color 0.2s, transform 0.14s;
+  }
+  .opt-btn:hover { background: rgba(255, 255, 255, 0.11); }
+  .opt-btn.active {
+    background: rgba(245, 165, 36, 0.18); border-color: #f5a524;
+    box-shadow: 0 0 0 1px rgba(245, 165, 36, 0.35), 0 0.3vw 0.9vw rgba(0, 0, 0, 0.25);
+  }
+  .opt-btn.pressing { transform: scale(0.95); }
+  .sw {
+    width: 1.25vw; height: 1.25vw; border-radius: 0.3vw; flex: none;
+    border: 1px solid rgba(255, 255, 255, 0.45); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .opt-txt { display: grid; gap: 0.12vw; min-width: 0; }
+  .opt-txt b { font: 600 0.68vw/1.15 Barlow, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .opt-txt small { font: 700 0.62vw/1 'Barlow Condensed', sans-serif; color: #ffd166; letter-spacing: 0.04em; }
+  .opt-btn:not(.active) .opt-txt small { color: rgba(210, 220, 232, 0.68); }
+  .cfg-toast {
+    margin-top: 0.62vw; padding-top: 0.48vw; border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font: 600 0.64vw/1.2 Barlow, sans-serif; color: #86efac; display: flex; align-items: center; gap: 0.35vw;
+  }
+
+  /* ===== Thẻ tổng kết lựa chọn khách hàng cuối video ===== */
+  #sum-card {
+    position: absolute; right: 1.8%; bottom: 4.2%; width: 27%;
+    background: rgba(15, 22, 32, 0.9); border: 1.5px solid rgba(245, 165, 36, 0.55); border-radius: 0.85vw;
+    padding: 0.95vw 1.1vw 1vw; z-index: 13; backdrop-filter: blur(16px);
+    box-shadow: 0 1.4vw 3.2vw rgba(0, 0, 0, 0.5);
+    opacity: 0; transform: translateY(0.8vw); pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  #sum-card.show { opacity: 1; transform: translateY(0); }
+  .sum-k { font: 700 0.64vw/1 'Barlow Condensed', sans-serif; letter-spacing: 0.15em; color: #ffd166; text-transform: uppercase; }
+  .sum-h { font: 700 1.35vw/1.1 'Barlow Condensed', sans-serif; text-transform: uppercase; margin-top: 0.22vw; color: #fff; }
+  .sum-list { list-style: none; margin-top: 0.6vw; display: grid; gap: 0.36vw; }
+  .sum-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    font: 500 0.68vw/1.2 Barlow, sans-serif; color: rgba(235, 241, 248, 0.9);
+    padding: 0.32vw 0.5vw; background: rgba(255, 255, 255, 0.055); border-radius: 0.36vw;
+  }
+  .sum-list li b { font: 700 0.74vw/1 'Barlow Condensed', sans-serif; color: #ffd166; letter-spacing: 0.04em; }
+  .sum-total {
+    margin-top: 0.65vw; padding-top: 0.55vw; border-top: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .sum-total span { font: 600 0.7vw/1 Barlow, sans-serif; color: rgba(220, 230, 242, 0.85); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sum-total strong { font: 700 1.35vw/1 'Barlow Condensed', sans-serif; color: #86efac; letter-spacing: 0.03em; }
+
+  /* ===== Con trỏ chuột mô phỏng khi tự động bấm chọn vật liệu ===== */
+  #vcursor {
+    position: absolute; left: 0; top: 0; width: 1.55vw; height: 1.55vw; z-index: 25;
+    pointer-events: none; opacity: 0; will-change: transform, opacity;
+    filter: drop-shadow(0 0.2vw 0.45vw rgba(0, 0, 0, 0.55));
+  }
+  #vcursor .ring {
+    position: absolute; left: -0.55vw; top: -0.55vw; width: 1.5vw; height: 1.5vw;
+    border-radius: 50%; border: 2px solid #ffd166; opacity: 0; transform: scale(0.3);
+  }
+
+  /* Chế độ render khung hình: tắt CSS transition để mỗi thời điểm t đều chính xác tuyệt đối */
+  body.rendering *, body.rendering #cfg-card, body.rendering #sum-card, body.rendering #price-pill {
+    transition: none !important;
+  }
+  #ctrl {
+    position: absolute; left: 1.5%; bottom: 2.6%; display: flex; align-items: center; gap: 0.55vw;
+    padding: 0.36vw 0.7vw; background: var(--glass); border: 1px solid var(--glass-b);
+    border-radius: 99px; z-index: 15; backdrop-filter: blur(10px); font: 600 0.66vw/1 Barlow, sans-serif;
+  }
+  body.rendering #ctrl { display: none !important; }
+  #ctrl button {
+    background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+    border-radius: 99px; padding: 0.26vw 0.62vw; font: 700 0.64vw/1 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.08em; cursor: pointer; text-transform: uppercase;
+  }
+  #ctrl input[type="range"] { width: 10vw; accent-color: #f5a524; cursor: pointer; }
+  #err[hidden] { display: none; }
+  #err { position: fixed; inset: 0; display: grid; place-content: center; color: #eee; font: 16px system-ui; }
+</style>
+</head>
+<body>
+<div id="frame">
+  <!-- Bản vẽ mặt bằng Blueprint góc trái trên -->
+  <div id="bp-card">
+    <div class="bp-head">
+      <span class="bp-title">BẢN VẼ MẶT BẰNG · KT-03 (4,2 × 18 M)</span>
+      <span class="bp-badge" id="bp-floor-badge">TẦNG 1 · TRỆT</span>
+    </div>
+    <svg id="bp-svg" viewBox="0 0 560 278" aria-label="Bản vẽ mặt bằng 2 tầng theo dõi vị trí camera"></svg>
+    <div class="bp-foot">
+      <span id="bp-room"><b>PHÒNG KHÁCH</b> · 6,0 × 4,2 M (25,2 M²)</span>
+      <span id="bp-ceil">CAO TRẦN 3,3 M</span>
+    </div>
+  </div>
+
+  <!-- Trạng thái & Giá nâng cấp góc phải trên -->
+  <div id="hud-top">
+    <div class="live-pill"><i class="live-dot"></i><span>3D WALKTHROUGH · TRÌNH DUYỆT</span></div>
+    <div id="price-pill">
+      <span class="lbl">Dự toán nâng cấp</span>
+      <span id="price-val">+0 ₫</span>
+      <span id="saved-cnt">0 tuỳ chọn</span>
+    </div>
+  </div>
+
+  <!-- Thanh chọn 2 chế độ: Demo tất cả & Tự do di chuyển (Game) -->
+  <div id="mode-bar">
+    <button id="btn-mode-demo" class="mode-btn active" title="Tour tự động giới thiệu qua 2 tầng">
+      <span class="m-icon">▶</span>
+      <span>Demo tất cả</span>
+    </button>
+    <button id="btn-mode-game" class="mode-btn" title="Tự di chuyển bằng chuột và bàn phím như game">
+      <span class="m-icon">🎮</span>
+      <span>Tự di chuyển (Game)</span>
+    </button>
+  </div>
+
+  <!-- Thanh công cụ & hướng dẫn khi ở chế độ Game -->
+  <div id="game-hud" hidden>
+    <div id="game-bar">
+      <div class="game-tip">
+        <b>Bấm</b> vào sàn để đi tới · <b>Kéo chuột</b> nhìn quanh
+        · <span class="badge-key">W A S D</span> / <span class="badge-key">↑ ↓ ← →</span> Đi
+        · <span class="badge-key">Shift</span> Chạy
+      </div>
+      <div class="game-actions">
+        <select id="teleport-sel" aria-label="Đi tới nhanh phòng">
+          <option value="" disabled selected>📍 Đến nhanh phòng...</option>
+          <option value="0">Phòng khách (Trệt)</option>
+          <option value="1">Bếp & Bàn ăn (Trệt)</option>
+          <option value="2">Phòng ngủ 1 (Trệt)</option>
+          <option value="3">Chân cầu thang U</option>
+          <option value="4">Phòng ngủ 3 (Lầu)</option>
+          <option value="5">Hành lang lầu</option>
+          <option value="6">Phòng ngủ 2 (Lầu)</option>
+          <option value="7">Phòng thờ & Ban công</option>
+        </select>
+        <button id="btn-toggle-cfg" class="hud-btn">🎨 Tuỳ chọn vật liệu</button>
+        <button id="btn-toggle-sum" class="hud-btn">📋 Xem dự toán</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bảng tuỳ biến vật liệu & nội thất -->
+  <div id="cfg-card">
+    <div class="cfg-kicker"><span>TUỲ CHỈNH NỘI THẤT &amp; VẬT LIỆU 3D</span><span id="cfg-step">PHÒNG 1/2</span></div>
+    <div class="cfg-room" id="cfg-room-title">Phòng khách · Tầng trệt</div>
+    <div id="cfg-body"></div>
+    <div class="cfg-toast" id="cfg-toast">✓ Bấm vào mẫu vật liệu để xem thay đổi trực tiếp</div>
+  </div>
+
+  <!-- Thẻ tổng kết lựa chọn cuối hành trình -->
+  <div id="sum-card">
+    <div class="sum-k">HỒ SƠ GHI NHẬN TỰ ĐỘNG · NHAPHO 4,2 × 18 M</div>
+    <div class="sum-h">Lựa chọn khách hàng quan tâm</div>
+    <ul class="sum-list">
+      <li><span>1. Sofa da Cognac + Thảm dệt xanh Teal</span><b>+14.500.000 ₫</b></li>
+      <li><span>2. Sàn gỗ sồi tự nhiên toàn tầng trệt</span><b>+18.000.000 ₫</b></li>
+      <li><span>3. Tủ bếp gỗ Óc Chó + Đá Calacatta vân mây</span><b>+16.500.000 ₫</b></li>
+    </ul>
+    <div class="sum-total">
+      <span>Tổng gói nâng cấp đã chọn</span>
+      <strong>+49.000.000 ₫</strong>
+    </div>
+  </div>
+
+  <!-- Con trỏ mô phỏng thao tác khách hàng -->
+  <div id="vcursor">
+    <div class="ring" id="vring"></div>
+    <svg viewBox="0 0 28 28" width="100%" height="100%">
+      <path d="M5 3 L5 22 L10.2 17.2 L14.2 25 L17.4 23.5 L13.4 15.8 L20.5 15.8 Z" fill="#ffffff" stroke="#141a22" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Điều khiển xem trên trình duyệt -->
+  <div id="ctrl">
+    <button id="btn-play">Tạm dừng</button>
+    <input id="scrub" type="range" min="0" max="35" step="0.03" value="0">
+    <span id="t-readout">00:00 / 00:35</span>
+  </div>
+</div>
+<div id="err" hidden>Không tải được thư viện 3D. Kiểm tra kết nối mạng rồi mở lại trang.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/MaskPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/math/SimplexNoise.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/SSAOShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/SSAOPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
+<script src="mo-hinh-3d.js"></script>
+<script>
+(() => {
+if (!window.THREE) { document.getElementById('err').hidden = false; return; }
+const q = new URLSearchParams(location.search);
+const IS_RENDER = q.has('render');
+if (IS_RENDER) document.body.classList.add('rendering');
+
+const W = 1920, H = 1080, DUR = 35.0;
+window.DUR = DUR;
+
+const { scene, U, RF, CEIL, LG, LU, SAN, NOW, LONG, sun, boxes, H1, ROAD } = nha3D();
+LG.visible = LU.visible = false;
+U.visible = RF.visible = CEIL.visible = true;
+SAN.visible = true; NOW.forEach(m => m.visible = false);
+for (const k in LONG) LONG[k].visible = k === '1';
+SAN.traverse(o => { if (o.isSprite) o.visible = false; });
+
+// ---------- Hoạ tiết & vật liệu процедуral ----------
+const FUR = new THREE.Group(); scene.add(FUR);
+const FL2 = 3.79;
+let sd = 19;
+const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+function canvasTex(w, h, draw, rx = 1, ry = rx) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.encoding = THREE.sRGBEncoding; t.anisotropy = 8;
+  t.repeat.set(rx, ry);
+  return t;
+}
+
+// Sàn gỗ sồi ấm (nâng cấp) & trần gỗ sáng (giống Video_mẫu.mp4)
+const oakFloorT = canvasTex(1024, 1024, (x, S) => {
+  const pw = S / 8;
+  for (let i = 0; i < 8; i++) for (let k = -1; k < 3; k++) {
+    const off = (i % 2) * S / 3 + k * S / 1.5, L = S / 1.5;
+    const h = 30 + rnd() * 8, s = 44 + rnd() * 12, l = 50 + rnd() * 11;
+    x.fillStyle = `hsl(${h},${s}%,${l}%)`; x.fillRect(i * pw, off, pw, L);
+    for (let g = 0; g < 28; g++) {
+      x.strokeStyle = `hsla(${h - 3},${s}%,${l - 12 - rnd() * 9}%,${.16 + rnd() * .2})`;
+      x.lineWidth = .7 + rnd() * 1.5;
+      const gx = i * pw + rnd() * pw; x.beginPath(); x.moveTo(gx, off);
+      x.bezierCurveTo(gx + rnd() * 6 - 3, off + L / 3, gx + rnd() * 6 - 3, off + L * 2 / 3, gx + rnd() * 4 - 2, off + L);
+      x.stroke();
+    }
+    x.fillStyle = 'rgba(48,30,16,.48)'; x.fillRect(i * pw, off, pw, 2); x.fillRect(i * pw, 0, 1.5, S);
+  }
+});
+
+const ceilWoodT = canvasTex(1024, 1024, (x, S) => {
+  const pw = S / 10;
+  for (let i = 0; i < 10; i++) {
+    const h = 33 + rnd() * 6, s = 22 + rnd() * 8, l = 73 + rnd() * 7;
+    x.fillStyle = `hsl(${h},${s}%,${l}%)`; x.fillRect(i * pw, 0, pw, S);
+    for (let g = 0; g < 18; g++) {
+      x.strokeStyle = `hsla(${h},${s}%,${l - 10}%,.16)`; x.lineWidth = 1 + rnd();
+      const gx = i * pw + rnd() * pw; x.beginPath(); x.moveTo(gx, 0); x.lineTo(gx + rnd() * 4 - 2, S); x.stroke();
+    }
+    x.fillStyle = 'rgba(90,72,54,.26)'; x.fillRect(i * pw, 0, 1.2, S);
+  }
+}, 2, 6);
+
+const tileCreamT = canvasTex(1024, 1024, (x, S) => {
+  const n = 2, w = S / n;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const v = rnd() * 4; x.fillStyle = `hsl(36, 16%, ${83 - v}%)`; x.fillRect(i * w, j * w, w, w);
+    for (let k = 0; k < 35; k++) {
+      x.fillStyle = `hsla(35, 14%, ${77 + rnd() * 12}%, .22)`;
+      x.beginPath(); x.arc(i * w + rnd() * w, j * w + rnd() * w, rnd() * 7, 0, 7); x.fill();
+    }
+  }
+  x.strokeStyle = '#beb6a8'; x.lineWidth = 3.5;
+  for (let i = 0; i <= n; i++) { x.beginPath(); x.moveTo(i * w, 0); x.lineTo(i * w, S); x.moveTo(0, i * w); x.lineTo(S, i * w); x.stroke(); }
+});
+
+const wetTileT = canvasTex(512, 512, (x, S) => {
+  const n = 6, w = S / n;
+  x.fillStyle = '#cfd9df'; x.fillRect(0, 0, S, S);
+  x.strokeStyle = '#b4c0c7'; x.lineWidth = 2;
+  for (let i = 0; i <= n; i++) { x.beginPath(); x.moveTo(i * w, 0); x.lineTo(i * w, S); x.moveTo(0, i * w); x.lineTo(S, i * w); x.stroke(); }
+});
+
+const fabricT = canvasTex(256, 256, (x, S) => {
+  x.fillStyle = '#fff'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 8000; i++) { x.fillStyle = `rgba(0,0,0,${rnd() * .065})`; x.fillRect(rnd() * S, rnd() * S, 2, 1); }
+}, 4, 4);
+
+// Thảm tiêu chuẩn (kem) & Thảm nâng cấp (Xanh Teal đậm hoạ tiết kim cương giống Video_mẫu.mp4!)
+const rugStdT = canvasTex(512, 512, (x, S) => {
+  x.fillStyle = '#d8cebc'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 14000; i++) { x.fillStyle = `rgba(90,72,52,${rnd() * .08})`; x.fillRect(rnd() * S, rnd() * S, 1, 3); }
+  x.strokeStyle = 'rgba(130,96,66,.5)'; x.lineWidth = 6; x.strokeRect(26, 26, S - 52, S - 52);
+});
+const rugTealT = canvasTex(1024, 1024, (x, S) => {
+  x.fillStyle = '#1b5560'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 24000; i++) { x.fillStyle = `rgba(12,35,40,${rnd() * .14})`; x.fillRect(rnd() * S, rnd() * S, 2, 2); }
+  x.strokeStyle = 'rgba(240,235,222,.88)'; x.lineWidth = 7.5;
+  const step = S / 5;
+  for (let k = -6; k <= 6; k++) {
+    x.beginPath(); x.moveTo(k * step, 0); x.lineTo(k * step + S, S); x.stroke();
+    x.beginPath(); x.moveTo(k * step + S, 0); x.lineTo(k * step, S); x.stroke();
+  }
+  x.strokeStyle = '#e5dfd0'; x.lineWidth = 14; x.strokeRect(16, 16, S - 32, S - 32);
+});
+
+const calacattaT = canvasTex(1024, 1024, (x, S) => {
+  x.fillStyle = '#f6f4ef'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 24; i++) {
+    x.strokeStyle = i % 2 === 0 ? `rgba(168,122,56,${.22 + rnd() * .28})` : `rgba(95,92,88,${.18 + rnd() * .26})`;
+    x.lineWidth = 1.2 + rnd() * 4.2; x.beginPath();
+    let px = rnd() * S, py = 0; x.moveTo(px, py);
+    while (py < S) { px += rnd() * 58 - 29; py += 20 + rnd() * 32; x.lineTo(px, py); }
+    x.stroke();
+  }
+});
+
+const walnutGrainT = canvasTex(512, 512, (x, S) => {
+  x.fillStyle = '#472d1b'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 140; i++) {
+    x.strokeStyle = `rgba(22,12,6,${.18 + rnd() * .26})`; x.lineWidth = 1 + rnd() * 2.4;
+    const gx = rnd() * S; x.beginPath(); x.moveTo(gx, 0); x.bezierCurveTo(gx + 10, S * .3, gx - 10, S * .7, gx, S); x.stroke();
+  }
+}, 2, 2);
+
+const slatT = canvasTex(512, 512, (x, S) => {
+  for (let i = 0; i < 18; i++) { x.fillStyle = i % 2 ? '#342419' : `hsl(28,38%,${38 + rnd() * 6}%)`; x.fillRect(i * S / 18, 0, S / 18, S); }
+});
+
+// Tranh treo tường nghệ thuật (tông cam đất + xanh cổ vịt giống Video_mẫu.mp4!)
+const artHeroT = canvasTex(512, 512, (x, S) => {
+  x.fillStyle = '#f0e9dc'; x.fillRect(0, 0, S, S);
+  const blobs = [['#c85a32', .3, .45, .28], ['#1e4e52', .62, .55, .26], ['#e09f3e', .48, .3, .2], ['#9e3b24', .72, .32, .16], ['#2a6f68', .25, .7, .18]];
+  for (const [col, cx, cy, r] of blobs) {
+    x.fillStyle = col; x.beginPath(); x.arc(S * cx, S * cy, S * r, 0, 7); x.fill();
+  }
+  for (let i = 0; i < 24; i++) {
+    x.fillStyle = i % 2 ? 'rgba(212,98,52,.55)' : 'rgba(26,75,78,.5)';
+    x.fillRect(S * (.12 + rnd() * .72), S * (.14 + rnd() * .68), S * (.05 + rnd() * .12), S * (.08 + rnd() * .18));
+  }
+});
+
+const artArchT = canvasTex(512, 512, (x, S) => {
+  x.fillStyle = '#ece5d7'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 6; i++) {
+    x.strokeStyle = `hsl(${22 + i * 26}, 42%, ${42 + i * 3}%)`; x.lineWidth = 12;
+    x.beginPath(); x.arc(S / 2, S * .88, S * (.14 + i * .068), Math.PI, 0); x.stroke();
+  }
+});
+
+// Tranh trúc chỉ tròn ấm sau bàn thờ
+const mandalaT = canvasTex(512, 512, (x, S) => {
+  const g = x.createRadialGradient(S/2, S/2, 10, S/2, S/2, S*.48);
+  g.addColorStop(0, '#fff3c4'); g.addColorStop(.6, '#e6a94e'); g.addColorStop(1, '#9e621e');
+  x.fillStyle = g; x.beginPath(); x.arc(S/2, S/2, S*.48, 0, 7); x.fill();
+  x.strokeStyle = 'rgba(92,48,12,.45)'; x.lineWidth = 3;
+  for (let r = .12; r <= .46; r += .08) { x.beginPath(); x.arc(S/2, S/2, S*r, 0, 7); x.stroke(); }
+  for (let i = 0; i < 16; i++) {
+    const a = i * Math.PI / 8;
+    x.beginPath(); x.moveTo(S/2, S/2); x.lineTo(S/2 + Math.cos(a)*S*.46, S/2 + Math.sin(a)*S*.46); x.stroke();
+  }
+});
+
+// ---------- Vật liệu cảnh & nhóm vật liệu đổi trực tiếp (chuyển chuẩn màu sRGB -> Linear để lên đúng sắc độ) ----------
+const Mf = (c, o = {}) => {
+  const col = new THREE.Color(c);
+  col.convertSRGBToLinear();
+  return new THREE.MeshStandardMaterial({ color: col, roughness: .78, ...o });
+};
+const wallM = Mf(0xf2efe8, { roughness: .88 });
+scene.traverse(o => { if (o.userData.st) o.material = wallM; });
+
+// Lưu danh sách tấm sàn tầng trệt để bấm đổi Gạch ↔ Gỗ sồi trực tiếp
+const groundFloorMeshes = [];
+const floorBy = {
+  0xd9bd94: [oakFloorT, 2.0, .5],
+  0xe6dccb: [tileCreamT, 1.2, .24],
+  0xbfe3c3: [tileCreamT, 1.2, .24],
+  0xcadcec: [wetTileT, 1.5, .22],
+  0xd3cfc1: [tileCreamT, 1.2, .3],
+  0xd5dade: [tileCreamT, 1.2, .3],
+};
+scene.traverse(o => {
+  if (!o.isMesh || !o.material.color || !o.geometry.parameters) return;
+  const p = o.geometry.parameters, hex = o.material.color.getHex(), f = floorBy[hex];
+  if (f && p.height < .2) {
+    const mkMat = (baseTex, scale, rough) => {
+      const t = baseTex.clone(); t.needsUpdate = true;
+      t.repeat.set(p.width / scale, p.depth / scale);
+      return new THREE.MeshStandardMaterial({ map: t, roughness: rough, envMapIntensity: .4 });
+    };
+    const stdMat = mkMat(f[0], f[1], f[2]);
+    o.material = stdMat;
+    // Các mảng sàn tầng trệt (y < 0.5, khu khách - lối đi - bếp)
+    if (o.position.y < 0.5 && (hex === 0xe6dccb || hex === 0xbfe3c3)) {
+      const oakMat = mkMat(oakFloorT, 1.8, .44);
+      groundFloorMeshes.push({ mesh: o, std: stdMat, upg: oakMat });
+    }
+  } else if (hex === 0x8d6240) {
+    // Tủ gầm thang và các chi tiết gỗ tự nhiên: phủ vân gỗ Óc Chó có vân mây cao cấp
+    const t = walnutGrainT.clone(); t.needsUpdate = true;
+    t.repeat.set(Math.max(1, p.width * 1.5), Math.max(1, p.height * 1.5));
+    o.material = new THREE.MeshStandardMaterial({ map: t, roughness: .38, envMapIntensity: .45 });
+  } else if (hex === 0xc29a6c) {
+    // Bậc cầu thang: phủ gỗ sồi mộc cao cấp
+    const t = oakFloorT.clone(); t.needsUpdate = true;
+    t.repeat.set(Math.max(1, p.width * 2), Math.max(1, p.depth * 2));
+    o.material = new THREE.MeshStandardMaterial({ map: t, roughness: .42, envMapIntensity: .4 });
+  }
+});
+
+const fm = {
+  // Sofa & gối & thảm (2 phương án: Tiêu chuẩn vs Da Cognac cam đất + Teal đậm như Video_mẫu.mp4)
+  sofaStd: Mf(0xdad3c7, { map: fabricT, roughness: .95 }),
+  sofaCognac: Mf(0xb34c2b, { map: fabricT, roughness: .55 }),
+  cushStd: Mf(0xc9b99e, { map: fabricT, roughness: .95 }),
+  cushIvory: Mf(0xf3eee3, { map: fabricT, roughness: .9 }),
+  accentStd: Mf(0xb07c54, { map: fabricT, roughness: .9 }),
+  accentTeal: Mf(0x1b6d74, { map: fabricT, roughness: .82 }),
+  rugStd: Mf(0xffffff, { map: rugStdT, roughness: 1 }),
+  rugTeal: Mf(0xffffff, { map: rugTealT, roughness: .95 }),
+
+  // Tủ bếp & mặt đá (2 phương án: Trắng tiêu chuẩn vs Gỗ Óc Chó + Đá Calacatta)
+  cabStd: Mf(0xeae6dd, { roughness: .42 }),
+  cabWalnut: Mf(0xffffff, { map: walnutGrainT, roughness: .38 }),
+  cabUpperUpg: Mf(0xffffff, { map: walnutGrainT, roughness: .4 }),
+  topStd: Mf(0xeeece7, { roughness: .24 }),
+  topCalacatta: Mf(0xffffff, { map: calacattaT, roughness: .14 }),
+
+  // Vật liệu dùng chung
+  armchair: Mf(0xede8dd, { map: fabricT, roughness: .92 }),
+  walnut: Mf(0x63432d, { roughness: .44 }),
+  oak: Mf(0xb58b5e, { roughness: .48 }),
+  dark: Mf(0x232629, { roughness: .38, metalness: .35 }),
+  black: Mf(0x111315, { roughness: .16 }),
+  white: Mf(0xf5f3ee, { roughness: .38 }),
+  brass: Mf(0xc89d5c, { metalness: .88, roughness: .28 }),
+  steel: Mf(0xc0c4c8, { metalness: .88, roughness: .24 }),
+  slat: Mf(0xffffff, { map: slatT, roughness: .58 }),
+  ceilWood: Mf(0xffffff, { map: ceilWoodT, roughness: .62 }),
+  leaf: Mf(0x395c2b, { roughness: .55 }),
+  leaf2: Mf(0x587c39, { roughness: .55 }),
+  pot: Mf(0xdad4c8, { roughness: .88 }),
+  potDark: Mf(0x2f3133, { roughness: .78 }),
+  glow: new THREE.MeshStandardMaterial({ color: 0xfff5e0, emissive: 0xffd599, emissiveIntensity: 4.2, roughness: .2 }),
+  glowSoft: new THREE.MeshStandardMaterial({ color: 0xfff0d4, emissive: 0xffc978, emissiveIntensity: 2.4, roughness: .3 }),
+  linen: Mf(0xf2ede2, { roughness: 1, side: THREE.DoubleSide, transparent: true, opacity: .9 }),
+  art1: Mf(0xffffff, { map: artHeroT, roughness: .85 }),
+  art2: Mf(0xffffff, { map: artArchT, roughness: .85 }),
+  mandala: new THREE.MeshStandardMaterial({ map: mandalaT, emissive: 0xffb84d, emissiveMap: mandalaT, emissiveIntensity: 1.35, roughness: .5 }),
+  bedSheet: Mf(0xf4f0e8, { map: fabricT, roughness: .92 }),
+  bedThrow: Mf(0x8c6d53, { map: fabricT, roughness: .92 }),
+  bedThrow2: Mf(0x4a6b70, { map: fabricT, roughness: .92 }),
+  coral: Mf(0xd97b59, { roughness: .6 }),
+};
+
+const RB = THREE.RoundedBoxGeometry;
+function fb(x1, x2, y1, y2, z1, z2, m, r = 0) {
+  const g = r > 0 && RB ? new RB(x2 - x1, y2 - y1, z2 - z1, 3, r) : new THREE.BoxGeometry(x2 - x1, y2 - y1, z2 - z1);
+  const o = new THREE.Mesh(g, m);
+  o.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2);
+  o.castShadow = o.receiveShadow = m !== fm.glow && m !== fm.glowSoft;
+  FUR.add(o); return o;
+}
+function cyl(x, z, r1, r2, y1, y2, m, seg = 28) {
+  const o = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, y2 - y1, seg), m);
+  o.position.set(x, (y1 + y2) / 2, z);
+  o.castShadow = o.receiveShadow = m !== fm.glow && m !== fm.glowSoft;
+  FUR.add(o); return o;
+}
+function ball(x, y, z, r, m, sx = 1, sy = 1, sz = 1) {
+  const o = new THREE.Mesh(new THREE.SphereGeometry(r, 22, 16), m);
+  o.position.set(x, y, z); o.scale.set(sx, sy, sz);
+  o.castShadow = m !== fm.glow && m !== fm.glowSoft;
+  FUR.add(o); return o;
+}
+function plant(x, y0, z, s = 1, potM = fm.potDark) {
+  cyl(x, z, .21 * s, .15 * s, y0, y0 + .42 * s, potM);
+  cyl(x, z, .022 * s, .028 * s, y0 + .38 * s, y0 + 1.35 * s, fm.walnut, 8);
+  for (let i = 0; i < 12; i++) {
+    const a = i * 2.35, r = (.13 + rnd() * .23) * s, y = y0 + (.75 + rnd() * .78) * s;
+    const l = ball(x + Math.cos(a) * r, y, z + Math.sin(a) * r, .17 * s, i % 3 ? fm.leaf : fm.leaf2, 1.35, .42, .82);
+    l.rotation.set(rnd() * .5, a, rnd() * .5);
+  }
+}
+function downlight(x, y, z) {
+  cyl(x, z, .068, .068, y - .012, y, fm.dark, 20);
+  cyl(x, z, .052, .052, y - .016, y - .011, fm.glow, 20);
+}
+
+// ===== Trần ốp gỗ sáng + hệ đèn âm trần (tạo chiều sâu ấm áp như Video_mẫu.mp4) =====
+fb(.28, 3.92, 3.275, 3.298, .35, 5.75, fm.ceilWood);
+fb(.28, 3.92, 3.275, 3.298, 8.95, 12.35, fm.ceilWood);
+for (const z of [1.1, 2.5, 3.9, 5.2]) for (const x of [0.85, 2.1, 3.35]) downlight(x, 3.275, z);
+for (const z of [9.4, 10.7, 12.0]) for (const x of [0.95, 2.15, 3.4]) downlight(x, 3.275, z);
+for (const z of [13.5, 15.6]) downlight(3.65, 3.275, z);
+// Đèn âm trần tầng lầu
+for (const z of [0.6, 3.2, 5.2, 9.6, 11.8, 13.8]) downlight(3.65, FL2 + 3.19, z);
+for (const z of [10.4, 13.2]) downlight(1.65, FL2 + 3.19, z);
+downlight(1.9, FL2 + 3.19, 0.8);
+
+// ===== Phòng khách (z 0..6) =====
+const rugMesh = fb(.82, 3.38, .013, .026, 1.55, 4.85, fm.rugStd, .005);
+const sofaMeshes = [], cushMainMeshes = [], cushAccentMeshes = [];
+// Sofa 3 chỗ sát tường phải (x ≈ 0.1..1.02)
+sofaMeshes.push(
+  fb(.1, 1.04, .1, .42, 1.55, 4.55, fm.sofaStd, .05),
+  fb(.1, .33, .42, .92, 1.55, 4.55, fm.sofaStd, .07),
+  fb(.1, 1.04, .1, .66, 1.55, 1.8, fm.sofaStd, .06),
+  fb(.1, 1.04, .1, .66, 4.3, 4.55, fm.sofaStd, .06)
+);
+for (const z of [1.82, 2.66, 3.5]) {
+  sofaMeshes.push(fb(.34, 1.0, .42, .56, z, z + .82, fm.sofaStd, .05));
+  cushMainMeshes.push(fb(.32, .5, .52, .9, z + .03, z + .78, fm.cushStd, .06));
+}
+for (const z of [1.95, 3.85]) {
+  const p = fb(.48, .64, .56, .85, z, z + .42, fm.accentStd, .06);
+  p.rotation.z = -.22; cushAccentMeshes.push(p);
+}
+for (const [x, z] of [[.18, 1.66], [.94, 1.66], [.18, 4.44], [.94, 4.44]]) cyl(x, z, .022, .016, 0, .1, fm.walnut, 10);
+
+// Kệ console mỏng sau/cạnh sofa + 2 đèn bàn chụp kem (như Video_mẫu.mp4)
+cyl(.55, 1.22, .22, .22, 0, .52, fm.oak, 24);
+cyl(.55, 1.22, .05, .06, .52, .74, fm.white, 16);
+cyl(.55, 1.22, .16, .19, .74, .98, fm.glowSoft, 24);
+
+// Tranh lớn phía trên sofa
+fb(.04, .075, 1.32, 2.22, 2.2, 3.9, fm.walnut);
+fb(.075, .082, 1.37, 2.17, 2.25, 3.85, fm.art1);
+
+// Bàn trà đá + bàn phụ + khay sách + bình gốm
+const coffeeTop = cyl(2.02, 3.05, .54, .54, .35, .39, fm.topCalacatta, 48);
+cyl(2.02, 3.05, .32, .36, 0, .35, fm.dark, 40);
+cyl(2.68, 3.78, .23, .23, .44, .47, fm.walnut, 32);
+cyl(2.68, 3.78, .03, .03, 0, .44, fm.dark, 10);
+fb(1.88, 2.22, .39, .43, 3.12, 3.4, fm.walnut, .008);
+cyl(2.18, 2.88, .06, .045, .39, .58, fm.white, 18);
+ball(2.18, .65, 2.88, .06, fm.leaf2, 1.1, 1.5, 1.1);
+ball(1.82, .45, 2.95, .065, fm.brass);
+
+// Ghế bành kem + gối điểm nhấn ở góc gần mặt tiền (chừa rộng lối đi giữa nhà)
+fb(2.82, 3.62, .1, .4, .72, 1.46, fm.armchair, .06);
+fb(2.82, 3.62, .4, .84, .68, .88, fm.armchair, .07);
+fb(2.82, 2.98, .1, .62, .72, 1.46, fm.armchair, .06);
+fb(3.46, 3.62, .1, .62, .72, 1.46, fm.armchair, .06);
+const armPillow = fb(2.98, 3.46, .42, .72, .86, 1.02, fm.accentStd, .05);
+cushAccentMeshes.push(armPillow);
+
+// Vách lam gỗ TV + kệ treo + TV + cây cảnh
+fb(4.11, 4.18, 0, 3.27, 1.65, 4.65, fm.slat);
+fb(3.72, 4.12, .26, .54, 1.85, 4.45, fm.walnut, .02);
+fb(4.05, 4.11, .98, 1.82, 2.35, 3.95, fm.black, .01);
+cyl(3.9, 4.2, .065, .08, .54, .82, fm.white, 16);
+ball(3.9, .92, 4.2, .1, fm.leaf2, 1, 1.4, 1);
+plant(3.82, 0, .52, 1.18, fm.potDark);
+plant(.48, 0, 5.15, 1.08, fm.pot);
+
+// Cụm đèn thả vòm trắng trên bàn trà (lấy cảm hứng từ Video_mẫu.mp4)
+for (const [x, z, y, r] of [[1.95, 2.95, 2.48, .22], [2.22, 3.22, 2.62, .17], [1.78, 3.25, 2.68, .15]]) {
+  cyl(x, z, .005, .005, y + r * .5, 3.28, fm.dark, 6);
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(r, 28, 16, 0, Math.PI * 2, 0, Math.PI * .58), fm.white);
+  dome.position.set(x, y, z); FUR.add(dome);
+  ball(x, y - .02, z, r * .42, fm.glowSoft, 1, .45, 1);
+}
+// Rèm voan hai bên cửa chính
+for (const baseX of [.18, 3.38]) {
+  for (let i = 0; i < 6; i++) {
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(.055, .055, 2.58, 12, 1, true, 0, Math.PI), fm.linen);
+    c.position.set(baseX + i * .09, 1.32, .13); c.rotation.y = i % 2 ? 0 : Math.PI; FUR.add(c);
+  }
+}
+
+// Đèn LED hắt ấm đúng dưới mũi từng bậc cầu thang (dọc chiều rộng bậc z) + Tranh & đèn thả giếng trời
+for (let i = 0; i < 10; i += 2) {
+  const r1 = (i + 1) * (3.78 / 22), x1 = 3.05 - i * 0.21;
+  fb(x1 - .012, x1 + .006, r1 - .02, r1 - .005, 6.10, 7.30, fm.glowSoft);
+  const r2 = (12 + i) * (3.78 / 22), x2 = 0.95 + i * 0.21;
+  fb(x2 - .006, x2 + .012, r2 - .02, r2 - .005, 7.50, 8.70, fm.glowSoft);
+}
+// Tranh lớn + đèn hắt tường tại chiếu nghỉ cầu thang (x ≈ 0.08, z 6.65..8.15)
+fb(.05, .09, 2.25, 3.42, 6.72, 8.08, fm.walnut);
+fb(.09, .105, 2.31, 3.36, 6.78, 8.02, fm.art1);
+fb(.06, .14, 3.52, 3.57, 7.12, 7.68, fm.brass, .01);
+fb(.08, .15, 3.49, 3.52, 7.15, 7.65, fm.glowSoft);
+// Bộ đèn thả 3 quả cầu thuỷ tinh từ giếng trời xuống lõi thang
+for (const [ox, oz, oy, r] of [[1.55, 7.12, 3.92, .11], [1.95, 7.65, 4.38, .13], [1.32, 7.72, 4.82, .095]]) {
+  cyl(ox, oz, .004, .004, oy + r, 6.95, fm.dark, 6);
+  cyl(ox, oz, .025, .035, oy + r * .85, oy + r * 1.25, fm.brass, 12);
+  ball(ox, oy, oz, r, fm.glowSoft);
+}
+
+// ===== Bếp & Bàn ăn (z 8.8..12.5) =====
+const kitLowerMeshes = [], kitUpperMeshes = [], kitTopMeshes = [];
+scene.traverse(o => {
+  if (o.isMesh && o.material.color?.getHex() === 0xaebfcd) {
+    o.material = fm.cabStd; kitLowerMeshes.push(o);
+  }
+});
+kitTopMeshes.push(
+  fb(.03, .68, .85, .895, 9.0, 12.47, fm.topStd),
+  fb(.66, 2.22, .85, .895, 11.83, 12.47, fm.topStd),
+  fb(.02, .055, .895, 1.52, 9.0, 12.47, fm.topStd)
+);
+kitUpperMeshes.push(
+  fb(.02, .42, 1.52, 2.32, 9.0, 11.18, fm.cabStd, .01),
+  fb(.02, .42, 1.52, 2.32, 11.92, 12.47, fm.cabStd, .01)
+);
+const kitLed = fb(.32, .36, 1.505, 1.52, 9.05, 11.15, fm.glowSoft);
+kitLed.visible = false;
+for (const z of [9.55, 10.15, 10.75, 12.18]) fb(.42, .435, 1.56, 1.62, z - .09, z + .09, fm.brass);
+fb(.05, .5, 1.78, 2.34, 11.2, 11.9, fm.steel, .01);
+fb(.05, .56, .895, .91, 11.24, 11.86, fm.black);
+fb(.1, .55, .86, .902, 9.58, 10.32, fm.steel);
+cyl(.12, 9.95, .015, .015, .9, 1.26, fm.brass, 10);
+
+// Bàn ăn 4 ghế + bộ chén đĩa trang trí + đèn thả thanh ngang hiện đại (như Video_mẫu.mp4)
+const dineTop = fb(1.68, 2.68, .73, .78, 9.55, 11.35, fm.walnut, .02);
+fb(1.9, 2.46, 0, .73, 9.95, 10.06, fm.dark);
+fb(1.9, 2.46, 0, .73, 10.84, 10.95, fm.dark);
+function chair(x, z, face, y0 = 0) {
+  fb(x - .2, x + .2, y0 + .44, y0 + .5, z - .21, z + .21, fm.armchair, .025);
+  const bx = x - face * .19;
+  fb(bx - .025, bx + .025, y0 + .48, y0 + .88, z - .19, z + .19, fm.walnut, .015);
+  for (const [dx, dz] of [[-.16, -.16], [.16, -.16], [-.16, .16], [.16, .16]]) cyl(x + dx, z + dz, .017, .013, y0, y0 + .44, fm.walnut, 8);
+}
+for (const z of [9.98, 10.92]) { chair(1.38, z, 1); chair(2.96, z, -1); }
+// Bộ đĩa & bình hoa trên bàn ăn
+for (const [x, z] of [[1.92, 9.98], [2.44, 9.98], [1.92, 10.92], [2.44, 10.92]]) {
+  cyl(x, z, .13, .11, .78, .795, fm.dark, 20);
+  cyl(x, z, .08, .06, .795, .835, fm.white, 20);
+}
+cyl(2.18, 10.45, .085, .065, .78, .94, fm.white, 18);
+for (const [dx, dz, c] of [[0, 0, fm.coral], [.05, .04, fm.coral], [-.05, .03, fm.white], [.03, -.05, fm.leaf2]]) {
+  ball(2.18 + dx, .98, 10.45 + dz, .055, c);
+}
+// Đèn thả thanh ngang phát sáng trên bàn ăn
+cyl(2.18, 9.85, .005, .005, 2.12, 3.28, fm.dark, 6);
+cyl(2.18, 11.05, .005, .005, 2.12, 3.28, fm.dark, 6);
+fb(2.14, 2.22, 2.1, 2.15, 9.65, 11.25, fm.brass, .01);
+fb(2.15, 2.21, 2.07, 2.1, 9.7, 11.2, fm.glow);
+// Tranh khổ lớn trên tường lối đi đối diện bếp
+fb(4.11, 4.145, 1.15, 2.15, 9.65, 11.25, fm.walnut);
+fb(4.095, 4.11, 1.2, 2.1, 9.7, 11.2, fm.art1);
+
+// ===== Phòng ngủ 1 tầng trệt (z 12.5..16.5, x 0..3.1) =====
+fb(.1, 2.55, .013, .024, 14.15, 16.42, fm.rugStd, .004);
+fb(.06, .14, .45, 1.35, 14.4, 16.38, fm.slat);                      // vách đầu giường ốp lam
+fb(.2, 2.22, .45, .53, 14.52, 16.28, fm.bedSheet, .03);             // nệm êm
+fb(1.35, 2.24, .46, .55, 14.5, 16.3, fm.bedThrow, .02);             // tấm phủ cuối giường
+// Táp đầu giường + đèn ngủ đôi ấm
+for (const z of [14.18, 16.35]) {
+  if (z < 16.4) {
+    fb(.08, .46, .02, .46, z - .2, z + .2, fm.walnut, .015);
+    cyl(.26, z, .04, .05, .46, .62, fm.brass, 14);
+    cyl(.26, z, .1, .12, .62, .78, fm.glowSoft, 18);
+  }
+}
+// Tủ quần áo cửa lùa kịch trần sát vách bếp (z 12.56..13.12, x 0.08..2.15 - đúng ghi chú thiết kế)
+fb(.08, 2.12, 0, 2.85, 12.56, 13.12, fm.cabStd, .01);
+fb(1.08, 1.11, .1, 2.75, 13.12, 13.14, fm.brass);
+fb(.06, .1, 1.48, 2.18, 14.85, 15.95, fm.walnut);
+fb(.1, .11, 1.52, 2.14, 14.9, 15.9, fm.art2);
+
+// ===== Tầng lầu: Phòng ngủ 3 (z 8.8..14.8), Hành lang, Phòng ngủ 2 (z 2..6), Phòng thờ & Ban công =====
+// Hành lang lầu: thảm chạy, tranh, đèn tường ấm
+fb(3.36, 4.04, FL2 + .005, FL2 + .016, 2.2, 14.2, fm.rugStd, .004);
+for (const [z1, z2, m] of [[6.2, 7.4, fm.art2], [10.1, 11.1, fm.art1]]) {
+  fb(4.09, 4.13, FL2 + 1.18, FL2 + 1.92, z1, z2, fm.walnut);
+  fb(4.075, 4.09, FL2 + 1.23, FL2 + 1.87, z1 + .05, z2 - .05, m);
+}
+for (const z of [4.2, 7.8, 11.8]) ball(4.12, FL2 + 2.02, z, .08, fm.glowSoft, .5, 1.2, 1);
+
+// Phòng ngủ 3 (phòng lớn nhất: trần gỗ điểm nhấn, giường + góc làm việc + tủ áo)
+fb(.28, 3.05, FL2 + 3.175, FL2 + 3.195, 9.0, 14.6, fm.ceilWood);
+fb(.12, 2.5, FL2 + .005, FL2 + .018, 12.4, 14.55, fm.rugStd, .004);
+fb(.06, .14, FL2 + .45, FL2 + 1.38, 12.7, 14.48, fm.slat);
+fb(1.35, 2.26, FL2 + .45, FL2 + .55, 12.8, 14.4, fm.bedThrow2, .02);
+cyl(.26, 12.48, .1, .12, FL2 + .58, FL2 + .76, fm.glowSoft, 18);
+fb(.08, .44, FL2, FL2 + .46, 12.28, 12.68, fm.walnut, .015);
+// Bàn làm việc + ghế gỗ có chân tựa + đèn bàn ở PN3
+fb(.12, .72, FL2 + .72, FL2 + .76, 10.2, 11.65, fm.oak, .015);
+fb(.14, .68, FL2, FL2 + .72, 10.25, 10.32, fm.dark);
+fb(.14, .68, FL2, FL2 + .72, 11.55, 11.62, fm.dark);
+fb(.22, .26, FL2 + .76, FL2 + 1.16, 10.65, 11.2, fm.black);
+chair(.96, 10.92, -1, FL2);
+cyl(.35, 11.42, .06, .08, FL2 + .76, FL2 + 1.02, fm.brass, 14);
+ball(.35, FL2 + 1.06, 11.42, .07, fm.glowSoft);
+fb(.06, .1, FL2 + 1.45, FL2 + 2.15, 13.05, 14.15, fm.walnut);
+fb(.1, .11, FL2 + 1.5, FL2 + 2.1, 13.1, 14.1, fm.art1);
+
+// Phòng ngủ 2 (z 2..6)
+fb(.28, 3.05, FL2 + 3.175, FL2 + 3.195, 2.15, 5.85, fm.ceilWood);
+fb(.12, 2.42, FL2 + .005, FL2 + .018, 4.05, 5.85, fm.rugStd, .004);
+fb(1.15, 2.06, FL2 + .45, FL2 + .54, 4.3, 5.7, fm.bedThrow, .02);
+fb(.06, .13, FL2 + .45, FL2 + 1.3, 4.25, 5.75, fm.slat);
+cyl(.26, 4.02, .09, .11, FL2 + .55, FL2 + .72, fm.glowSoft, 16);
+fb(.08, .42, FL2, FL2 + .44, 3.85, 4.2, fm.walnut, .015);
+fb(.06, .1, FL2 + 1.42, FL2 + 2.08, 4.5, 5.5, fm.walnut);
+fb(.1, .11, FL2 + 1.47, FL2 + 2.03, 4.55, 5.45, fm.art2);
+
+// Phòng thờ & Ban công (z -1.2..2.0): vách hậu gỗ ấm, bàn thờ gỗ chạm, tranh trúc chỉ phát sáng mặt trước (nhìn về -z)
+fb(.25, 3.95, FL2 + 3.175, FL2 + 3.195, -.45, 1.9, fm.ceilWood);
+fb(.85, 2.85, FL2, FL2 + 2.65, 1.91, 1.95, fm.slat);
+fb(.98, 2.72, FL2 + .88, FL2 + .96, 1.48, 1.94, fm.walnut, .015);
+fb(1.04, 2.66, FL2, FL2 + .88, 1.52, 1.92, fm.walnut, .01);
+cyl(1.85, 1.88, .44, .44, FL2 + 1.62, FL2 + 1.65, fm.mandala, 36).rotation.x = Math.PI / 2;
+cyl(1.85, 1.68, .09, .07, FL2 + .96, FL2 + 1.12, fm.brass, 20);      // lư đồng
+for (const x of [1.22, 2.48]) {
+  cyl(x, 1.7, .075, .055, FL2 + .96, FL2 + 1.26, fm.white, 16);
+  ball(x, FL2 + 1.35, 1.7, .08, fm.leaf2, 1, 1.4, 1);
+}
+fb(.95, 2.75, FL2 + .005, FL2 + .018, .35, 1.45, fm.rugStd, .004);
+plant(.48, FL2, 1.35, .92, fm.pot);
+plant(2.2, FL2, -.95, .52, fm.potDark);   // chậu cây gọn ngoài ban công, không chạm tường -0.6
+
+// ---------- Hệ thống đèn chiếu sáng ấm áp ----------
+const lights = [
+  [2.05, 2.45, 3.05, 2.1, 1],
+  [2.1, 2.8, 1.3, 1.0, 0],
+  [2.18, 2.0, 10.45, 2.0, 1],
+  [1.4, 2.4, 14.8, 1.35, 0],
+  [1.8, 4.2, 7.4, 1.25, 0],
+  [1.6, FL2 + 2.3, 11.8, 1.5, 0],
+  [1.6, FL2 + 2.2, 4.6, 1.15, 0],
+  [3.65, FL2 + 2.3, 7.5, 1.0, 0],
+  [2.1, FL2 + 2.2, 0.8, 1.65, 0],
+];
+for (const [x, y, z, inten, sh] of lights) {
+  const l = new THREE.PointLight(0xffcf96, inten, 9.5, 1.85);
+  l.position.set(x, y, z); scene.add(l);
+  if (sh) { l.castShadow = true; l.shadow.mapSize.set(1024, 1024); l.shadow.bias = -0.003; l.shadow.camera.near = .2; }
+}
+
+// ---------- Trạng thái Tuỳ chọn Vật liệu / Nội thất & Giá nâng cấp ----------
+const UPGRADES = {
+  sofa: { price: 14500000, on: false, label: 'Sofa da Cognac + Thảm xanh Teal' },
+  floor: { price: 18000000, on: false, label: 'Sàn gỗ sồi tự nhiên tầng trệt' },
+  kitchen: { price: 16500000, on: false, label: 'Tủ bếp Óc Chó + Đá Calacatta' },
+};
+
+function applyUpgrades() {
+  const sOn = UPGRADES.sofa.on;
+  sofaMeshes.forEach(m => m.material = sOn ? fm.sofaCognac : fm.sofaStd);
+  cushMainMeshes.forEach(m => m.material = sOn ? fm.cushIvory : fm.cushStd);
+  cushAccentMeshes.forEach(m => m.material = sOn ? fm.accentTeal : fm.accentStd);
+  rugMesh.material = sOn ? fm.rugTeal : fm.rugStd;
+
+  const fOn = UPGRADES.floor.on;
+  groundFloorMeshes.forEach(o => o.mesh.material = fOn ? o.upg : o.std);
+
+  const kOn = UPGRADES.kitchen.on;
+  kitLowerMeshes.forEach(m => m.material = kOn ? fm.cabWalnut : fm.cabStd);
+  kitUpperMeshes.forEach(m => m.material = kOn ? fm.cabUpperUpg : fm.cabStd);
+  kitTopMeshes.forEach(m => m.material = kOn ? fm.topCalacatta : fm.topStd);
+  kitLed.visible = kOn;
+
+  let total = 0, cnt = 0;
+  for (const k in UPGRADES) if (UPGRADES[k].on) { total += UPGRADES[k].price; cnt++; }
+  document.getElementById('price-val').textContent = '+' + total.toLocaleString('vi-VN') + ' ₫';
+  document.getElementById('saved-cnt').textContent = cnt + ' tuỳ chọn';
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    const [key, val] = b.dataset.opt.split(':');
+    b.classList.toggle('active', UPGRADES[key].on === (val === '1'));
+  });
+}
+
+const CFG_PANELS = {
+  living: {
+    step: 'KHÔNG GIAN 01 · TẦNG TRỆT',
+    title: 'Phòng khách · 25,2 m²',
+    groups: [
+      {
+        name: 'Bộ Sofa & Thảm trung tâm',
+        opts: [
+          { id: 'sofa:0', sw: '#d8d1c5', title: 'Nỉ Kem tiêu chuẩn', sub: 'Mặc định (+0 ₫)' },
+          { id: 'sofa:1', sw: 'linear-gradient(135deg,#b85a38 55%,#2d6d76 55%)', title: 'Da Cognac & Thảm Teal', sub: '+14.500.000 ₫' },
+        ],
+      },
+      {
+        name: 'Vật liệu lát sàn tầng trệt',
+        opts: [
+          { id: 'floor:0', sw: '#dfd8ca', title: 'Gạch đá mờ 60×60', sub: 'Mặc định (+0 ₫)' },
+          { id: 'floor:1', sw: '#b88856', title: 'Gỗ Sồi tự nhiên', sub: '+18.000.000 ₫' },
+        ],
+      },
+    ],
+  },
+  kitchen: {
+    step: 'KHÔNG GIAN 02 · TẦNG TRỆT',
+    title: 'Bếp & Bàn ăn · 15,5 m²',
+    groups: [
+      {
+        name: 'Hệ tủ bếp chữ L & Mặt đá bếp',
+        opts: [
+          { id: 'kitchen:0', sw: '#eae6dd', title: 'Tủ Kem · Đá trắng', sub: 'Mặc định (+0 ₫)' },
+          { id: 'kitchen:1', sw: 'linear-gradient(135deg,#5b3e29 55%,#f5f3ee 55%)', title: 'Gỗ Óc Chó · Calacatta', sub: '+16.500.000 ₫' },
+        ],
+      },
+    ],
+  },
+};
+
+let currentPanelKey = '';
+function renderCfgPanel(key, toastText) {
+  const card = document.getElementById('cfg-card');
+  if (!key) { card.classList.remove('show'); currentPanelKey = ''; return; }
+  if (key !== currentPanelKey) {
+    currentPanelKey = key;
+    const p = CFG_PANELS[key];
+    document.getElementById('cfg-step').textContent = p.step;
+    document.getElementById('cfg-room-title').textContent = p.title;
+    document.getElementById('cfg-body').innerHTML = p.groups.map(g => `
+      <div class="cfg-group">
+        <div class="cfg-gtitle">${g.name}</div>
+        <div class="cfg-opts">
+          ${g.opts.map(o => `
+            <button class="opt-btn" data-opt="${o.id}">
+              <span class="sw" style="background:${o.sw}"></span>
+              <span class="opt-txt"><b>${o.title}</b><small>${o.sub}</small></span>
+            </button>`).join('')}
+        </div>
+      </div>`).join('');
+    document.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        userInteracted = true;
+        const [k, v] = btn.dataset.opt.split(':');
+        UPGRADES[k].on = v === '1';
+        applyUpgrades();
+        document.getElementById('cfg-toast').textContent = '✓ Đã ghi nhận: ' + UPGRADES[k].label;
+      });
+    });
+    applyUpgrades();
+  }
+  if (toastText) document.getElementById('cfg-toast').textContent = toastText;
+  card.classList.add('show');
+}
+
+// ---------- Bản vẽ Blueprint 2 tầng góc trái trên (tích hợp phễu FOV trực tiếp) ----------
+// Hệ toạ độ ngang: u = X (-3.5..18.0 m), v = Y (0..4.2 m; v=0 ở trên = hành lang trái, v=4.2 ở dưới = vách phải).
+const BP_SCALE = 23.2, BP_X0 = 96;
+const BP_Y_G = 28, BP_Y_U = 158;
+const bx = X => +(BP_X0 + X * BP_SCALE).toFixed(1);
+const by = (Y, up) => +((up ? BP_Y_U : BP_Y_G) + Y * BP_SCALE).toFixed(1);
+
+const ROOMS_META = [
+  // Tầng trệt (up = false)
+  { up: false, x: [-3.5, 0], y: [0, 4.2], n: 'SÂN TRƯỚC', dim: '3,5 × 4,2 M · LỒNG SẮT', ceil: 'MÁI LẤY SÁNG' },
+  { up: false, x: [0, 6], y: [0, 4.2], n: 'PHÒNG KHÁCH', dim: '6,0 × 4,2 M (25,2 M²)', ceil: 'CAO TRẦN 3,3 M' },
+  { up: false, x: [6, 8.8], y: [0, 1.15], n: 'LỐI ĐI GIỮA NHÀ', dim: '2,8 × 1,0 M', ceil: 'CAO TRẦN 3,3 M' },
+  { up: false, x: [6, 8.8], y: [1.15, 4.2], n: 'CẦU THANG U', dim: '22 BẬC × 17,2 CM', ceil: 'GIẾNG TRỜI LẤY SÁNG' },
+  { up: false, x: [8.8, 12.5], y: [0, 4.2], n: 'BẾP & BÀN ĂN', dim: '3,7 × 4,2 M (15,5 M²)', ceil: 'CAO TRẦN 3,3 M' },
+  { up: false, x: [12.5, 16.5], y: [1, 4.2], n: 'PHÒNG NGỦ 1', dim: '4,0 × 3,2 M (12,8 M²)', ceil: 'CAO TRẦN 3,3 M' },
+  { up: false, x: [16.5, 18], y: [1, 4.2], n: 'NHÀ VỆ SINH', dim: '1,5 × 3,2 M (4,8 M²)', ceil: 'CAO TRẦN 2,8 M' },
+  { up: false, x: [12.5, 18], y: [0, 1], n: 'HÀNH LANG TRỆT', dim: '5,5 × 1,0 M', ceil: 'CAO TRẦN 3,3 M' },
+  // Tầng lầu (up = true)
+  { up: true, x: [-1.2, -0.6], y: [0, 4.2], n: 'BAN CÔNG', dim: '0,6 × 4,2 M (2,5 M²)', ceil: 'NGOÀI TRỜI' },
+  { up: true, x: [-0.6, 2], y: [0, 4.2], n: 'PHÒNG THỜ', dim: '2,6 × 4,2 M (10,9 M²)', ceil: 'CAO TRẦN 3,2 M' },
+  { up: true, x: [2, 6], y: [1, 4.2], n: 'PHÒNG NGỦ 2', dim: '4,0 × 3,2 M (12,8 M²)', ceil: 'CAO TRẦN 3,2 M' },
+  { up: true, x: [6, 8.8], y: [1.15, 4.2], n: 'Ô THANG & GIẾNG TRỜI', dim: '2,8 × 3,1 M', ceil: 'GIẾNG TRỜI KÍN' },
+  { up: true, x: [8.8, 14.8], y: [1, 4.2], n: 'PHÒNG NGỦ 3', dim: '6,0 × 3,2 M (19,2 M²)', ceil: 'CAO TRẦN 3,2 M' },
+  { up: true, x: [2, 14.8], y: [0, 1], n: 'HÀNH LANG LẦU', dim: '12,8 × 1,0 M', ceil: 'CAO TRẦN 3,2 M' },
+  { up: true, x: [14.8, 18], y: [0, 2.1], n: 'KHU PHƠI', dim: '3,2 × 2,1 M', ceil: 'MÁI LẤY SÁNG' },
+  { up: true, x: [14.8, 15.9], y: [2.1, 4.2], n: 'KHO', dim: '1,1 × 2,1 M', ceil: 'CAO TRẦN 3,2 M' },
+  { up: true, x: [15.9, 18], y: [2.1, 4.2], n: 'NHÀ TẮM LẦU', dim: '2,1 × 2,1 M', ceil: 'CAO TRẦN 2,8 M' },
+];
+
+function buildBlueprintSVG() {
+  const R = (x1, y1, x2, y2, up, cls) =>
+    `<rect x="${bx(x1)}" y="${by(y1, up)}" width="${+((x2 - x1) * BP_SCALE).toFixed(1)}" height="${+((y2 - y1) * BP_SCALE).toFixed(1)}" class="${cls}"/>`;
+  const L = (x1, y1, x2, y2, up, cls) =>
+    `<line x1="${bx(x1)}" y1="${by(y1, up)}" x2="${bx(x2)}" y2="${by(y2, up)}" class="${cls}"/>`;
+  const T = (x, y, up, txt, sz = 7.8, op = .88) =>
+    `<text x="${bx(x)}" y="${by(y, up)}" font-family="'Barlow Condensed',sans-serif" font-size="${sz}" font-weight="700" letter-spacing="0.6" fill="rgba(232,242,255,${op})" text-anchor="middle" dominant-baseline="central">${txt}</text>`;
+
+  const stairsSVG = up => {
+    let s = '';
+    for (let i = 0; i <= 10; i++) {
+      const y = 1.15 + i * 0.21;
+      s += L(6.05, y, 7.35, y, up, 'bp-thin') + L(7.45, y, 8.75, y, up, 'bp-thin');
+    }
+    s += R(6.05, 3.25, 8.75, 4.15, up, 'bp-furn');
+    s += `<polyline points="${bx(6.7)},${by(1.35, up)} ${bx(6.7)},${by(3.65, up)} ${bx(8.1)},${by(3.65, up)} ${bx(8.1)},${by(1.45, up)}" fill="none" stroke="#ffd166" stroke-width="1.1" stroke-dasharray="2 1.5"/>`;
+    return s;
+  };
+
+  return `
+    <defs>
+      <style>
+        .bp-wall { stroke: #eef5ff; stroke-width: 2.3; stroke-linecap: square; }
+        .bp-sub { stroke: rgba(210,228,252,.62); stroke-width: 1.2; stroke-dasharray: 3 2; fill: none; }
+        .bp-thin { stroke: rgba(215,232,255,.55); stroke-width: 0.9; fill: none; }
+        .bp-furn { fill: rgba(210,230,255,.08); stroke: rgba(215,232,255,.5); stroke-width: 0.9; }
+        .bp-dimline { stroke: rgba(175,204,242,.45); stroke-width: 0.8; }
+      </style>
+      <radialGradient id="fovGrad" cx="0%" cy="50%" r="100%">
+        <stop offset="0%" stop-color="#ffb703" stop-opacity="0.72"/>
+        <stop offset="55%" stop-color="#fb8500" stop-opacity="0.32"/>
+        <stop offset="100%" stop-color="#fb8500" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Nhóm TẦNG TRỆT -->
+    <g id="bp-g">
+      <text x="8" y="${by(2.1, false)}" font-family="'Barlow Condensed',sans-serif" font-size="9.5" font-weight="700" fill="#ffd166" letter-spacing="1">TRỆT</text>
+      <rect id="hl-g" x="0" y="0" width="0" height="0" fill="rgba(245,165,36,0.22)" stroke="rgba(255,209,102,0.75)" stroke-width="1.2" rx="2"/>
+      ${R(-3.5, 0, 0, 4.2, false, 'bp-sub')}
+      ${R(0, 0, 18, 4.2, false, 'bp-furn')}
+      <!-- Nội thất chính trên mặt bằng trệt -->
+      ${R(1.55, 3.16, 4.55, 4.1, false, 'bp-furn')}
+      <circle cx="${bx(3.05)}" cy="${by(2.18, false)}" r="11" class="bp-furn"/>
+      ${R(9.0, 3.52, 12.45, 4.14, false, 'bp-furn')}
+      ${R(11.85, 2.0, 12.45, 3.52, false, 'bp-furn')}
+      ${R(9.55, 1.52, 11.35, 2.52, false, 'bp-furn')}
+      ${R(14.5, 1.98, 16.3, 4.12, false, 'bp-furn')}
+      ${stairsSVG(false)}
+      <!-- Tường tầng trệt -->
+      ${L(0, 0, 18, 0, false, 'bp-wall')}
+      ${L(0, 4.2, 18, 4.2, false, 'bp-wall')}
+      ${L(0, 0, 0, 0.9, false, 'bp-wall')} ${L(0, 3.3, 0, 4.2, false, 'bp-wall')}
+      ${L(18, 0, 18, 2.2, false, 'bp-wall')} ${L(18, 3.2, 18, 4.2, false, 'bp-wall')}
+      ${L(12.5, 1, 12.5, 4.2, false, 'bp-wall')}
+      ${L(16.5, 1, 16.5, 4.2, false, 'bp-wall')}
+      ${L(12.5, 1, 12.65, 1, false, 'bp-wall')} ${L(13.55, 1, 16.65, 1, false, 'bp-wall')} ${L(17.45, 1, 18, 1, false, 'bp-wall')}
+      <!-- Nhãn phòng trệt -->
+      ${T(-1.75, 2.1, false, 'SÂN', 7.2, .65)}
+      ${T(3.0, 1.15, false, 'P. KHÁCH', 8.2)}
+      ${T(7.4, 2.55, false, 'THANG', 7.2)}
+      ${T(10.6, 0.72, false, 'BẾP & ĂN', 8.0)}
+      ${T(14.0, 2.55, false, 'PN 1', 8.0)}
+      ${T(17.25, 2.55, false, 'WC', 7.2)}
+      <!-- Đường kích thước tổng -->
+      ${L(0, -0.45, 18, -0.45, false, 'bp-dimline')}
+      ${T(9, -0.78, false, '18,0 M', 7.0, .65)}
+    </g>
+
+    <!-- Nhóm TẦNG LẦU -->
+    <g id="bp-u">
+      <text x="8" y="${by(2.1, true)}" font-family="'Barlow Condensed',sans-serif" font-size="9.5" font-weight="700" fill="#ffd166" letter-spacing="1">LẦU</text>
+      <rect id="hl-u" x="0" y="0" width="0" height="0" fill="rgba(245,165,36,0.22)" stroke="rgba(255,209,102,0.75)" stroke-width="1.2" rx="2"/>
+      ${R(-1.2, 0, -0.6, 4.2, true, 'bp-sub')}
+      ${R(-0.6, 0, 18, 4.2, true, 'bp-furn')}
+      <!-- Nội thất chính trên mặt bằng lầu -->
+      ${R(1.55, 1.5, 1.95, 3.2, true, 'bp-furn')}
+      ${R(4.3, 2.15, 5.7, 4.12, true, 'bp-furn')}
+      ${R(12.8, 1.98, 14.4, 4.12, true, 'bp-furn')}
+      ${R(10.2, 3.48, 11.65, 4.08, true, 'bp-furn')}
+      ${stairsSVG(true)}
+      <!-- Tường tầng lầu -->
+      ${L(-0.6, 0, 18, 0, true, 'bp-wall')}
+      ${L(-0.6, 4.2, 18, 4.2, true, 'bp-wall')}
+      ${L(-0.6, 0, -0.6, 0.15, true, 'bp-wall')} ${L(-0.6, 0.95, -0.6, 4.2, true, 'bp-wall')}
+      ${L(2, 0, 2, 0.1, true, 'bp-wall')} ${L(2, 0.9, 2, 4.2, true, 'bp-wall')}
+      ${L(6, 1, 6, 4.2, true, 'bp-wall')}
+      ${L(8.8, 1, 8.8, 4.2, true, 'bp-wall')}
+      ${L(14.8, 0, 14.8, 0.1, true, 'bp-wall')} ${L(14.8, 0.9, 14.8, 4.2, true, 'bp-wall')}
+      ${L(15.9, 2.1, 15.9, 4.2, true, 'bp-wall')}
+      ${L(18, 0, 18, 4.2, true, 'bp-wall')}
+      ${L(2, 1, 2.15, 1, true, 'bp-wall')} ${L(3.05, 1, 6, 1, true, 'bp-wall')}
+      ${L(8.8, 1, 8.95, 1, true, 'bp-wall')} ${L(9.85, 1, 14.8, 1, true, 'bp-wall')}
+      ${L(14.8, 2.1, 15.0, 2.1, true, 'bp-wall')} ${L(15.75, 2.1, 16.05, 2.1, true, 'bp-wall')} ${L(16.75, 2.1, 18, 2.1, true, 'bp-wall')}
+      <!-- Nhãn phòng lầu -->
+      ${T(-0.9, 2.1, true, 'BC', 6.8, .7)}
+      ${T(0.7, 2.1, true, 'P. THỜ', 7.8)}
+      ${T(3.6, 2.55, true, 'PN 2', 8.0)}
+      ${T(7.4, 2.55, true, 'Ô THANG', 6.8)}
+      ${T(11.5, 2.25, true, 'PHÒNG NGỦ 3', 8.0)}
+      ${T(16.4, 1.05, true, 'PHƠI', 7.2)}
+      ${T(17.0, 3.15, true, 'WC', 7.2)}
+    </g>
+
+    <!-- Đường vết di chuyển & Chấm camera + Phễu hướng nhìn (FOV Cone) -->
+    <polyline id="bp-trail-g" points="" fill="none" stroke="rgba(255,220,140,0.6)" stroke-width="1.4" stroke-dasharray="2.5 2"/>
+    <polyline id="bp-trail-u" points="" fill="none" stroke="rgba(255,220,140,0.6)" stroke-width="1.4" stroke-dasharray="2.5 2"/>
+    <g id="bp-cam">
+      <path id="bp-cone" d="M0,0 L46,-26 A52,52 0 0,1 46,26 Z" fill="url(#fovGrad)"/>
+      <circle r="6.2" fill="rgba(245,165,36,0.35)"/>
+      <circle r="4.0" fill="#f59e0b" stroke="#ffffff" stroke-width="1.6"/>
+    </g>
+  `;
+}
+document.getElementById('bp-svg').innerHTML = buildBlueprintSVG();
+
+// ---------- Khởi tạo Renderer + SSAO + Bloom (ánh sáng chân thực, sắc nét) ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H, false);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.74;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('frame').prepend(renderer.domElement);
+
+sun.intensity = 1.3;
+sun.position.set(-9, 18, -10);
+sun.target.position.set(2.1, 1, 5);
+sun.shadow.bias = -0.0004;
+sun.shadow.mapSize.set(4096, 4096);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+const ENV = pmrem.fromScene(new THREE.RoomEnvironment(), .04).texture;
+scene.environment = ENV;
+scene.background = new THREE.Color('#d6e3ec');
+scene.traverse(o => {
+  if (o.isHemisphereLight) o.intensity = .35;
+  if (o.isMesh && o.material.isMeshStandardMaterial) o.material.envMapIntensity = .38;
+});
+
+const camera = new THREE.PerspectiveCamera(62, W / H, .06, 95);
+const HDR = { type: THREE.HalfFloatType };
+const composer = new THREE.EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, HDR));
+const ssao = new THREE.SSAOPass(scene, camera, W, H);
+Object.assign(ssao, { kernelRadius: .42, minDistance: .0008, maxDistance: .048 });
+ssao.beautyRenderTarget.dispose();
+ssao.beautyRenderTarget = new THREE.WebGLRenderTarget(W, H, { ...HDR, samples: 4 });
+ssao.ssaoMaterial.uniforms.tDiffuse.value = ssao.beautyRenderTarget.texture;
+composer.addPass(ssao);
+composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(W, H), .32, .5, 1.55));
+
+// ---------- Âm thanh phản hồi tương tác (Web Audio) ----------
+let audioCtx = null;
+function playChime() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const t = audioCtx.currentTime;
+    const osc1 = audioCtx.createOscillator(), osc2 = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc1.type = 'sine'; osc1.frequency.setValueAtTime(1046.5, t);
+    osc2.type = 'sine'; osc2.frequency.setValueAtTime(1567.98, t);
+    gain.gain.setValueAtTime(0.12, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+    osc1.connect(gain); osc2.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc1.start(t); osc2.start(t);
+    osc1.stop(t + 0.45); osc2.stop(t + 0.45);
+  } catch {}
+}
+
+// ---------- Kịch bản đường đi Camera liên tục 35 giây (Demo tất cả: không cắt cảnh, không xuyên tường) ----------
+// [giây, vị trí [x, y, z], điểm nhìn [tx, ty, tz], fov]
+const KEYS = [
+  [0.0,  [2.10, 1.60, 0.50],  [2.00, 1.40, 5.20], 64],  // Đứng ở cửa chính nhìn thẳng vào phòng khách & cầu thang
+  [2.6,  [2.60, 1.58, 2.30],  [1.45, 1.25, 4.40], 64],  // Lướt nhẹ qua bàn trà & cụm đèn thả
+  [4.8,  [3.45, 1.56, 4.40],  [0.85, 1.05, 2.70], 63],  // Xoay lại ngắm trọn bộ sofa, thảm, sàn gỗ & cửa mặt tiền
+  [6.8,  [3.45, 1.56, 4.40],  [0.85, 1.05, 2.70], 62],  // Bấm chọn Sofa da Cognac + Thảm dệt Teal
+  [9.0,  [3.50, 1.56, 4.80],  [1.10, 0.95, 2.80], 62],  // Bấm chọn Sàn gỗ Sồi tự nhiên toàn tầng trệt
+  [11.2, [3.60, 1.56, 9.20],  [1.30, 1.25, 11.30], 64], // Lướt êm qua lối đi, tiến vào Bếp & Bàn ăn ngập tràn ánh sáng
+  [13.2, [3.45, 1.56, 10.30], [0.95, 1.15, 11.25], 64], // Ngắm trọn hệ tủ bếp chữ L hiện đại & bàn ăn 4 ghế
+  [15.8, [3.45, 1.56, 10.50], [0.95, 1.15, 11.25], 63], // Bấm chọn Tủ bếp Óc Chó + Đá Calacatta + LED hắt
+  [17.6, [3.65, 1.56, 12.40], [2.00, 1.25, 14.80], 64], // Đi tới hành lang trệt nhìn vào cửa Phòng ngủ 1
+  [19.2, [2.90, 1.55, 13.10], [1.10, 1.10, 15.20], 64], // Ghé vào cửa Phòng ngủ 1 xem giường, đèn ngủ, tủ lùa
+  [20.7, [3.65, 1.56, 11.50], [3.55, 1.55, 6.80],  64], // Quay ra hành lang hướng về chân Cầu thang U
+  [21.8, [3.55, 1.58, 6.70],  [1.20, 1.65, 6.70],  65], // Trước vế thang 1 thấy bậc gỗ có đèn hắt & tranh chiếu nghỉ
+  [23.0, [1.80, 2.60, 6.70],  [0.40, 2.90, 6.70],  65], // Lên giữa vế 1 hướng về tranh chiếu nghỉ & giếng trời
+  [24.1, [0.55, 3.45, 7.60],  [2.20, 2.90, 8.10],  65], // Qua chiếu nghỉ nhìn êm ái lên vế 2 thấy bậc gỗ & đèn hắt
+  [25.3, [1.95, 4.50, 8.10],  [3.50, 4.95, 8.00],  64], // Lên đỉnh vế 2 hướng ánh nhìn vào sảnh lầu thoáng đãng
+  [26.3, [3.60, 5.25, 8.60],  [2.50, 5.00, 11.50], 64], // Chạm sảnh lầu — bản đồ góc trái chuyển sang Tầng Lầu
+  [27.6, [3.20, 5.25, 9.20],  [1.50, 4.88, 12.80], 64], // Nhìn vào Phòng ngủ 3 (giường lớn + bàn làm việc + tranh)
+  [29.0, [3.65, 5.25, 6.50],  [3.65, 5.15, 1.80],  64], // Lướt dọc Hành lang lầu (lan can kính, tranh, ánh sáng phía trước)
+  [30.5, [3.65, 5.24, 3.60],  [3.60, 5.10, 0.50],  64], // Lướt êm qua hành lang về phía Phòng thờ & ban công đón nắng
+  [31.8, [3.55, 5.22, 1.80],  [2.30, 5.05, 0.20],  63], // Bước qua cửa vào Phòng thờ, thấy cửa kính ra Ban công
+  [33.2, [2.85, 5.20, 0.20],  [1.85, 5.05, 1.50],  62], // Xoay nhẹ từ phía cửa sổ nắng sớm vào không gian Phòng thờ
+  [35.0, [2.35, 5.16, -0.15], [1.85, 4.98, 1.85],  61], // Khung kết: Tủ thờ gỗ Óc Chó, tranh trúc chỉ mandala & thẻ tổng kết
+];
+
+const sstep = x => x * x * (3 - 2 * x);
+const clamp01 = x => Math.min(1, Math.max(0, x));
+const V3 = a => new THREE.Vector3(a[0], a[1], a[2]);
+
+// Nội suy Hermite có kiểm soát độ căng (tension = 0.36) giúp mượt liên tục mà không văng qua tường ở khúc cua hẹp
+function evalHermiteVec(arr, t) {
+  if (t <= arr[0][0]) return V3(arr[0][1]);
+  const n = arr.length;
+  if (t >= arr[n - 1][0]) return V3(arr[n - 1][1]);
+  let i = 1;
+  while (i < n - 1 && t > arr[i][0]) i++;
+  const t0 = arr[i - 1][0], t1 = arr[i][0], dt = t1 - t0;
+  const u = clamp01((t - t0) / dt);
+  const p0 = V3(arr[i - 1][1]), p1 = V3(arr[i][1]);
+  const pPrev = V3(arr[Math.max(0, i - 2)][1]), pNext = V3(arr[Math.min(n - 1, i + 1)][1]);
+  const dtPrev = Math.max(0.2, t1 - arr[Math.max(0, i - 2)][0]);
+  const dtNext = Math.max(0.2, arr[Math.min(n - 1, i + 1)][0] - t0);
+  const tens = 0.36;
+  const m0 = p1.clone().sub(pPrev).multiplyScalar(tens * dt / dtPrev);
+  const m1 = pNext.clone().sub(p0).multiplyScalar(tens * dt / dtNext);
+  const u2 = u * u, u3 = u2 * u;
+  return p0.clone().multiplyScalar(2 * u3 - 3 * u2 + 1)
+    .add(m0.multiplyScalar(u3 - 2 * u2 + u))
+    .add(p1.clone().multiplyScalar(-2 * u3 + 3 * u2))
+    .add(m1.multiplyScalar(u3 - u2));
+}
+
+function evalScalar(pairs, t) {
+  if (t <= pairs[0][0]) return pairs[0][1];
+  for (let i = 1; i < pairs.length; i++) if (t <= pairs[i][0]) {
+    const [t0, a] = pairs[i - 1], [t1, b] = pairs[i];
+    return a + (b - a) * sstep((t - t0) / (t1 - t0));
+  }
+  return pairs[pairs.length - 1][1];
+}
+
+const posKeys = KEYS.map(k => [k[0], k[1]]);
+const tgtKeys = KEYS.map(k => [k[0], k[2]]);
+const fovKeys = KEYS.map(k => [k[0], k[3]]);
+
+// Tiền tính đường đi trên bản đồ Blueprint để vẽ vết di chuyển mượt
+const TRAIL_SAMPLES = [];
+for (let s = 0; s <= DUR; s += 0.25) {
+  const p = evalHermiteVec(posKeys, s);
+  TRAIL_SAMPLES.push({ t: s, X: p.z, Y: 4.2 - p.x, up: p.y > 3.6 });
+}
+
+// ---------- Kịch bản tương tác chuột & đổi vật liệu trực tiếp theo thời gian ----------
+// CLICK_EVENTS: [giây bấm, khoá tuỳ chọn, id nút mục tiêu, thông báo]
+const CLICK_EVENTS = [
+  { t: 6.1, key: 'sofa', btn: 'sofa:1', toast: '✓ Đã chọn: Sofa da Cognac + Thảm xanh Teal (+14,5 tr)' },
+  { t: 8.3, key: 'floor', btn: 'floor:1', toast: '✓ Đã chọn: Sàn gỗ sồi tự nhiên tầng trệt (+18,0 tr)' },
+  { t: 14.4, key: 'kitchen', btn: 'kitchen:1', toast: '✓ Đã chọn: Tủ bếp Óc Chó + Đá Calacatta (+16,5 tr)' },
+];
+window.CLICK_TIMES = CLICK_EVENTS.map(e => e.t);
+
+let userInteracted = false;
+let prevPriceState = '';
+
+function boxAlpha(t, tIn, tOut, d = 0.35) {
+  if (t <= tIn || t >= tOut) return 0;
+  return sstep(Math.min(clamp01((t - tIn) / d), clamp01((tOut - t) / d)));
+}
+
+function updateInteractiveHUD(t) {
+  if (currentMode !== 'demo') return;
+  // Bảng tuỳ chọn hiện mượt theo t tại Phòng khách (4.0..10.2s) và Bếp (12.2..16.9s)
+  let panel = null, cfgAlpha = 0, toast = '✓ Bấm vào mẫu vật liệu để xem thay đổi trực tiếp';
+  const aLiv = boxAlpha(t, 4.0, 10.2, 0.38), aKit = boxAlpha(t, 12.2, 16.9, 0.38);
+  if (aLiv > 0) { panel = 'living'; cfgAlpha = aLiv; }
+  else if (aKit > 0) { panel = 'kitchen'; cfgAlpha = aKit; }
+
+  if (!userInteracted) {
+    UPGRADES.sofa.on = t >= 6.1;
+    UPGRADES.floor.on = t >= 8.3;
+    UPGRADES.kitchen.on = t >= 14.4;
+    for (const ev of CLICK_EVENTS) if (t >= ev.t && t <= ev.t + 3.8) toast = ev.toast;
+    const st = `${+UPGRADES.sofa.on}${+UPGRADES.floor.on}${+UPGRADES.kitchen.on}`;
+    if (st !== prevPriceState) {
+      prevPriceState = st;
+      applyUpgrades();
+    }
+  }
+  const cfgCard = document.getElementById('cfg-card');
+  renderCfgPanel(panel, toast);
+  cfgCard.style.opacity = cfgAlpha.toFixed(3);
+  cfgCard.style.transform = `translateY(${((1 - cfgAlpha) * 0.7).toFixed(2)}vw)`;
+
+  // Hiệu ứng nảy nhẹ thanh giá đúng khoảnh khắc vừa bấm
+  let bumpSc = 1;
+  for (const ev of CLICK_EVENTS) {
+    const dt = t - ev.t;
+    if (dt >= 0 && dt <= 0.32) bumpSc = 1 + Math.sin((dt / 0.32) * Math.PI) * 0.065;
+  }
+  document.getElementById('price-pill').style.transform = `scale(${bumpSc.toFixed(3)})`;
+
+  // Thẻ tổng kết cuối video (31.6..35.0s)
+  const sumCard = document.getElementById('sum-card');
+  const sumAlpha = t > 31.6 ? sstep(clamp01((t - 31.6) / 0.45)) : 0;
+  sumCard.classList.toggle('show', sumAlpha > 0.01);
+  sumCard.style.opacity = sumAlpha.toFixed(3);
+  sumCard.style.transform = `translateY(${((1 - sumAlpha) * 0.7).toFixed(2)}vw)`;
+
+  // Điều khiển con trỏ mô phỏng bấm nút
+  const cur = document.getElementById('vcursor'), ring = document.getElementById('vring');
+  const frameRect = document.getElementById('frame').getBoundingClientRect();
+  let curAlpha = 0, cx = frameRect.width * 0.86, cy = frameRect.height * 0.86, scale = 1, ringOp = 0, ringSc = 0.3;
+
+  for (const ev of CLICK_EVENTS) {
+    const dt = t - ev.t;
+    if (dt >= -1.15 && dt <= 0.95) {
+      const btn = document.querySelector(`.opt-btn[data-opt="${ev.btn}"]`);
+      if (btn) {
+        const br = btn.getBoundingClientRect();
+        const tx = br.left - frameRect.left + br.width * 0.56;
+        const ty = br.top - frameRect.top + br.height * 0.56;
+        const sx = tx + frameRect.width * 0.055;
+        const sy = ty + frameRect.height * 0.085;
+        const moveP = dt < 0 ? sstep(clamp01((dt + 1.15) / 0.95)) : 1;
+        cx = sx + (tx - sx) * moveP;
+        cy = sy + (ty - sy) * moveP;
+        curAlpha = Math.min(clamp01((dt + 1.15) / 0.25), clamp01((0.95 - dt) / 0.28));
+        if (Math.abs(dt) < 0.14) {
+          scale = 0.86;
+          btn.classList.add('pressing');
+        } else {
+          btn.classList.remove('pressing');
+        }
+        if (dt >= 0 && dt <= 0.55) {
+          const rp = dt / 0.55;
+          ringSc = 0.45 + rp * 1.55;
+          ringOp = (1 - rp) * 0.95;
+        }
+      }
+      break;
+    }
+  }
+  cur.style.opacity = curAlpha.toFixed(3);
+  if (curAlpha > 0.01) {
+    cur.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(${scale})`;
+    ring.style.opacity = ringOp.toFixed(3);
+    ring.style.transform = `scale(${ringSc.toFixed(2)})`;
+  }
+}
+
+function updateBlueprint(pos, tgt, fovDeg, t) {
+  const X = pos.z, Y = 4.2 - pos.x, isUp = pos.y > 3.6;
+  document.getElementById('bp-g').style.opacity = isUp ? '0.38' : '1';
+  document.getElementById('bp-u').style.opacity = isUp ? '1' : '0.38';
+  document.getElementById('bp-floor-badge').textContent = isUp ? 'TẦNG 2 · TẦNG LẦU (+3,78 M)' : 'TẦNG 1 · TẦNG TRỆT (±0,00)';
+
+  // Tìm phòng hiện tại để tô sáng trên Blueprint và ghi thông số
+  const rm = ROOMS_META.find(r => r.up === isUp && X >= r.x[0] - 0.15 && X <= r.x[1] + 0.15 && Y >= r.y[0] - 0.15 && Y <= r.y[1] + 0.15)
+    || (isUp ? ROOMS_META[13] : ROOMS_META[1]);
+
+  const hlG = document.getElementById('hl-g'), hlU = document.getElementById('hl-u');
+  const setHL = (el, r, on) => {
+    if (!on) { el.setAttribute('width', '0'); return; }
+    el.setAttribute('x', bx(r.x[0]));
+    el.setAttribute('y', by(r.y[0], r.up));
+    el.setAttribute('width', ((r.x[1] - r.x[0]) * BP_SCALE).toFixed(1));
+    el.setAttribute('height', ((r.y[1] - r.y[0]) * BP_SCALE).toFixed(1));
+  };
+  setHL(hlG, rm, !isUp);
+  setHL(hlU, rm, isUp);
+
+  document.getElementById('bp-room').innerHTML = `<b>${rm.n}</b> · ${rm.dim}`;
+  document.getElementById('bp-ceil').textContent = rm.ceil;
+
+  // Vẽ đường đi đã qua trên mỗi tầng (chỉ vẽ đường tĩnh trong mode Demo)
+  if (currentMode === 'demo') {
+    const ptsG = [], ptsU = [];
+    for (const s of TRAIL_SAMPLES) {
+      if (s.t > t) break;
+      const pt = `${bx(s.X)},${by(s.Y, s.up)}`;
+      (s.up ? ptsU : ptsG).push(pt);
+    }
+    document.getElementById('bp-trail-g').setAttribute('points', ptsG.join(' '));
+    document.getElementById('bp-trail-u').setAttribute('points', ptsU.join(' '));
+  }
+
+  // Đặt chấm vị trí và xoay phễu FOV đúng hướng nhìn 3D (du = dz, dv = -dx)
+  const du = tgt.z - pos.z, dv = -(tgt.x - pos.x);
+  const ang = Math.atan2(dv, du) * 180 / Math.PI;
+  const halfRad = (fovDeg * 0.52) * Math.PI / 180, R = 52;
+  const xEnd = (Math.cos(halfRad) * R).toFixed(1), yEnd = (Math.sin(halfRad) * R).toFixed(1);
+  document.getElementById('bp-cone').setAttribute('d', `M0,0 L${xEnd},-${yEnd} A${R},${R} 0 0,1 ${xEnd},${yEnd} Z`);
+  document.getElementById('bp-cam').setAttribute('transform', `translate(${bx(X)} ${by(Y, isUp)}) rotate(${ang.toFixed(1)})`);
+}
+
+function seek(t) {
+  const tt = Math.max(0, Math.min(DUR, t));
+  const pos = evalHermiteVec(posKeys, tt);
+  const tgt = evalHermiteVec(tgtKeys, tt);
+  const fov = evalScalar(fovKeys, tt);
+
+  camera.position.copy(pos);
+  camera.up.set(0, 1, 0);
+  camera.lookAt(tgt);
+  camera.fov = fov;
+  camera.updateProjectionMatrix();
+
+  updateBlueprint(pos, tgt, fov, tt);
+  updateInteractiveHUD(tt);
+  composer.render();
+}
+window.seek = seek;
+
+// ---------- Hệ thống điều khiển Game (Chế độ Tự do di chuyển bằng chuột & bàn phím) ----------
+let currentMode = 'demo'; // 'demo' | 'game'
+const EYE = 1.6, BODY = 1.75, RAD = 0.22, STEP = 0.38, WALK_SPD = 2.4, RUN_SPD = 4.6;
+const me = window.me = { X: 1.5, Y: 2.1, fz: 0, yaw: Math.PI, pitch: 0 };
+
+const nearBox = (b, X, Y) => X + RAD > b.X1 && X - RAD < b.X2 && Y + RAD > b.Y1 && Y - RAD < b.Y2;
+const isBlocked = (X, Y, fz) => boxes.some(b => nearBox(b, X, Y) && b.z2 > fz + STEP && b.z1 < fz + BODY);
+function getGround(X, Y, fz) {
+  let top = 0;
+  for (const b of boxes) {
+    if (nearBox(b, X, Y) && b.z2 <= fz + STEP && b.z2 > top) top = b.z2;
+  }
+  return top;
+}
+
+const keysDown = new Set();
+window.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  keysDown.add(e.code);
+});
+window.addEventListener('keyup', e => { keysDown.delete(e.code); });
+window.addEventListener('blur', () => { keysDown.clear(); });
+
+// Kéo chuột (hoặc vuốt) = nhìn quanh; bấm không kéo = đi tới điểm bấm trên sàn
+const canvasEl = renderer.domElement;
+canvasEl.style.touchAction = 'none';
+let isDragging = false, dragDist = 0, lastMouseX = 0, lastMouseY = 0;
+let walkTo = null; // { X, Y } đích đang tự đi tới
+const ray = new THREE.Raycaster();
+const marker = new THREE.Mesh(new THREE.RingGeometry(0.14, 0.2, 32),
+  new THREE.MeshBasicMaterial({ color: 0xffc94d, transparent: true, opacity: 0.9, depthTest: false }));
+marker.rotation.x = -Math.PI / 2; marker.renderOrder = 99; marker.visible = false; scene.add(marker);
+const shown = o => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+
+canvasEl.addEventListener('pointerdown', e => {
+  if (currentMode !== 'game') return;
+  isDragging = true; dragDist = 0; lastMouseX = e.clientX; lastMouseY = e.clientY;
+  canvasEl.setPointerCapture(e.pointerId);
+});
+canvasEl.addEventListener('pointermove', e => {
+  if (currentMode !== 'game' || !isDragging) return;
+  const dx = e.clientX - lastMouseX, dy = e.clientY - lastMouseY;
+  lastMouseX = e.clientX; lastMouseY = e.clientY;
+  dragDist += Math.abs(dx) + Math.abs(dy);
+  const sens = 0.004;
+  me.yaw += dx * sens; // kéo kiểu "nắm khung cảnh": kéo sang phải thì nhìn sang trái
+  me.pitch = Math.max(-1.3, Math.min(1.3, me.pitch + dy * sens));
+});
+canvasEl.addEventListener('pointerup', e => {
+  if (currentMode !== 'game' || !isDragging) return;
+  isDragging = false;
+  if (dragDist > 6) return;
+  const r = canvasEl.getBoundingClientRect();
+  ray.setFromCamera({ x: (e.clientX - r.left) / r.width * 2 - 1, y: -(e.clientY - r.top) / r.height * 2 + 1 }, camera);
+  const hit = ray.intersectObject(scene, true).find(h => h.object !== marker && shown(h.object));
+  if (!hit) return;
+  // Bấm vào tường/đồ đạc thì đi tới sát trước nó; bấm sàn thì đi đúng điểm đó
+  const p = hit.point, cam = camera.position, d = Math.hypot(p.x - cam.x, p.z - cam.z);
+  const k = hit.face && hit.face.normal.clone().transformDirection(hit.object.matrixWorld).y > 0.7 ? 1 : Math.max(0, (d - 0.45) / d);
+  const x = cam.x + (p.x - cam.x) * k, z = cam.z + (p.z - cam.z) * k;
+  walkTo = { X: z, Y: 4.2 - x };
+  marker.position.set(x, (hit.face && k === 1 ? p.y : me.fz) + 0.02, z);
+  marker.visible = true;
+});
+
+const TELEPORT_POINTS = [
+  { name: 'Phòng khách', X: 2.2, Y: 2.1, fz: 0, yaw: Math.PI },
+  { name: 'Bếp & Bàn ăn', X: 10.2, Y: 1.8, fz: 0, yaw: Math.PI },
+  { name: 'Phòng ngủ 1', X: 14.5, Y: 2.4, fz: 0, yaw: Math.PI },
+  { name: 'Chân cầu thang U', X: 6.6, Y: 3.5, fz: 0, yaw: Math.PI / 2 },
+  { name: 'Phòng ngủ 3', X: 11.5, Y: 2.5, fz: H1, yaw: Math.PI },
+  { name: 'Hành lang lầu', X: 6.5, Y: 0.5, fz: H1, yaw: 0 },
+  { name: 'Phòng ngủ 2', X: 3.5, Y: 2.5, fz: H1, yaw: Math.PI },
+  { name: 'Phòng thờ & Ban công', X: 0.8, Y: 2.1, fz: H1, yaw: 0 },
+];
+const telSel = document.getElementById('teleport-sel');
+telSel?.addEventListener('change', () => {
+  const idx = parseInt(telSel.value, 10);
+  const p = TELEPORT_POINTS[idx];
+  if (p) {
+    me.X = p.X; me.Y = p.Y; me.fz = p.fz; me.yaw = p.yaw; me.pitch = 0; walkTo = null;
+  }
+  telSel.blur();
+});
+
+let manualCfgOpen = false, manualSumOpen = false;
+const btnToggleCfg = document.getElementById('btn-toggle-cfg');
+btnToggleCfg?.addEventListener('click', () => {
+  manualCfgOpen = !manualCfgOpen;
+  btnToggleCfg.classList.toggle('active', manualCfgOpen);
+  if (manualCfgOpen) {
+    const pKey = me.X >= 8.0 ? 'kitchen' : 'living';
+    renderCfgPanel(pKey, '✓ Bấm chọn vật liệu để áp dụng ngay vào không gian 3D');
+    document.getElementById('cfg-card').style.opacity = '1';
+    document.getElementById('cfg-card').style.transform = 'translateY(0)';
+  } else {
+    document.getElementById('cfg-card').style.opacity = '0';
+    document.getElementById('cfg-card').style.transform = 'translateY(0.8vw)';
+  }
+});
+const btnToggleSum = document.getElementById('btn-toggle-sum');
+btnToggleSum?.addEventListener('click', () => {
+  manualSumOpen = !manualSumOpen;
+  btnToggleSum.classList.toggle('active', manualSumOpen);
+  const card = document.getElementById('sum-card');
+  card.classList.toggle('show', manualSumOpen);
+  card.style.opacity = manualSumOpen ? '1' : '0';
+  card.style.transform = manualSumOpen ? 'translateY(0)' : 'translateY(0.8vw)';
+});
+
+// Chuyển đổi giữa 2 chế độ: Demo tất cả & Tự di chuyển như Game
+const btnModeDemo = document.getElementById('btn-mode-demo');
+const btnModeGame = document.getElementById('btn-mode-game');
+const gameHud = document.getElementById('game-hud');
+const ctrlBar = document.getElementById('ctrl');
+
+function setMode(newMode) {
+  if (newMode === currentMode) return;
+  currentMode = newMode;
+  btnModeDemo.classList.toggle('active', currentMode === 'demo');
+  btnModeGame.classList.toggle('active', currentMode === 'game');
+  gameHud.hidden = (currentMode !== 'game');
+  ctrlBar.hidden = (currentMode === 'game');
+  document.getElementById('vcursor').style.opacity = '0';
+
+  if (currentMode === 'game') {
+    // Lấy toạ độ vị trí camera hiện tại làm điểm bắt đầu đi bộ
+    me.X = camera.position.z;
+    me.Y = 4.2 - camera.position.x;
+    me.fz = Math.max(0, camera.position.y - EYE);
+    const dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+    me.yaw = Math.atan2(-dir.x, -dir.z);
+    me.pitch = Math.asin(Math.max(-0.99, Math.min(0.99, dir.y)));
+  } else {
+    walkTo = null; marker.visible = false;
+    manualCfgOpen = false; manualSumOpen = false;
+    btnToggleCfg?.classList.remove('active');
+    btnToggleSum?.classList.remove('active');
+  }
+}
+btnModeDemo?.addEventListener('click', () => setMode('demo'));
+btnModeGame?.addEventListener('click', () => setMode('game'));
+
+function updateGamePhysics(dt) {
+  let f = 0, s = 0;
+  if (keysDown.has('KeyW') || keysDown.has('ArrowUp')) f += 1;
+  if (keysDown.has('KeyS') || keysDown.has('ArrowDown')) f -= 1;
+  if (keysDown.has('KeyA') || keysDown.has('ArrowLeft')) s -= 1;
+  if (keysDown.has('KeyD') || keysDown.has('ArrowRight')) s += 1;
+
+  const len = Math.hypot(f, s);
+  if (len > 0.05) {
+    const isSprint = keysDown.has('ShiftLeft') || keysDown.has('ShiftRight');
+    const spd = (isSprint ? RUN_SPD : WALK_SPD) * Math.min(1, len) * dt / len;
+    const fx = -Math.sin(me.yaw), fzz = -Math.cos(me.yaw);
+    const rx = Math.cos(me.yaw), rz = -Math.sin(me.yaw);
+    const dX = (fzz * f + rz * s) * spd;
+    const dY = -(fx * f + rx * s) * spd;
+
+    if (!isBlocked(me.X + dX, me.Y, me.fz)) me.X += dX;
+    if (!isBlocked(me.X, me.Y + dY, me.fz)) me.Y += dY;
+    walkTo = null;
+  } else if (walkTo && Math.hypot(walkTo.X - me.X, walkTo.Y - me.Y) < 0.05) {
+    walkTo = null;
+  } else if (walkTo) {
+    // Tự đi tới điểm đã bấm, quay mặt dần theo hướng đi; dừng khi tới nơi hoặc bị tường chặn
+    const ex = walkTo.X - me.X, ey = walkTo.Y - me.Y, dist = Math.hypot(ex, ey);
+    const want = Math.atan2(ey, -ex);
+    me.yaw += Math.atan2(Math.sin(want - me.yaw), Math.cos(want - me.yaw)) * Math.min(1, dt * 5);
+    const stepLen = Math.min(dist, WALK_SPD * dt), dX = ex / dist * stepLen, dY = ey / dist * stepLen;
+    const X0 = me.X, Y0 = me.Y;
+    if (!isBlocked(me.X + dX, me.Y, me.fz)) me.X += dX;
+    if (!isBlocked(me.X, me.Y + dY, me.fz)) me.Y += dY;
+    if (Math.hypot(me.X - X0, me.Y - Y0) < stepLen * 0.2) walkTo = null;
+  }
+  marker.visible = !!walkTo;
+
+  const g = getGround(me.X, me.Y, me.fz);
+  me.fz = g > me.fz ? g : Math.max(g, me.fz - 7 * dt);
+
+  const camPos = new THREE.Vector3(4.2 - me.Y, me.fz + EYE, me.X);
+  camera.position.copy(camPos);
+  camera.rotation.order = 'YXZ';
+  camera.rotation.set(me.pitch, me.yaw, 0);
+
+  const fx = -Math.sin(me.yaw) * Math.cos(me.pitch);
+  const fy = Math.sin(me.pitch);
+  const fz = -Math.cos(me.yaw) * Math.cos(me.pitch);
+  const camTgt = new THREE.Vector3(camPos.x + fx * 4, camPos.y + fy * 4, camPos.z + fz * 4);
+
+  updateBlueprint(camPos, camTgt, camera.fov, 0);
+
+  // Tự động kiểm tra gợi ý panel vật liệu theo vị trí nếu chưa mở thủ công
+  if (!manualCfgOpen && !manualSumOpen) {
+    if (me.X >= 0 && me.X <= 6.0 && me.fz < 2.0) {
+      renderCfgPanel('living', '✓ Bạn đang ở Phòng khách · Bấm đổi vật liệu');
+      document.getElementById('cfg-card').style.opacity = '1';
+      document.getElementById('cfg-card').style.transform = 'translateY(0)';
+    } else if (me.X >= 8.8 && me.X <= 12.5 && me.fz < 2.0) {
+      renderCfgPanel('kitchen', '✓ Bạn đang ở Bếp & Bàn ăn · Bấm đổi vật liệu');
+      document.getElementById('cfg-card').style.opacity = '1';
+      document.getElementById('cfg-card').style.transform = 'translateY(0)';
+    } else {
+      document.getElementById('cfg-card').style.opacity = '0';
+      document.getElementById('cfg-card').style.transform = 'translateY(0.8vw)';
+    }
+  }
+
+  composer.render();
+}
+
+// ---------- Chế độ Render Video (?render) hoặc Chạy trực tiếp trên trình duyệt ----------
+if (IS_RENDER) {
+  document.fonts.ready.then(() => { seek(0); window.ready = true; });
+  return;
+}
+
+let playing = true, curT = 0, lastNow = performance.now();
+const btnPlay = document.getElementById('btn-play');
+const scrub = document.getElementById('scrub');
+const readout = document.getElementById('t-readout');
+const fmt = s => '00:' + String(Math.floor(s)).padStart(2, '0');
+
+btnPlay.addEventListener('click', () => {
+  playing = !playing;
+  btnPlay.textContent = playing ? 'Tạm dừng' : 'Tiếp tục';
+  lastNow = performance.now();
+});
+scrub.addEventListener('input', () => {
+  curT = parseFloat(scrub.value);
+  userInteracted = false; prevPriceState = '';
+  seek(curT);
+  readout.textContent = `${fmt(curT)} / ${fmt(DUR)}`;
+});
+
+// Mở trang là vào thẳng chế độ tự đi, đứng ở cửa chính nhìn vào nhà; ?demo để xem phim tự chạy
+if (!q.has('demo')) {
+  seek(0);
+  setMode('game');
+  Object.assign(me, { X: 1.2, Y: 2.1, fz: 0, yaw: Math.PI, pitch: -0.05 });
+}
+
+(function loop(now) {
+  const dt = Math.max(0, Math.min(0.06, (now - lastNow) / 1000)); // khung đầu rAF có thể sớm hơn lastNow → dt âm
+  lastNow = now;
+
+  if (currentMode === 'demo') {
+    if (playing) {
+      curT += dt;
+      if (curT > DUR) { curT = 0; userInteracted = false; prevPriceState = ''; }
+      scrub.value = curT.toFixed(2);
+      readout.textContent = `${fmt(curT)} / ${fmt(DUR)}`;
+    }
+    seek(curT);
+  } else if (currentMode === 'game') {
+    updateGamePhysics(dt);
+  }
+
+  requestAnimationFrame(loop);
+})(performance.now());
+})();
+</script>
+</body>
+</html>

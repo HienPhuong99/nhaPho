@@ -17,6 +17,7 @@ Sửa số trong mảng dữ liệu, không sửa SVG. Tìm bằng grep (`grep -
 | `long-sat.html` | so 2 kiểu lồng sắt kín trùm sân trước (không in PDF) | `LONG_PA` trong `mo-hinh-3d.js` (dùng chung với 3D), `MO_TA` |
 | `bia.html` | bìa bộ PDF | mục lục ghi số trang |
 | `phim.html` | phim giới thiệu: bản vẽ nét chì chuyển sang bản dựng màu (không in PDF); dựng video bằng `phim-render.mjs` (Playwright + ffmpeg) rồi `phim-dung.mjs` (FilmCraft CLI) | `SHOTS` (khung khoá máy quay, `mix` nét chì→màu, `cut` cao độ cắt mặt bằng), đồ đạc riêng `FUR` |
+| `phim-tham-quan.html` | phim & trình duyệt tham quan 3D góc nhìn thứ nhất kèm mặt bằng Blueprint góc trái, đổi nội thất/vật liệu & tính giá nâng cấp (không in PDF); dựng MP4 bằng `phim-tham-quan-render.mjs` | `KEYS` (quỹ đạo camera 2 tầng), `UPGRADES`, `CLICK_EVENTS`, đồ đạc riêng `FUR` |
 
 Cao độ và kích thước phòng lặp ở nhiều file: đổi số nào thì grep số cũ trong cả `mat-bang.js`, `mat-dung.html`, `mo-hinh-3d.js`, `index.html`, `cot-dien.html`.
 
